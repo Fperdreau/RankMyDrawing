@@ -27,7 +27,13 @@ class DrawRef {
         require($_SESSION['path_to_app'].'admin/conf/config.php');
         $db_set = new DB_set();
         $this->file_id = $file_id;
-        self::make_folders();
+
+        // Make folders
+        $result = self::make_folders();
+        if ($result == false) {
+            return $result;
+        }
+
         $this->filename = self::upload($file);
         $this->date = date('Y-m-d HH:MM:SS');
         $this->drawlist = self::get_refdrawinglist("filename");
@@ -56,27 +62,35 @@ class DrawRef {
         $ref_directory = $_SESSION['path_to_app']."images/$this->file_id/";
         $img_directory = $_SESSION['path_to_app']."images/$this->file_id/img/";
         $thumb_directory = $_SESSION['path_to_app']."images/$this->file_id/thumb/";
-
         if (!is_dir($ref_directory)) {
-            mkdir($ref_directory);
+            if (!mkdir($ref_directory)) {
+                echo json_encode("Failed to create $ref_directory");
+                return false;
+            }
         }
         chmod($ref_directory,0755);
 
         if (!is_dir($img_directory)) {
-            mkdir($img_directory);
+            if (!mkdir($img_directory)) {
+                echo json_encode("Failed to create $img_directory");
+                return false;
+            }
         }
         chmod($img_directory,0755);
 
         if (!is_dir($thumb_directory)) {
-            mkdir($thumb_directory);
+            if (!mkdir($thumb_directory)) {
+                echo json_encode("Failed to create $thumb_directory");
+                return false;
+            }
         }
         chmod($thumb_directory,0755);
-
+        return true;
     }
 
     // Update
     public function update($post,$file_id=null) {
-        require($_SESSION['path_to_app']."/admin/conf/config.php");
+        require($_SESSION['path_to_app']."admin/conf/config.php");
         $db_set = new DB_set();
 
         if (null!=$file_id) {
@@ -154,7 +168,7 @@ class DrawRef {
 
 	// Make an unique ID
 	function makeID() {
-        require($_SESSION['path_to_app']."/admin/conf/config.php");
+        require($_SESSION['path_to_app']."admin/conf/config.php");
         $db_set = new DB_set();
         $file_id = $this->file_id."_".rand(1,10000);
 

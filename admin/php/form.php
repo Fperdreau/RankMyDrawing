@@ -7,15 +7,6 @@
  */
 
 session_start();
-$_SESSION['root_path'] = $_SERVER['DOCUMENT_ROOT'];
-$_SESSION['app_name'] = "/RankMyDrawings_v2/";
-$_SESSION['path_to_app'] = $_SESSION['root_path'].$_SESSION['app_name'];
-$_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
-$_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
-$_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
-$_SESSION['path_to_pages'] = $_SESSION['path_to_app']."admin/pages/";
-date_default_timezone_set('Europe/Paris');
-
 // Includes required files (classes)
 include_once($_SESSION['path_to_includes'].'includes.php');
 include_once($_SESSION['path_to_app'].'admin/includes/includes.php');

@@ -11,23 +11,6 @@ var display_content = function(type,lang,content,refid) {
         .fadeIn('slow');
 }
 
-// Check if the label chosen by the user for the new reference drawing does not already exist in the database
-var labelexist = function(refid) {
-    jQuery.ajax({
-        url: '../admin/php/form.php',
-        type: 'POST',
-        async: false,
-        data: {
-            check_availability: true,
-            refid: refid
-        },
-        success: function(data){
-            var result = jQuery.parseJSON(data);
-            return result;
-        }
-    });
-}
-
 $( document ).ready(function() {
     $(".mainbody")
 
@@ -195,19 +178,26 @@ $( document ).ready(function() {
             e.preventDefault();
             var elo = $('input#elo').val();
             var pair = $('input#pair').val();
+            var max_nb_users = $('input#max_nb_users').val();
             var status = $('select#status').val();
             var filter = $('select#filter').val();
             var refid = $(this).attr('data-ref');
 
             if (elo == "") {
-                showfeedback('<p id="warning">This field is required</p>','feedback_params');
+                showfeedback('<p id="warning">This field is required</p>','.feedback_params');
                 $("input#elo").focus();
                 return false;
             }
 
-            if (pair == "") {
-                showfeedback('<p id="warning">This field is required</p>','feedback_params');
+            if (pair == "" || pair == 0) {
+                showfeedback('<p id="warning">This value must be greater than 0</p>','.feedback_params');
                 $("input#pair").focus();
+                return false;
+            }
+
+            if (max_nb_users == "" || max_nb_users == 0) {
+                showfeedback('<p id="warning">This value must be greater than 0</p>','.feedback_params');
+                $("input#max_nb_users").focus();
                 return false;
             }
 
@@ -220,6 +210,7 @@ $( document ).ready(function() {
                     initial_score: elo,
                     refid: refid,
                     nb_pairs: pair,
+                    max_nb_users: max_nb_users,
                     status: status,
                     filter: filter},
                 success: function(data){
@@ -457,8 +448,6 @@ $( document ).ready(function() {
                     }
                 }
             });
-
-
         })
 
         // Delete reference drawing

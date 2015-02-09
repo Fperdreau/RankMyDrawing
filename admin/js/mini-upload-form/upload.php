@@ -16,12 +16,15 @@ if ($op == "ref") {
     $filename = $item->make($file_id,$_FILES[$id]);
 }
 
-if ($filename == "no_file") {
-    echo '{"status":"no_file"}';	
+if ($filename == false) {
+    $result['status'] = false;
+} elseif ($filename == "no_file") {
+    $result['status'] ="no_file";
 } elseif ($filename == "failed") {
-	echo '{"status":"error"}';	
+	$result['status'] = "error";
 } else {
-	echo '{"status":"'.$filename.'"}';	
+	$result['status'] = $filename;
 }
+echo json_encode($result);
 exit;
 

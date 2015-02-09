@@ -9,20 +9,13 @@ if (!isset($_SESSION['logok']) || !$_SESSION['logok']) {
     $showlogin = "<span style='font-size: 16px;' id='logout'><a href=''>Log out</a></span>";
 }
 
-if (!empty($_GET['page']) && $_GET['page'] == "install") {
-    $sitetitle = "RankMyDrawings";
-} else {
-    if (!isset($db_set)) {
-        $db_set = new DB_set();
-    }
-    $sitetitle = strtoupper($db_set->getinfo($config_table,'value',array("variable"),array("'sitetitle'")));
-}
+$config = new site_config('get');
 
 echo "
 <div class='displaymenu_btn' id='on'>.:: Menu ::.</div>
 <div class='header_container'>
     <div id='title'>
-        <span id='sitetitle'>$sitetitle</span>
+        <span id='sitetitle'>$config->sitetitle</span>
         <div style='float: right; margin-right: 10px; margin-top: 20px; height: 20px;' id='welcome'>$showlogin</div>
     </div>
 </div>

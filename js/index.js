@@ -173,20 +173,27 @@ var loadspin =  function (action) {
     } else {
         spinner.stop(target);
     }
-
 };
 
 var progressbar = function(id,value) {
     var el = $('#'+id);
     var size = $(el).width();
-    var linearprogress = size*value;
+    var linearprogress = value*100;
     var text = "Progression: "+Math.round(value*100)+"%";
 
     $(el)
+        .show()
         .text(text)
-        .children('.fillprogress')
-            .width(linearprogress)
-        .show();
+        .css({
+            background: "linear-gradient(to right, rgba(200,200,200,.7) "+linearprogress+"%, rgba(200,200,200,0) "+linearprogress+"%)"
+        });
+}
+
+var logout = function() {
+    loadpageonclick('logout');
+    $('.warningmsg')
+        .show()
+        .html("You have been logged out!");
 }
 
 $( document ).ready(function() {
@@ -197,8 +204,7 @@ $( document ).ready(function() {
     $('.mainbody')
 
         .ready(function() {
-
-			// Automatically parse url and load the corresponding page
+            // Automatically parse url and load the corresponding page
             var params = getParams();
             if (params.page == undefined) {
                 loadpageonclick('home',false);
@@ -211,7 +217,7 @@ $( document ).ready(function() {
             }
         })
 
-        // Trigger modal dialog box for log in/sign up
+        // Trigger modal dialog box for log in/contact
         .on('mouseover',"a[rel*=leanModal]",function(e) {
             e.preventDefault();
             $(this).leanModal({top : 50, overlay : 0.6, closeButton: ".modal_close" });

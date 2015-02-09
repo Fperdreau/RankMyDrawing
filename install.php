@@ -468,9 +468,13 @@ if (!empty($_POST['getpagecontent'])) {
     </head>
 
     <body class="mainbody">
+        <!-- Header section -->
         <div id="mainheader">
-            <!-- Header section -->
-            <?php require($_SESSION['path_to_pages'].'page_header.php'); ?>
+            <div class='header_container'>
+                <div id='title'>
+                    <span id='sitetitle'>RankMyDrawings / Installation</span>
+                </div>
+            </div>
         </div>
 
         <!-- Core section -->

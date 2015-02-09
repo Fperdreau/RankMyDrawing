@@ -50,8 +50,9 @@ function showrefsettings($ref_id='all') {
                 <div class='feedback_params'></div>
                 <label for='elo' class='label'>Initial Elo score</label><input type='text' name='elo' id='elo' value='$ref->initial_score' />
                 <span id='info'>Modifying this value will result in the recomputation of all items' score</span><br>
-                <label for='pair' class='label'>Nb of pairs</label><input type='text' name='pair' id='pair' value='$ref->nb_pairs' />
+                <label for='pair' class='label'>Number of trials</label><input type='text' name='pair' id='pair' value='$ref->nb_pairs' />
                 <span id='info'>Max number: $ref->max_nb_pairs</span><br>
+                <label for='max_nb_users' class='label'>Max number of users</label><input type='text' name='max_nb_users' id='max_nb_users' value='$ref->max_nb_users' /><br>
                 <label for='status' class='label'>Status</label>
                 <select name='status' id='status' data-ref='$ref->file_id'>
                     <option value='$ref->status' selected>$ref->status</option>

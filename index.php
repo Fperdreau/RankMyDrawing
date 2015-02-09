@@ -19,7 +19,7 @@ You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-
+session_set_cookie_params(3600);
 session_start();
 $_SESSION['app_name'] = basename(__DIR__);
 $_SESSION['path_to_app'] = dirname(__FILE__)."/";
@@ -59,6 +59,8 @@ $config = new site_config('get');
     </head>
 
     <body class="mainbody">
+        <div class='warningmsg' style='position: fixed; display: none; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background-color: #550000; color: #EEEEEE;'><input type='button' id='submit'></div>
+
         <?php require($_SESSION['path_to_pages'].'modal.php'); ?>
 
         <div id="mainheader">

@@ -17,8 +17,8 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 <?php
     session_start();
-    $_SESSION['app_name'] = dirname(__dir__).'/';
-    $_SESSION['path_to_app'] = $_SESSION['app_name'];
+    $_SESSION['app_name'] = basename(dirname(__dir__));
+    $_SESSION['path_to_app'] = dirname(__dir__).'/';
     $_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
     $_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
     $_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
@@ -27,23 +27,10 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
     // Includes required files (classes)
     require_once($_SESSION['path_to_includes'].'includes.php');
-    if (isset($_GET['page'])){
-        $pagetoload = $_SESSION['path_to_pages'].$_GET['page'].".php";
-    } else {
-        $pagetoload = $_SESSION['path_to_pages']."home.php";
-    }
 
-    $config = new site_config();
-    if (!empty($_GET['page']) && $_GET['page'] == "install") {
-        $sitetitle = "RankMyDrawings";
-    } else {
-        $config->get_config();
-        $sitetitle = $config->sitetitle;
-    }
+    // Get application settings
+    $config = new site_config('get');
 
-    if (empty($_SESSION['logok'])) {
-        $_SESSION['logok'] = false;
-    }
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

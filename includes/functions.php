@@ -41,6 +41,7 @@ function is_session_started()
     return FALSE;
 }
 
+// Recursively browse files in a specified folders and subfolders
 function browse($dir, $dirsNotToSaveArray = array()) {
     $filenames = array();
     if ($handle = opendir($dir)) {

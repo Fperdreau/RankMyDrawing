@@ -262,16 +262,6 @@ a#menu:hover {
     background-color: #222222;
 }
 
-.fillprogress {
-    position: relative;
-    z-index: 0;
-    border-radius: 5px;
-    background-color: rgba(200,200,200,.5);
-    margin: 0;
-    padding: 2px;
-    height: 30px;
-}
-
 #experiment_frame {
     width: 100%;
 }
