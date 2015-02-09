@@ -1,0 +1,112 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Florian
+ * Date: 25/01/15
+ * Time: 14:54
+ */
+
+class participant {
+    public $date = "";
+    public $userid = "";
+    public $refid = "";
+    public $name = "";
+    public $email = "";
+    public $ip = "";
+    public $nb_visit = "";
+    public $age = "";
+    public $gender = "";
+    public $language = "";
+    public $drawlvl = "";
+    public $artint = "";
+    public $response1 = "";
+    public $response2 = "";
+    public $pair1 = "";
+    public $pair2 = "";
+    public $time_start = "";
+    public $time_end = "";
+
+    function __construct($userid=null,$refid=null) {
+        if ($userid != null) {
+            self::get($userid,$refid);
+        }
+    }
+
+    // Create user
+    function make($post,$drawref) {
+        $db_set = new DB_set();
+
+        $this->refid = $drawref;
+        $post['date'] = date("Y-m-d HH:MM:SS");
+        $post['ip'] = self::getip();
+        $post['userid'] = self::makeID();
+
+        // Parse variables and values to store in the table
+        $class_vars = get_class_vars("participant");
+        $class_keys = array_keys($class_vars);
+        $values = array();
+        $variables = array();
+        foreach ($post as $name => $value) {
+            if (in_array($name,$class_keys)) {
+                $escaped = mysqli_real_escape_string($db_set->bdd,$value);
+                $values[] = "'$escaped'";
+                $variables[] = $name;
+            }
+        }
+        $values = implode(",", $values);
+        $variables = implode(",", $variables);
+
+        // Add user to the database
+        $result = $db_set->addcontent($db_set->dbprefix.$drawref."_users",$variables,$values);
+        self::get($post['userid'],$this->refid);
+        return $this->userid;
+    }
+
+    function update() {
+        $db_set = new DB_set();
+        $users_table = $db_set->dbprefix.$this->refid.'_users';
+        foreach ($this as $key=>$value) {
+            $db_set->updatecontent($users_table,$key,"'$value'",array("userid"),array("'$this->userid'"));
+        }
+        return true;
+    }
+
+    public function getip() {
+        return strval($_SERVER['REMOTE_ADDR']);
+    }
+
+    // Make an unique ID
+    function makeID() {
+        $db_set = new DB_set();
+        $id = $this->refid."_".rand(1,10000);
+
+        // Check if random ID does not already exist in our database
+        $prev_id = $db_set->getinfo($db_set->dbprefix.$this->refid.'_users','id');
+        while (in_array($id,$prev_id)) {
+            $id = $this->refid."_".rand(1,10000);
+        }
+        return $id;
+    }
+
+    function get($userid,$refid) {
+        $db_set = new DB_set();
+        $users_table = $db_set->dbprefix.$refid.'_users';
+
+        $class_vars = get_class_vars("participant");
+
+        $sql = "SELECT * FROM $users_table WHERE userid='$userid'";
+        $req = $db_set -> send_query($sql);
+        $data = mysqli_fetch_assoc($req);
+        $exist = $db_set->getinfo($users_table,'userid',array("userid"),array("'$userid'"));
+        if (!empty($exist)) {
+            foreach ($data as $varname=>$value) {
+                if (array_key_exists($varname,$class_vars)) {
+                    $this->$varname = $value;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

@@ -1,0 +1,689 @@
+/*
+style.css
+by F Perdreau
+*/
+@import url('forms.css');
+
+/* Bodytext */
+html { height: 100%; }
+
+body {
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.2;
+	width: 100%;
+    margin: auto;
+	background-color: #cccccc;
+    -webkit-font-smoothing: antialiased;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+a {
+	text-decoration: none;
+    color: #CF5151;
+}
+
+a:hover {
+    color: #aaaaaa;
+}
+
+a#menu {
+    text-decoration: none;
+    color: #CF5151;
+}
+
+a#menu:hover {
+    color: #eeeeee;
+}
+
+#pagecontent {
+    display: none;
+}
+
+/* Header */
+#mainheader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    z-index: 10;
+    background-color: #555555;
+    text-align: justify;
+    padding: 0;
+    box-shadow: 0 2px 2px #555;
+}
+
+.header_container {
+    position: relative;
+    clear: both;
+    width: 1024px;
+    height: 100%;
+    margin: auto;
+}
+
+#title {
+    padding-top: 10px;
+    text-align: center;
+}
+
+.displaymenu_btn {
+    position: absolute;
+    top: 50px;
+    left: 40px;
+    color: #DDDDDD;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#welcome {
+    width: auto;
+    text-align: center;
+    background-color: #333333;
+    border: 1px double #cccccc;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+/* Menu */
+.menu {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 150px;
+    min-height: 400px;
+    background-color: #333333;
+    padding: 5px;
+    box-shadow: 0 2px 2px #555;
+    z-index: 5;
+}
+
+.menu-section {
+    margin-top: 10px;
+    width: 90%; /* Declare your value. Can be in relative units. */
+    height: 100%;
+    text-align: center;
+    font-size: 20px;
+    color: #CF5151;
+    padding: 5px;
+    border-bottom: 1px solid #999999;
+    border-left: 2px solid #b43d3d;
+}
+
+.menu-section-defaut {
+    background-color: #333333;
+}
+
+.menu-section:hover {
+    cursor: pointer;
+    font-size: 20px;
+    color: #cccccc;
+    border-left: 2px solid #999999;
+    border-bottom: 1px solid #b43d3d;
+    background-color: #555555;
+}
+
+.menu-section-active {
+    background-color: #222222;
+    font-size: 20px;
+    color: #cccccc;
+}
+
+.activepage {
+    font-size: 22px;
+    color: #cccccc;
+}
+
+/* Content */
+.core {
+    position: relative;
+    z-index: 3;
+    width: 1024px;
+    box-shadow: 0px 0px 12px #555;
+    padding: 0;
+    top: 80px;
+    margin: auto;
+    background-color: #eeeeee;
+    min-height: 768px;
+    height: auto !important;
+    height: 100%;
+}
+
+#content {
+    padding: 50px;
+    width: 90%;
+    margin: auto;
+    vertical-align: middle;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    z-index: 10;
+    width: 100%;
+    padding: 10px;
+    clear: both;
+    height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    margin: auto;
+    background-color: #555555;
+}
+
+/* Home */
+.user_info {
+    margin: 50px auto;
+    width: 50%;
+    text-align: justify;
+    padding: 30px;
+    background-color: rgba(127,127,127,.1);
+}
+
+/* Participation */
+.action_btn {
+    clear: both;
+    width: 50%;
+    margin: 10px auto;
+    display: block;
+    text-align: justify;
+    text-decoration: none;
+}
+
+.action_btn>div {
+    display: inline-block;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    width: 70px;
+    margin-left: 0;
+}
+
+.action_btn:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.part_btn:hover {
+    cursor: pointer;
+}
+
+.decline {
+    padding:10px 10px;
+    background: #CF5151;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+}
+
+.agree {
+    padding:10px 20px;
+    background: #FFFFFF;
+    color: #CF5151;
+    border: 1px solid #CF5151;
+}
+
+/* Instructions */
+.instructions {
+    display: table-cell;
+    width: 30%;
+    vertical-align: middle;
+}
+
+.example {
+    display: table-cell;
+    padding: 50px;
+    width: 50%;
+}
+
+.start_btn {
+    text-align: center;
+    margin: auto;
+    width: 100px;
+}
+
+/* Experiment */
+#progressbar {
+    width: 200px;
+    height: 34px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 30px;
+    display: none;
+    position: absolute;
+    top: 25px;
+    left: 100px;
+    border: 1px solid #EEEEEE;
+    border-radius: 5px;
+    padding: 0px;
+    color: #FFFFFF;
+    background-color: #222222;
+}
+
+.fillprogress {
+    position: relative;
+    z-index: 0;
+    border-radius: 5px;
+    background-color: rgba(200,200,200,.5);
+    margin: 0;
+    padding: 2px;
+    height: 30px;
+}
+
+#experiment_frame {
+    width: 100%;
+}
+
+.original {
+    width: 70%;
+    margin: auto;
+    text-align: center;
+    background-color: #eeeeee;
+}
+
+.original_container {
+    margin: auto;
+    padding: 0;
+    background-color: #eeeeee;
+    width: 100%;
+    text-align: justify;
+}
+
+.img_container {
+    margin: 50px auto;
+    padding: 0;
+    background-color: #dddddd;
+    width: 100%;
+    text-align: justify;
+    display: block;
+}
+
+.img_container>div {
+    display: inline-block;
+}
+
+.img_container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.drawing {
+    box-shadow: 0px 0px 12px #555;
+    width: auto;
+    margin: auto;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #eeeeee;
+}
+
+.drawing_img {
+    width: 400px;
+    height: auto;
+}
+
+.drawing:hover {
+    box-shadow: 0px 0px 12px #FF0000;
+    border: 1px solid #999999;
+}
+
+/* Modal */
+
+/* Publication modal dialog */
+.item_caps {
+    display: block;
+    width: 30%;
+    background-color: rgba(255,255,255,.7);
+    padding: 10px;
+}
+
+#item_title {
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+    font-weight: bold;
+}
+
+.item_img {
+    display: block;
+    width: 600px;
+    height: 400px;
+    text-align: center;
+    padding: 0px;
+    margin: 10px auto;
+}
+
+.action_btn {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+}
+
+.action_btn>div {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.del_item {
+    cursor: pointer;
+    padding: 10px 10px;
+    height: 20px;
+    background-color: #CF5151;
+    color: #EEEEEE;
+    width: 100px;
+    text-align: center;
+}
+
+.del_item:hover {
+    background-color: #EEEEEE;
+    color: #CF5151;
+}
+
+/* Login and register forms */
+.missing_field {
+	background-color: rgba(127,0,0,.5);
+}
+
+.login_form {
+    display: none;
+}
+
+/* Login */
+.login-container {
+    display: inline-block;
+    clear: both;
+    width: 90%;
+    text-align: justify;
+    margin: auto;
+    padding: 0;
+    vertical-align: top;
+}
+
+.login-container > div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.login-container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.login {
+    width: 30%;
+}
+
+/* Drawing Management */
+.refdraw-div {
+    display: table;
+    background-color: #dddddd;
+    padding: 5px;
+    margin-top: 10px;
+    text-align: justify;
+}
+
+.refdraw-content {
+    width: 100%;
+    margin: auto;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.refdraw-name {
+    background-color: #CF5151;
+    width: 200px;
+    color: #eeeeee;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 2px solid #CF5151;
+    display: inline-block;
+}
+
+.refdraw-desc {
+    display: table-cell;
+    width: 20%;
+    height: auto;
+    padding: 10px;
+    vertical-align: top;
+    background-color: #bbbbbb;
+}
+
+.refdraw-info {
+    padding: 5px;
+    background-color: #eeeeee;
+    color: #555555;
+    border-top: 1px dashed #555555;
+    border-bottom: 1px dashed #555555;
+}
+
+
+.refdraw-half {
+    vertical-align: top;
+    text-align: center;
+    margin-right: 10px;
+    width: 40%;
+    display: table-cell;
+}
+
+.refdraw-items {
+    margin: auto;
+    width: 500px;
+    height: auto;
+    background-color: #666666;
+    padding: 10px;
+    border: 1px solid #222222;
+}
+
+.refdraw-thumb {
+    padding: 10px;
+    border: 1px solid #999999;
+    border-radius: 5px;
+    background-color: #222222;
+    margin: 10px auto 10px auto;
+    width: 100px;
+    height: auto;
+    text-align: center;
+}
+
+.ref-thumb {
+	width: 100px;
+	height: auto;
+}
+
+.refdraw-delbutton {
+	display: inline-block;
+	margin-left: 70%;
+}
+
+.deleteref {
+}
+
+.sortitems {
+    margin-bottom: 10px;
+}
+
+.delete_btn_item {
+    float: right;
+    text-align: right;
+    width: 20px;
+    height: 20px;
+}
+
+.delete_btn_item:hover {
+    cursor: pointer;
+}
+
+.item {
+    display: inline-block;
+    width: 110px;
+    background-color: #ffffff;
+    padding: 5px;
+    margin: 5px;
+}
+
+.item:hover{
+    background-color: #dddddd;
+}
+
+.thumb {
+    width: 100px;
+    margin: auto;
+}
+
+/* Experiments settings */
+.refdraw-header {
+    background-color: #CF5151;
+    display: block;
+    width: 300px;
+    color: #eeeeee;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 2px solid #CF5151;
+    margin: 5px 20px auto auto;
+}
+
+.refdraw-param {
+    background-color: #dddddd;
+    margin: 20px 20px auto auto;
+}
+
+.section_param {
+    padding: 10px;
+    border-bottom: 1px dashed #222222;
+}
+
+.section_param-header {
+     font-size: 15px;
+     font-weight: bold;
+}
+
+.add_lang {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.div_display_content {
+    border: 1px dashed #bbbbbb;
+    background-color: #eeeeee;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: justify;
+}
+
+/* Text/Messages */
+#sitetitle {
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    border: none;
+    color: rgba(48,48,48,1);
+    text-align: left;
+    text-transform: normal;
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    white-space: pre;
+    text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
+
+    margin-left: 30px;
+    font-size: 50px;
+}
+
+#pagename {
+    display: block;
+    margin-left: -10px;
+    color: #555555;
+    font-size: 35px;
+}
+
+#sign {
+    text-align: right;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+#warning {
+    color: #990000;
+    font-size: 13px; /* Set message font size  */
+    padding: 5px; /* Some padding to make some more space for our text  */
+    background-color: rgba(255,200,200,.7); /* Add a background color to our status message   */
+    border: 1px solid rgba(255,200,200,.7); /* Add a border arround our status message   */
+}
+
+#info {
+    color: #000099;
+    font-size: 13px; /* Set message font size  */
+    padding: 5px; /* Some padding to make some more space for our text  */
+    background-color: rgba(0,0,127,.2); /* Add a background color to our status message   */
+    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
+}
+
+#success {
+    color: #009900;
+    font-size: 13px; /* Set message font size  */
+    padding: 3px; /* Some padding to make some more space for our text  */
+    background-color: rgba(0,127,0,.2); /* Add a background color to our status message   */
+    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
+}
+
+.page_description {
+    text-align: justify;
+    margin: 10px auto 10px auto;
+    width: 80%;
+    color: #222222;
+    font-style: italic;
+    font-size: 14px; /* Set message font size  */
+    padding: 10px; /* Some padding to make some more space for our text  */
+    background: rgba(207,81,81,.1); /* Add a background color to our status message   */
+    border: 1px solid rgba(207,81,81,.2); /* Add a border arround our status message   */
+}
+
+.fullbackup {
+}
+
+/* Home sections */
+.section_header {
+    background-color: #CF5151;
+    width: auto;
+    color: #eeeeee;
+    padding: 5px;
+    clear: both;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 2px solid #CF5151;
+    margin-top: 20px;
+}
+
+.section_content {
+    line-height: 130%;
+    margin: 30px auto 20px auto;
+    width: 90%;
+    text-align: justify;
+    padding: 20px;
+    background-color: rgba(127,127,127,.1);
+}
+
+.pub_section_content {
+    line-height: 130%;
+    font-size: 16px;
+    margin: auto 50px auto auto;
+    clear: left;
+    width: 100%;
+    text-align: justify;
+    padding: 10px;
+    background-color: rgba(127,127,127,.1);
+}
