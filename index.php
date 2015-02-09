@@ -21,8 +21,8 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 session_start();
-$_SESSION['app_name'] = dirname(__FILE__)."/";
-$_SESSION['path_to_app'] = $_SESSION['app_name'];
+$_SESSION['app_name'] = basename(__DIR__);
+$_SESSION['path_to_app'] = dirname(__FILE__)."/";
 $_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
 $_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
 $_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
@@ -32,17 +32,8 @@ date_default_timezone_set('Europe/Paris');
 // Includes required files (classes)
 require_once($_SESSION['path_to_includes'].'includes.php');
 
-$config = new site_config();
-if (!empty($_GET['page']) && $_GET['page'] == "install") {
-    $sitetitle = "RankMyDrawings";
-} else {
-    $config->get_config();
-    $sitetitle = $config->sitetitle;
-}
-
-if (empty($_SESSION['logok'])) {
-    $_SESSION['logok'] = false;
-}
+// Get application settings
+$config = new site_config('get');
 
 ?>
 
