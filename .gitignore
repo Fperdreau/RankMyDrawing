@@ -1,4 +1,7 @@
 .idea/
 admin/conf/config.php
+<<<<<<< HEAD
 admin/conf/version.php
+=======
+>>>>>>> a05533e173bd0cd53189b4d856024f6d3372d940
 admin/passwd/.htpasswd

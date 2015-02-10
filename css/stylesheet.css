@@ -114,6 +114,7 @@ a#menu:hover {
     border-left: 2px solid #b43d3d;
 }
 
+
 .menu-section:hover {
     cursor: pointer;
     font-size: 20px;
@@ -147,6 +148,7 @@ a#menu:hover {
     height: auto !important;
     height: 100%;
 }
+
 
 #loading {
     display:    none;

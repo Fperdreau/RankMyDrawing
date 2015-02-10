@@ -12,7 +12,6 @@ var processform = function(formid,feedbackid) {
         feedbackid = ".feedback";
     }
     var data = $("#" + formid).serialize();
-    console.log(data);
     jQuery.ajax({
         url: 'php/form.php',
         type: 'POST',
@@ -20,7 +19,6 @@ var processform = function(formid,feedbackid) {
         data: data,
         success: function(data){
             var result = jQuery.parseJSON(data);
-            console.log("returned result:"+result);
             showfeedback(result,feedbackid);
         }
     });
@@ -85,7 +83,6 @@ var loadpageonclick = function(pagetoload,param) {
                 var json = jQuery.parseJSON(data);
                 history.pushState(stateObj, pagetoload, "index.php?page="+pagetoload);
 
-                $('#loading').hide();
                 $('#pagecontent')
                     .html('<div>'+json+'</div>')
                     .fadeIn('slow');
@@ -103,7 +100,6 @@ var loadpageonclick = function(pagetoload,param) {
                 var json = jQuery.parseJSON(data);
                 history.pushState(stateObj, pagetoload, "index.php?page="+pagetoload+"&"+param);
 
-                $('#loading').hide();
                 $('#pagecontent')
                     .html('<div>'+json+'</div>')
                     .fadeIn('slow');
@@ -120,7 +116,6 @@ var parseurl = function() {
     var vars = query.split("&");
     vars = vars.slice(1,vars.length);
     vars = vars.join("&");
-    console.log(vars);
     return vars;
 };
 
@@ -273,7 +268,6 @@ $( document ).ready(function() {
                     },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     loadpageonclick('participation');
                 }
             });
@@ -334,7 +328,6 @@ $( document ).ready(function() {
                     },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     var trial = result.trial;
                     var item1 = result.item1;
                     var item2 = result.item2;
@@ -370,7 +363,6 @@ $( document ).ready(function() {
        // Send an email to the chosen organizer
        $('.contact_container').on('click','.contact_send',function(e) {
             e.preventDefault();
-            console.log('hello');
             var message = $("textarea#message").val();
             var contact_mail = $("input#contact_mail").val();
             var contact_name = $("input#contact_name").val();
@@ -404,7 +396,6 @@ $( document ).ready(function() {
                     mail: contact_mail},
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
 
                     if (result === "sent") {
                         $('.send_msg').html('<p id="success">Your message has been sent!</p>');
@@ -415,7 +406,6 @@ $( document ).ready(function() {
             });
             return false;
         })
-
 }).on({
     ajaxStart: function() { $("#loading").show(); },
     ajaxStop: function() { $("#loading").hide(); }

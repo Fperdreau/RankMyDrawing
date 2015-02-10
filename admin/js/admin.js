@@ -10,8 +10,6 @@ var display_content = function(type,lang,content,refid) {
         .html(html)
         .fadeIn('slow');
 }
-// Spin animation when a page is loading
-var $loading = $('#loading').hide()
 
 $( document ).ready(function() {
     $(".mainbody")

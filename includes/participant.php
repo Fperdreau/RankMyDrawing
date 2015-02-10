@@ -33,6 +33,7 @@ class participant {
     }
 
     // Create user
+
     function make($post,$refid) {
         $db_set = new DB_set();
 

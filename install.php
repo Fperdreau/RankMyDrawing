@@ -39,7 +39,6 @@ Process Installation
 if (!empty($_POST['inst_admin'])) {
     $user = new users();
     $adduser = $user -> create_user($_POST);
-
     $result = "<p id='success'>Admin account created</p>";
     echo json_encode($result);
     exit;
