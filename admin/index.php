@@ -1,4 +1,7 @@
-<!--
+<?php
+/*
+Copyright © 2014, F. Perdreau, Radboud University Nijmegen
+=======
 This file is part of RankMyDrawings.
 
 RankMyDrawings is free software: you can redistribute it and/or modify
@@ -13,23 +16,23 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
--->
 
-<?php
-    session_start();
-    $_SESSION['app_name'] = basename(dirname(__dir__));
-    $_SESSION['path_to_app'] = dirname(__dir__).'/';
-    $_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
-    $_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
-    $_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
-    $_SESSION['path_to_pages'] = $_SESSION['path_to_app']."admin/pages/";
-    date_default_timezone_set('Europe/Paris');
+*/
+session_set_cookie_params(3600);
+session_start();
+$_SESSION['app_name'] = basename(dirname(__dir__));
+$_SESSION['path_to_app'] = dirname(__dir__).'/';
+$_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
+$_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
+$_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
+$_SESSION['path_to_pages'] = $_SESSION['path_to_app']."admin/pages/";
+date_default_timezone_set('Europe/Paris');
 
-    // Includes required files (classes)
-    require_once($_SESSION['path_to_includes'].'includes.php');
+// Includes required files (classes)
+require_once($_SESSION['path_to_includes'].'includes.php');
 
-    // Get application settings
-    $config = new site_config('get');
+// Get application settings
+$config = new site_config('get');
 
 ?>
 
