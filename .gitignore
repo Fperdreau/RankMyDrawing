@@ -1,0 +1,4 @@
+.idea/
+admin/conf/config.php
+admin/conf/version.php
+admin/passwd/.htpasswd
