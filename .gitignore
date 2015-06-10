@@ -2,3 +2,4 @@
 *.xls
 *.sql
 *.zip
+config/config.php
