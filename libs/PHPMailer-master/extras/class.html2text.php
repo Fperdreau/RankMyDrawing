@@ -11,7 +11,7 @@
  * (at your option) any later version.                                   *
  *                                                                       *
  * The GNU General Public License can be found at                        *
- * http://www.gnu.org/copyleft/gpl.pages.                                 *
+ * http://www.gnu.org/copyleft/gpl.html.                                 *
  *                                                                       *
  * This script is distributed in the hope that it will be useful,        *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -228,7 +228,7 @@ class Html2Text
     protected $url;
 
     /**
-     * Indicates whether content in the $pages variable has been converted yet.
+     * Indicates whether content in the $html variable has been converted yet.
      *
      * @type boolean
      * @see $html, $text
@@ -359,7 +359,7 @@ class Html2Text
             }
         } else {
             // Strip any trailing slashes for consistency (relative
-            // URLs may already start with a slash like "/file.pages")
+            // URLs may already start with a slash like "/file.html")
             if (substr($url, -1) == '/') {
                 $url = substr($url, 0, -1);
             }
@@ -423,7 +423,7 @@ class Html2Text
         // Run our defined entities/characters search-and-replace
         $text = preg_replace($this->ent_search, $this->ent_replace, $text);
 
-        // Replace known pages entities
+        // Replace known html entities
         $text = html_entity_decode($text, ENT_QUOTES);
 
         // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)

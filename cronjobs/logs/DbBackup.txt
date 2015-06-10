@@ -1,0 +1,6 @@
+[2015-06-10 15:12:14]: Backup successfully done.
+[2015-06-10 15:56:50]: Backup successfully done.
+[2015-06-10 15:57:34]: Backup successfully done.
+[2015-06-10 15:57:45]: Backup successfully done.
+[2015-06-10 16:02:02]: Backup successfully done.
+[2015-06-10 16:02:12]: Backup successfully done.

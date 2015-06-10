@@ -19,26 +19,11 @@ You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-session_set_cookie_params(3600);
-session_start();
-$_SESSION['app_name'] = basename(__DIR__);
-$_SESSION['path_to_app'] = dirname(__FILE__)."/";
-$_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
-$_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
-$_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
-$_SESSION['path_to_pages'] = $_SESSION['path_to_app']."pages/";
-date_default_timezone_set('Europe/Paris');
-
-// Includes required files (classes)
-require_once($_SESSION['path_to_includes'].'includes.php');
-
-// Get application settings
-$config = new site_config('get');
-
+require('includes/boot.php');
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <META NAME="description" CONTENT="Journal Club Manager. Organization. Submit or suggest a presentation. Archives.">
@@ -53,33 +38,31 @@ $config = new site_config('get');
         <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
         <script type="text/javascript" src="js/jquery.leanModal.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
-        <script type="text/javascript" src="js/spin.js"></script>
 
-        <title><?php $config->sitetitle ?></title>
+        <title><?php $AppConfig->sitetitle ?></title>
     </head>
 
     <body class="mainbody">
         <div class='warningmsg' style='position: fixed; display: none; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background-color: #550000; color: #EEEEEE;'><input type='button' id='submit'></div>
 
-        <?php require($_SESSION['path_to_pages'].'modal.php'); ?>
+        <?php require(PATH_TO_PAGES.'modal.php'); ?>
 
         <div id="mainheader">
             <!-- Header section -->
-            <?php require($_SESSION['path_to_pages'].'page_header.php'); ?>
+            <?php require(PATH_TO_PAGES.'page_header.php'); ?>
         </div>
 
         <!-- Core section -->
         <div class="core">
         	<div id="loading"></div>
-        	<div id="pagecontent">
-        	</div>
+        	<div id="pagecontent"></div>
         </div>
 
         <!-- Footer section -->
         <div id="footer">
-            <span id="sign"><?php echo "<a href='$config->repository' target='_blank'>$config->app_name $config->version</a>
+            <span id="sign"><?php echo "<a href='$AppConfig->repository' target='_blank'>$AppConfig->app_name $AppConfig->version</a>
              | <a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3 </a>
-             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $config->author</a>" ?></span>
+             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></span>
         </div>
 
         <!-- Bunch of jQuery functions -->

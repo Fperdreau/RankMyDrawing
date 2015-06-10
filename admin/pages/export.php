@@ -19,15 +19,11 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
-require_once($_SESSION['path_to_app'].'admin/includes/includes.php');
-require_once($_SESSION['path_to_app'].'admin/conf/config.php');
+require_once('../includes/includes.php');
 check_login();
 
-
 // Get reference drawing list
-$ref = new DrawRef();
+$ref = new DrawRef($db);
 $refdrawlist = $ref->get_refdrawinglist("file_id");
 $optioncontent = "";
 foreach ($refdrawlist as $cur_refdraw) {
@@ -47,14 +43,14 @@ $result = "
                 </select>
             </div><br>
 
-            <div id='db_backup'>
+            <div id='dbbackup'>
             <label for='backup'>Backup databases</label>
-            <input type='button' name='backup' value='Proceed' id='submit' class='dbbackup'/>
+            <input type='button' name='backup' value='Proceed' id='submit' class='backup' data-op='dbbackup'/>
             </div><br>
 
-            <div id='full_backup'>
+            <div id='fullbackup'>
             <label for='full_backup'>Full backup (all databases + files)</label>
-            <input type='button' name='full_backup' value='Proceed' id='submit' class='fullbackup'/>
+            <input type='button' name='full_backup' value='Proceed' id='submit' class='backup' data-op='fullbackup'/>
             </div>
 
         </div>

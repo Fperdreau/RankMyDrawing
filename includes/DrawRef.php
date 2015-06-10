@@ -19,9 +19,24 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-require_once($_SESSION['path_to_app'].'includes/db_connect.php');
 
-class DrawRef {
+class DrawRef extends AppTable {
+
+    protected $table_data = array(
+        "id" => array("INT NOT NULL AUTO_INCREMENT", false),
+        "file_id" => array("CHAR(50)", false),
+        "filename" => array("CHAR(50)", false),
+        "date" => array("DATETIME NOT NULL"),
+        "nb_users" => array("INT", false),
+        "max_nb_users" => array("INT", false),
+        "nb_draw" => array("INT", false),
+        "initial_score" => array("INT(5)", false),
+        "nb_pairs" => array("INT(5)", false),
+        "max_nb_pairs" => array("INT(5)",false),
+        "status" => array("CHAR(3)", false),
+        "filter" => array("CHAR(3)", false),
+        "primary" => "id"
+    );
 
     public $file_id = "";
     public $filename = "";
@@ -34,18 +49,27 @@ class DrawRef {
     public $nb_pairs = 0;
     public $status = "on";
     public $filter = "off";
+    public $drawlist = array();
 
-    // Constructor
-    function __construct($file_id = null) {
+    /**
+     * Constructor
+     * @param AppDb $db
+     * @param null $file_id
+     */
+    function __construct(AppDb $db, $file_id = null) {
+        parent::__construct($db, "DrawRef", $this->table_data);
         if (null != $file_id) {
             self::get($file_id);
         }
     }
 
-    // Make object.
+    /**
+     * Create a reference drawing
+     * @param $file_id
+     * @param $file
+     * @return bool|string
+     */
     public function make($file_id,$file) {
-        require($_SESSION['path_to_app'].'admin/conf/config.php');
-        $db_set = new DB_set();
         $this->file_id = $file_id;
 
         // Make folders
@@ -58,18 +82,11 @@ class DrawRef {
         $this->date = date('Y-m-d H:i:s');
         $this->drawlist = self::get_refdrawinglist("filename");
         $this->nb_draw = count($this->drawlist);
-
         $class_vars = get_class_vars("DrawRef");
-        $variables = implode(',',array_keys($class_vars));
-        $values = array();
-        foreach ($class_vars as $name=>$value) {
-            $extvalue = mysqli_real_escape_string($db_set->bdd,$this->$name);
-            $values[]= "'$extvalue'";
-        }
-        $values = implode(',',$values);
+        $content = $this->parsenewdata($class_vars,array(),array('drawlist'));
 
         // Add an entry in the ref_drawings table
-        $db_set -> addcontent($ref_drawings_table,$variables,$values);
+        $this->db -> addcontent($this->tablename,$content);
 
         // Create corresponding tables
         self::create_reftable();
@@ -77,11 +94,14 @@ class DrawRef {
         return $this->filename;
 	}
 
-	// Create images folders
+    /**
+     * Create picture folders corresponding to this reference drawing
+     * @return bool
+     */
     private function make_folders() {
-        $ref_directory = $_SESSION['path_to_app']."images/$this->file_id/";
-        $img_directory = $_SESSION['path_to_app']."images/$this->file_id/img/";
-        $thumb_directory = $_SESSION['path_to_app']."images/$this->file_id/thumb/";
+        $ref_directory = PATH_TO_IMG."$this->file_id/";
+        $img_directory = PATH_TO_IMG."$this->file_id/img/";
+        $thumb_directory = PATH_TO_IMG."$this->file_id/thumb/";
         if (!is_dir($ref_directory)) {
             if (!mkdir($ref_directory)) {
                 echo json_encode("Failed to create $ref_directory");
@@ -108,10 +128,13 @@ class DrawRef {
         return true;
     }
 
-    // Update
+    /**
+     * Update DB
+     * @param $post
+     * @param null $file_id
+     * @return string
+     */
     public function update($post,$file_id=null) {
-        require($_SESSION['path_to_app']."admin/conf/config.php");
-        $db_set = new DB_set();
 
         if (null!=$file_id) {
             $this->$file_id = $file_id;
@@ -120,24 +143,24 @@ class DrawRef {
         }
 
         $class_vars = get_class_vars("DrawRef");
-        foreach ($post as $name => $value) {
-            $value = htmlspecialchars($value);
-            if (array_key_exists($name,$class_vars)) {
-                $db_set->updatecontent($ref_drawings_table,$name,"'$value'",array("file_id"),array("'$this->file_id'"));
-                $this->$name = $value;
-            }
+        $content = $this->parsenewdata($class_vars,$post,array('drawlist'));
+        if ($this->db->updatecontent($this->tablename,$content,array("file_id"=>$this->file_id))) {
+            return 'updated';
+        } else {
+            return false;
         }
-        return "updated";
     }
 
-    // Get information
+    /**
+     * Get information from DB
+     * @param $file_id
+     * @return bool
+     */
     public function get($file_id) {
-        require($_SESSION['path_to_app'].'admin/conf/config.php');
-        $db_set = new DB_set();
 
         if (self::exists($file_id)) {
-            $sql = "SELECT * FROM $ref_drawings_table WHERE file_id='$file_id'";
-            $req = $db_set->send_query($sql);
+            $sql = "SELECT * FROM $this->tablename WHERE file_id='$file_id'";
+            $req = $this->db->send_query($sql);
             $class_vars = get_class_vars("DrawRef");
             $row = mysqli_fetch_assoc($req);
             foreach ($row as $varname=>$value) {
@@ -157,28 +180,41 @@ class DrawRef {
         }
     }
 
-    // Check if ref drawing exists in the database (return true if it exists)
+    /**
+     * Check if ref drawing exists in the database (return true if it exists)
+     * @param $file_id
+     * @return bool
+     */
     public function exists($file_id) {
         $reflist = self::get_refdrawinglist();
         return in_array($file_id,$reflist);
     }
 
-	// Get number of participants
-	private function getnbusers() {
+    /**
+     * Get number of participants
+     * @return int
+     */
+    private function getnbusers() {
         return count(self::getusers());
 	}
 
-    // Get maximum number of possible pairs
+    /**
+     * Get maximum number of possible pairs
+     * @return float
+     */
     private function getmaxnbpairs() {
         return factorial($this->nb_draw)/(factorial($this->nb_draw-2)*factorial(2));
     }
 
-    // Get users list
+    /**
+     * Get users list
+     * @param string $property
+     * @return array
+     */
     function getusers($property = "userid") {
-        $db_set = new DB_set();
-        $reftable = $db_set->dbprefix.$this->file_id."_users";
+        $reftable = $this->db->dbprefix.'_'.$this->file_id."_users";
         $sql = "SELECT $property FROM $reftable";
-        $req = $db_set->send_query($sql);
+        $req = $this->db->send_query($sql);
         $users = array();
         while ($row = mysqli_fetch_assoc($req)) {
             $users[] = $row[$property];
@@ -186,30 +222,35 @@ class DrawRef {
         return $users;
     }
 
-	// Make an unique ID
-	function makeID() {
-        require($_SESSION['path_to_app']."admin/conf/config.php");
-        $db_set = new DB_set();
+    /**
+     * Make an unique ID
+     * @return string
+     */
+    function makeID() {
         $file_id = $this->file_id."_".rand(1,10000);
 
         // Check if random ID does not already exist in our database
-        $prev_id = $db_set->getinfo($ref_drawings_table,'file_id');
+        $prev_id = $this->db->getinfo($this->tablename,'file_id');
         while (in_array($file_id,$prev_id)) {
             $file_id = $this->file_id."_".rand(1,10000);
         }
         return $file_id;
 	}
 
-	// Upload reference file
-	function upload($file) {
+    /**
+     * Upload reference file
+     * @param $file
+     * @return string
+     */
+    function upload($file) {
 
 		if (isset($file['tmp_name']) && !empty($file['name'])) {
             $tmp = htmlspecialchars($file['tmp_name']);
             $splitname = explode(".", strtolower($file['name']));
             $extension = end($splitname);
 
-			$img_directory = $_SESSION['path_to_app']."images/$this->file_id/img/";
-            $thumb_directory = $_SESSION['path_to_app']."images/$this->file_id/thumb/";
+			$img_directory = PATH_TO_IMG."$this->file_id/img/";
+            $thumb_directory = PATH_TO_IMG."$this->file_id/thumb/";
             chmod($img_directory,0777);
             chmod($thumb_directory,0777);
 
@@ -230,24 +271,28 @@ class DrawRef {
         }
 	}
 
-	// Get list of items corresponding to the current object
-	function get_refdrawinglist($property="file_id") {
-		require($_SESSION['path_to_app'].'admin/conf/config.php');
-		$db_set = new DB_set();
-        $refdrawlist = $db_set->getinfo($ref_drawings_table,$property);
+    /**
+     * Get list of items corresponding to the current object
+     * @param string $property
+     * @return mixed
+     */
+    function get_refdrawinglist($property="file_id") {
+        $refdrawlist = $this->db->getinfo($this->tablename,$property);
 		return $refdrawlist;
 	}
 
-	// Get list of items corresponding to the current object
-	function get_drawingslist($filter=null) {
-		require($_SESSION['path_to_app'].'admin/conf/config.php');
-		$db_set = new DB_set();
-        $reftable = $db_set->dbprefix.$this->file_id."_ranking";
+    /**
+     * Get list of items corresponding to the current object
+     * @param null $filter
+     * @return array
+     */
+    function get_drawingslist($filter=null) {
+        $reftable = $this->db->dbprefix.'_'.$this->file_id."_ranking";
         $sql = "SELECT file_id FROM $reftable";
         if (null != $filter) {
             $sql .= " ORDER BY $filter DESC";
         }
-        $req = $db_set->send_query($sql);
+        $req = $this->db->send_query($sql);
         $drawlist = array();
         while ($row = mysqli_fetch_assoc($req)) {
             $drawlist[] = $row['file_id'];
@@ -255,23 +300,25 @@ class DrawRef {
         return $drawlist;
 	}
 
+    /**
+     * Select a reference drawing for the current user
+     * @param $user_ip
+     * @return bool|string
+     */
     public function selectdrawref($user_ip) {
-        require($_SESSION['path_to_app'].'admin/conf/config.php');
-        $db_set = new DB_set();
-        $ref = new DrawRef();
         $reflist = self::get_refdrawinglist();
 
         // Update all ref drawings tables
         foreach ($reflist as $ref_id) {
-            $ref = new DrawRef($ref_id);
+            $ref = new DrawRef($this->db, $ref_id);
         }
 
-        $sql = "SELECT file_id FROM $ref_drawings_table WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' ORDER BY nb_users ASC";
-        $req = $db_set->send_query($sql);
+        $sql = "SELECT file_id FROM $this->tablename WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' ORDER BY nb_users ASC";
+        $req = $this->db->send_query($sql);
         $validref = false;
         while ($row = mysqli_fetch_assoc($req)) {
             $ref_id = $row['file_id'];
-            $cur_ref = new DrawRef($ref_id);
+            $cur_ref = new DrawRef($this->db, $ref_id);
 
             // Check if user already exists for this ref drawing and if this ref drawing's settings allow users to do it again
             $user_exist = $cur_ref->checkuser($user_ip);
@@ -283,38 +330,45 @@ class DrawRef {
         return $validref;
     }
 
-    // Check if user exists (ip checking)
+    /**
+     * Check if user exists (ip checking)
+     * @param $user_ip
+     * @return bool
+     */
     public function checkuser($user_ip) {
         $users = self::getusers('ip');
         return in_array($user_ip, $users);
     }
 
-    // Delete current object (database &  corresponding files)
+    /**
+     * Delete current object (database &  corresponding files)
+     * @return bool
+     */
     function delete() {
-        require($_SESSION['path_to_app'].'admin/conf/config.php');
-        $db_set = new DB_set();
 
         // Delete corresponding entry in the ref_drawings table
-        $db_set -> deletecontent($ref_drawings_table,array("file_id"),array("'$this->file_id'"));
+        $this->db->deletecontent($this->tablename,array("file_id"),array($this->file_id));
 
         // Delete corresponding tables
         $tablenames = self::get_tables();
         foreach ($tablenames as $table_name) {
-            $db_set -> deletetable($table_name);
+            $this->db -> deletetable($table_name);
         }
 
         // Delete related files
-        $img_path = $_SESSION['path_to_app']."images/$this->file_id/";
+        $img_path = PATH_TO_IMG."$this->file_id/";
         deleteDirectory($img_path);
         return true;
     }
 
-    // Get tables name
+    /**
+     * Get tables name
+     * @return array
+     */
     public function get_tables() {
-        $db_set = new DB_set();
-        $table_name = $db_set->dbprefix.$this->file_id."_%";
-        $sql = "SHOW TABLES FROM $db_set->dbname LIKE '$table_name'";
-        $req = $db_set->send_query($sql);
+        $table_name = $this->db->dbprefix.'_'.$this->file_id."_%";
+        $sql = "SHOW TABLES FROM ".$this->db->dbname." LIKE '$table_name'";
+        $req = $this->db->send_query($sql);
         $result = array();
         while ($row = mysqli_fetch_array($req)) {
             $result [] = $row[0];
@@ -322,20 +376,17 @@ class DrawRef {
         return $result;
     }
 
-	// Create related tables in the database
-	function create_reftable() {
-		require($_SESSION['path_to_app'].'admin/conf/config.php');
-		$db_set = new DB_set();
-
-		// Create tables
-		$table_prefix = $this->file_id;
+    /**
+     * Create related tables in the database
+     */
+    function create_reftable() {
 
 		$tables = array(
-			"table1" => $db_set->dbprefix.$table_prefix."_users",
-			"table2" => $db_set->dbprefix.$table_prefix."_ranking",
-			"table3" => $db_set->dbprefix.$table_prefix."_comp_mat",
-			"table4" => $db_set->dbprefix.$table_prefix."_res_mat",
-            "table5" => $db_set->dbprefix.$table_prefix."_content");
+			"table1" => $this->db->dbprefix.'_'.$this->file_id."_users",
+			"table2" => $this->db->dbprefix.'_'.$this->file_id."_ranking",
+			"table3" => $this->db->dbprefix.'_'.$this->file_id."_comp_mat",
+			"table4" => $this->db->dbprefix.'_'.$this->file_id."_res_mat",
+            "table5" => $this->db->dbprefix.'_'.$this->file_id."_content");
 
 		$cols = array(
 			"table1" => "`id` INT NOT NULL AUTO_INCREMENT,
@@ -386,26 +437,32 @@ class DrawRef {
         for ($i=1; $i<=$ntable; $i++) {
             $table_name = $tables["table".$i];
             $cols_name = $cols['table'.$i];
-            $db_set->createtable($table_name,$cols_name,1);
+            $this->db->createtable($table_name,$cols_name,1);
         }
 
         // Add default content
-        $config = new site_config('get');
-        $db_set->addcontent($tables['table5'],'type,lang,content',"'instruction','en','$config->instruction'");
-        $db_set->addcontent($tables['table5'],'type,lang,content',"'consent','en','$config->consent'");
+        $Appconfig = new AppConfig($this->db);
+        $this->db->addcontent($tables['table5'],array('type'=>'instruction','lang'=>'en','content'=>$Appconfig->instruction));
+        $this->db->addcontent($tables['table5'],array('type'=>'consent','lang'=>'en','content'=>$Appconfig->consent));
     }
 
-    // Display items corresponding to the current object
+    /**
+     * Display items corresponding to the current object
+     * @param null $filter
+     * @return string
+     */
     public function displayitems($filter=null) {
-        require($_SESSION['path_to_app'].'admin/conf/config.php');
         $drawlist = self::get_drawingslist($filter);
+        $AppConfig = new AppConfig($this->db);
+
+        $content = "";
         if (!empty($drawlist)) {
-            $result = "";
+
             foreach ($drawlist as $id) {
-                $item = new Elo($this->file_id,$id);
+                $item = new Ranking($this->db,$this->file_id,$id);
                 $thumb_url = "../images/$item->refid/thumb/thumb_$item->filename";
                 $del_url = "../images/delete.png";
-                $result .= "
+                $content .= "
                     <div class='item' id='item_$item->file_id'>
                         <div style='font-size: 12px; float: left;'>Score: $item->score</div>
                         <div class='delete_btn_item' id='$item->file_id' data-item='$item->refid'>
@@ -418,18 +475,82 @@ class DrawRef {
                 ";
             }
         } else {
-            $result = "<span id='warning'>There are no items for this reference drawing yet</span>";
+            $content = "<span id='warning'>There are no items for this reference drawing yet</span>";
         }
+
+        $result = "<div class='upl_container' id='$this->file_id'>
+               <div class='upl_form'>
+                    <form method='post' enctype='multipart/form-data'>
+                        <input type='file' name='item,$this->file_id'  class='upl_input' id='$this->file_id' multiple style='display: none;' />
+                        <div class='upl_btn' id='$this->file_id'>
+                            Drag your files
+                            <div class='upl_filetypes'>($AppConfig->upl_types)</div>
+                            <div class='upl_errors'></div>
+                        </div>
+                    </form>
+               </div>
+                <div class='upl_filelist'>$content</div>
+            </div>";
 
         return $result;
     }
 
-	// Get instructions and consent forms related to the current object
+    public function showDetails() {
+        $itemlist = $this->displayitems();
+
+        $imgurl = "../images/$this->file_id/thumb/thumb_$this->filename";
+
+        $sort_option =  "
+                <label for='order'>Sort by</label>
+	            <select name='order' class='sortitems' data-ref='$this->file_id'>
+	            	<option value='' selected></option>
+	            	<option value='score'>Score</option>
+	            	<option value='file_id'>File ID</option>
+	            	<option value='nb_occ'>Number of users</option>
+	        	</select>";
+
+        $content = "
+	    <div class='refdraw-div' id='$this->file_id'>
+
+	        <div style='width: 100%; margin: auto;'>
+                <div class='refdraw-name'>$this->file_id</div>
+                <div class='refdraw-delbutton'>
+                <input type='submit' value='Delete' id='submit' data-ref='$this->file_id' class='deleteref'/>
+                </div>
+	        </div>
+
+	        <div class='refdraw-content'>
+                <div class='refdraw-desc'>
+                    <div class='refdraw-thumb'>
+                        <img src='$imgurl' class='ref-thumb'>
+                    </div>
+
+                    <div class='refdraw-info'>
+                        <p>Number of drawings: $this->nb_draw</p>
+                        <p>Number of users: $this->nb_users</p>
+                    </div>
+
+                </div>
+
+                <div class='refdraw-half'>
+                    $sort_option
+                    <div class='itemList' id='$this->file_id'>$itemlist</div>
+                </div>
+            </div>
+
+	    </div>";
+        return $content;
+    }
+
+    /**
+     * Get instructions and consent forms related to the current object
+     * @param $type
+     * @return array
+     */
     public function get_content($type) {
-        $db_set = new DB_set();
-        $reftable = $db_set->dbprefix.$this->file_id.'_content';
+        $reftable = $this->db->dbprefix.'_'.$this->file_id.'_content';
         $sql = "SELECT lang,content FROM $reftable WHERE type='$type'";
-        $req = $db_set->send_query($sql);
+        $req = $this->db->send_query($sql);
         $content = array();
         while ($row = mysqli_fetch_assoc($req)) {
             $content[$row['lang']] = htmlspecialchars_decode($row['content']);
@@ -437,12 +558,14 @@ class DrawRef {
         return $content;
     }
 
-    // Get content languages
+    /**
+     * Get content languages
+     * @return array
+     */
     public function getlanguages() {
-        $db_set = new DB_set();
-        $reftable = $db_set->dbprefix.$this->file_id.'_content';
+        $reftable = $this->db->dbprefix.'_'.$this->file_id.'_content';
         $sql = "SELECT lang FROM $reftable WHERE type='instruction'";
-        $req = $db_set->send_query($sql);
+        $req = $this->db->send_query($sql);
         $languages = array();
         while ($row = mysqli_fetch_assoc($req)) {
             $languages[] = $row['lang'];

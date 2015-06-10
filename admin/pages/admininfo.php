@@ -19,11 +19,10 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
+require_once('../includes/includes.php');
 
 check_login();
-$user = new users($_SESSION['username']);
+$user = new Users($db,$_SESSION['username']);
 $result = "
     <div id='content'>
     <span id='pagename'>Admin Information</span>

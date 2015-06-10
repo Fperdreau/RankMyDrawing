@@ -64,7 +64,7 @@ a#menu:hover {
     top: 0;
     left: 0;
     width: 100%;
-    height: 80px;
+    height: 50px;
     z-index: 10;
     background-color: #555555;
     text-align: justify;
@@ -81,14 +81,14 @@ a#menu:hover {
 }
 
 #title {
-    padding-top: 10px;
+    padding-top: 2px;
     text-align: center;
 }
 
 .displaymenu_btn {
     z-index: 15;
     position: absolute;
-    top: 50px;
+    top: 20px;
     left: 40px;
     color: #DDDDDD;
     text-align: center;
@@ -97,18 +97,23 @@ a#menu:hover {
 }
 
 #welcome {
+    vertical-align: middle;
     width: auto;
     text-align: center;
     background-color: #333333;
     border: 1px double #cccccc;
-    padding: 2px;
+    padding: 5px;
     border-radius: 5px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+    height: 20px;
 }
 
 /* Menu */
 .menu {
     position: fixed;
-    top: 80px;
+    top: 50px;
     left: 0;
     width: 150px;
     min-height: 400px;
@@ -158,13 +163,12 @@ a#menu:hover {
     width: 1024px;
     box-shadow: 0px 0px 12px #555;
     padding: 0;
-    margin: 80px auto;
+    margin: 50px auto;
     background-color: #eeeeee;
     min-height: 768px;
     height: auto !important;
     height: 100%;
 }
-
 
 #loading {
     display:    none;
@@ -175,9 +179,9 @@ a#menu:hover {
     width:      100%;
     height: 100%;
     background: rgba( 0, 0, 0, .7)
-                url('../images/spinner.gif')
-                50% 50%
-                no-repeat;
+    url('../images/spinner.gif')
+    50% 50%
+    no-repeat;
 }
 
 #content {
@@ -272,6 +276,7 @@ a#menu:hover {
     text-align: center;
     margin: auto;
     width: 100px;
+    cursor: pointer;
 }
 
 /* Experiment */
@@ -283,7 +288,7 @@ a#menu:hover {
     line-height: 30px;
     display: none;
     position: absolute;
-    top: 25px;
+    top: 10px;
     left: 100px;
     border: 1px solid #EEEEEE;
     border-radius: 5px;
@@ -347,6 +352,177 @@ a#menu:hover {
 .drawing:hover {
     box-shadow: 0px 0px 12px #FF0000;
     border: 1px solid #999999;
+}
+
+
+/* *********************************************************************/
+/* Uploads
+/* *********************************************************************/
+
+/* Reference Drawing */
+.ref_upl {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+
+.ref_upl input.upload::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.ref_upl input.upload::before {
+    content: 'Upload';
+    font-size: 10pt;
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+}
+
+.ref_upl input.upload:hover::before {
+    border-color: #000000;
+}
+
+.ref_upl input.upload:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+.upl_container {
+    display: block;
+    width: 500px;
+    height: auto;
+    padding: 10px;
+    margin: 20px auto 10px auto;
+    background-color: #222222;
+    border: 1px solid #000000;
+    text-align: center;
+    -webkit-box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
+    -moz-box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
+    box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
+}
+
+.dragging {
+    background-color: #444444;
+}
+
+.upl_form {
+    width: 400px;
+    text-align: center;
+    margin: auto;
+    clear: both;
+}
+
+.upl_btn {
+    display: block;
+    margin: 0 auto 0 auto;
+    width: 200px;
+    height: auto;
+    line-height: 30px;
+    background-color: #444444;
+    color: #CF5151;
+    border: 1px solid #999;
+    padding: 0px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    -webkit-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+    box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+}
+
+.upl_btn:hover {
+    background-color: #666666;
+}
+
+.upl_btn:active {
+    background-color: #222222;
+    padding: 6px 10px 4px;
+}
+
+.upl_errors {
+    display: none;
+    width: 100%;
+    color: #990000;
+    font-size: 13px; /* Set message font size  */
+    padding: 5px; /* Some padding to make some more space for our text  */
+    background-color: rgba(255,255,255,.9); /* Add a background color to our status message   */
+    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
+}
+
+.upl_filetypes {
+    display: block;
+    margin: 0 auto;
+    font-size: 10px;
+    font-weight: normal;
+}
+
+.upl_filelist {
+    width: 95%;
+    height: auto;
+    padding: 10px;
+    margin: 0;
+}
+
+.upl_info {
+    display: inline-block;
+    width: 190px;
+    font-size: 12px;
+    height: 30px;
+    line-height: 30px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #bbbbbb;
+    -webkit-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+    box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
+}
+
+.upl_info>div {
+    display: table-cell;
+    height: 30px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.upl_name {
+    line-height: 30px;
+    white-space: pre-wrap;
+    width: 160px;
+    font-weight: bold;
+}
+
+.upl_name:hover {
+    background-color:rgba(207,81,81,1);
+    color: #EEEEEE;
+}
+
+.upl_type {
+    display: inline-block;
+    padding: 0 5px 0 5px;
+    margin-left: 0;
+    font-weight: bold;
+    background-color: #555555;
+    color: #EEEEEE;
+}
+
+.del_upl {
+    background-color: #666666;
+    line-height: 30px;
+    border-left: 1px solid #999999;
+    width: 30px;
+    padding-left: 5px;
+}
+
+.del_upl:hover {
+    background-color: rgba(207,81,81,.8);
+}
+
+.del_upl:active {
+    background-color: #444444;
 }
 
 /* Modal */
@@ -546,6 +722,7 @@ a#menu:hover {
 .item {
     display: inline-block;
     width: 110px;
+    min-height: 110px;
     background-color: #ffffff;
     padding: 5px;
     margin: 5px;
@@ -556,7 +733,7 @@ a#menu:hover {
 }
 
 .thumb {
-    width: 100px;
+    width: 90%;
     margin: auto;
 }
 
@@ -619,7 +796,7 @@ a#menu:hover {
     text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
 
     margin-left: 30px;
-    font-size: 50px;
+    font-size: 40px;
 }
 
 #pagename {

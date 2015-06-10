@@ -19,13 +19,15 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+require_once('boot.php');
+
 function check_login() {
 	$cond = !isset($_SESSION['logok']) || $_SESSION['logok'] == false;
 
     if ($cond) {
         $result = "
 		    <div id='content'>
-        		<p id='warning'>You must <a rel='leanModal' id='modal_trigger_login' href='#modal' class='modal_trigger'>sign in</a> to access the different options of this interface</p>
+        		<p id='warning'>You must <a rel='leanModal' id='modal_trigger_login' href='#modal' class='modal_trigger'>log in</a> to access the different options of this interface</p>
 		        </p>
 		    </div>
 		    ";
@@ -77,12 +79,12 @@ function browse($dir, $dirsNotToSaveArray = array()) {
 // Export target db to xls file
 function exportdbtoxls($tablename) {
     /***** EDIT BELOW LINES *****/
-    $db_set = new DB_set();
+    $db_set = new AppDb();
     $DB_Server = $db_set->host; // MySQL Server
     $DB_Username = $db_set->username; // MySQL Username
-    $DB_Password = $db_set->password; // MySQL Password
+    $DB_Password = $db_set->passw; // MySQL Password
     $DB_DBName = $db_set->dbname; // MySQL Database Name
-    $DB_TBLName = $tablename; // MySQL Table Name
+    $DB_TBLName = $tablename; // MySQL AppTable Name
     $xls_filename = 'backup/export_'.$tablename.date('Y-m-d').'.xls'; // Define Excel (.xls) file name
 	$out = "";
     /***** DO NOT EDIT BELOW LINES *****/
@@ -134,7 +136,7 @@ function exportdbtoxls($tablename) {
         $out .=  "\n";
     }
 
-	if ($fp = fopen($_SESSION['path_to_app'].$xls_filename, "w+")) {
+	if ($fp = fopen(PATH_TO_APP.'/'.$xls_filename, "w+")) {
         if (fwrite($fp, $out) == true) {
             fclose($fp);
         } else {
@@ -147,23 +149,17 @@ function exportdbtoxls($tablename) {
         echo json_encode($result);
         exit;
     }
-    chmod($_SESSION['path_to_app'].$xls_filename,0644);
+    chmod(PATH_TO_APP.'/'.$xls_filename,0644);
 
     return $xls_filename;
 }
 
 // Backup routine
 function backup_db(){
-    require_once($_SESSION['path_to_includes'].'db_connect.php');
-    require_once($_SESSION['path_to_includes'].'site_config.php');
-    require_once($_SESSION['path_to_includes'].'users.php');
-
-    // Declare classes
-    $db_set = new DB_set();
-    $config = new site_config('get');
+    global $db, $AppConfig;
 
     // Create Backup Folder
-    $mysqlSaveDir = $_SESSION['path_to_app'].'backup/Mysql';
+    $mysqlSaveDir = PATH_TO_APP.'/backup/Mysql';
     $fileNamePrefix = 'fullbackup_'.date('Y-m-d_H-i-s');
 
     if (!is_dir($mysqlSaveDir)) {
@@ -171,20 +167,20 @@ function backup_db(){
     }
 
     // Do backup
-    /* Store All Table name in an Array */
+    /* Store All AppTable name in an Array */
     $allTables = array();
-    $result = $db_set->send_query('SHOW TABLES');
+    $result = $db->send_query('SHOW TABLES');
     while($row = mysqli_fetch_row($result)){
         $allTables[] = $row[0];
     }
 
     $return = "";
     foreach($allTables as $table){
-        $result = $db_set->send_query('SELECT * FROM '.$table);
+        $result = $db->send_query('SELECT * FROM '.$table);
         $num_fields = mysqli_num_fields($result);
 
         $return.= 'DROP TABLE IF EXISTS '.$table.';';
-        $row2 = mysqli_fetch_row($db_set->send_query('SHOW CREATE TABLE '.$table));
+        $row2 = mysqli_fetch_row($db->send_query('SHOW CREATE TABLE '.$table));
         $return.= "\n\n".$row2[1].";\n\n";
 
         for ($i = 0; $i < $num_fields; $i++) {
@@ -206,50 +202,76 @@ function backup_db(){
     fwrite($handle,$return);
     fclose($handle);
 
-    // Check for previous backup and delete old ones
-    $oldbackup = browse($mysqlSaveDir);
-    $cpt = 0;
-    foreach ($oldbackup as $old) {
-        $prop = explode('_',$old);
-        $back_date = $prop[1];
-        $today = date('Y-m-d');
-        $lim_date = date("Y-m-d",strtotime($today." - $config->clean_day days"));
-        // Delete file if too old
-        if ($back_date <= $lim_date) {
-            if (is_file($old)) {
-                $cpt++;
-                unlink($old);
-            }
-        }
-    }
-    return "http://".$config->site_url."/backup/Mysql/$fileNamePrefix.sql";
+    cleanbackups($mysqlSaveDir);
+    return "http://".$AppConfig->site_url."/backup/Mysql/$fileNamePrefix.sql";
 }
 
 // Mail backup file to admins
 function mail_backup($backupfile) {
-    require_once($_SESSION['path_to_includes'].'myMail.php');
-    $mail = new myMail();
-    $admin = new users();
-    $admin->getuserinfo('admin');
+    global $AppMail, $db;
+    $admin = new Users($db);
+    $admin->get('admin');
 
     // Send backup via email
     $content = "
     Hello, <br>
     <p>This message has been sent automatically by the server. You may find a backup of your database in attachment.</p>
     ";
-    $body = $mail -> formatmail($content);
+    $body = $AppMail -> formatmail($content);
     $subject = "Automatic Database backup";
-    if ($mail->send_mail($admin->email,$subject,$body,$backupfile)) {
+    if ($AppMail->send_mail($admin->email,$subject,$body,$backupfile)) {
+    }
+}
+
+
+/**
+ * Check for previous backup and delete the oldest ones
+ * @param $mysqlSaveDir
+ */
+function cleanbackups($mysqlSaveDir) {
+    $db = new AppDb();
+    $config = new AppConfig($db);
+    $oldbackup = browse($mysqlSaveDir);
+    if (!empty($oldbackup)) {
+        $files = array();
+        // First get files date
+        foreach ($oldbackup as $file) {
+            $filewoext = explode('.',$file);
+            $filewoext = $filewoext[0];
+            $prop = explode('_',$filewoext);
+            if (count($prop)>1) {
+                $back_date = $prop[1];
+                $back_time = $prop[2];
+                $formatedtime = str_replace('-',':',$back_time);
+                $date = $back_date." ".$formatedtime;
+                $files[$date] = $file;
+            }
+        }
+
+        // Sort backup files by date
+        krsort($files);
+
+        // Delete oldest files
+        $cpt = 0;
+        foreach ($files as $date=>$old) {
+            // Delete file if too old
+            if ($cpt >= $config->clean_day) {
+                if (is_file($old)) {
+                    unlink($old);
+                }
+            }
+            $cpt++;
+        }
     }
 }
 
 // Full backup routine
 function file_backup() {
 
-    $dirToSave = $_SESSION['path_to_app'];
-    $dirsNotToSaveArray = array($_SESSION['path_to_app']."backup");
-    $mysqlSaveDir = $_SESSION['path_to_app'].'backup/Mysql';
-    $zipSaveDir = $_SESSION['path_to_app'].'backup/Complete';
+    $dirToSave = PATH_TO_APP;
+    $dirsNotToSaveArray = array(PATH_TO_APP."/backup");
+    $mysqlSaveDir = PATH_TO_APP.'/backup/Mysql';
+    $zipSaveDir = PATH_TO_APP.'/backup/Complete';
     $fileNamePrefix = 'fullbackup_'.date('Y-m-d_H-i-s');
 
     if (!is_dir($zipSaveDir)) {

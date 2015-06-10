@@ -2,7 +2,7 @@
 /**
  * htmlfilter.inc
  * ---------------
- * This set of functions allows you to filter pages in order to remove
+ * This set of functions allows you to filter html in order to remove
  * any malicious tags from it. Useful in cases when you need to filter
  * user input for any cross-site-scripting attempts.
  *
@@ -587,7 +587,7 @@ function tln_fixatts(
  * @param array $rm_attnames            see description above
  * @param array $bad_attvals            see description above
  * @param array $add_attr_to_tag        see description above
- * @return string                       Sanitized pages safe to show on your pages.
+ * @return string                       Sanitized html safe to show on your pages.
  */
 function tln_sanitize(
     $body,
@@ -613,7 +613,7 @@ function tln_sanitize(
      */
     $curpos = 0;
     $open_tags = array();
-    $trusted = "<!-- begin tln_sanitized pages -->\n";
+    $trusted = "<!-- begin tln_sanitized html -->\n";
     $skip_content = false;
     /**
      * Take care of netscape's stupid javascript entities like
@@ -718,7 +718,7 @@ function tln_sanitize(
         }
         $trusted .= "\n";
     }
-    $trusted .= "<!-- end tln_sanitized pages -->\n";
+    $trusted .= "<!-- end tln_sanitized html -->\n";
     return $trusted;
 }
 
@@ -734,7 +734,7 @@ function HTMLFilter($body, $trans_image_path, $block_external_images = false)
         false,
         "object",
         "meta",
-        "pages",
+        "html",
         "head",
         "base",
         "link",

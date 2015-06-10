@@ -18,22 +18,7 @@ You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-session_set_cookie_params(3600);
-session_start();
-$_SESSION['app_name'] = basename(dirname(__dir__));
-$_SESSION['path_to_app'] = dirname(__dir__).'/';
-$_SESSION['path_to_img'] = $_SESSION['path_to_app'].'images/';
-$_SESSION['path_to_includes'] = $_SESSION['path_to_app']."includes/";
-$_SESSION['path_to_html'] = $_SESSION['path_to_app']."php/";
-$_SESSION['path_to_pages'] = $_SESSION['path_to_app']."admin/pages/";
-date_default_timezone_set('Europe/Paris');
-
-// Includes required files (classes)
-require_once($_SESSION['path_to_includes'].'includes.php');
-
-// Get application settings
-$config = new site_config('get');
-
+require('../includes/boot.php');
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -53,20 +38,20 @@ $config = new site_config('get');
         <script type="text/javascript" src="../js/jquery.leanModal.min.js"></script>
         <script type="text/javascript" src="../js/jquery-ui.js"></script>
 
-        <title><?php $config->sitetitle ?></title>
+        <title><?php $AppConfig->sitetitle ?></title>
     </head>
 
     <body class="mainbody">
-    <?php require($_SESSION['path_to_pages'].'modal.php'); ?>
+    <?php require('pages/modal.php'); ?>
 
     <div id="mainheader">
         <!-- Header section -->
-        <?php require($_SESSION['path_to_pages'].'page_header.php'); ?>
+        <?php require('pages/page_header.php'); ?>
     </div>
 
     <!-- Menu section -->
     <div class='menu'>
-        <?php require($_SESSION['path_to_pages'].'page_menu.php'); ?>
+        <?php require('pages/page_menu.php'); ?>
     </div>
 
     <!-- Core section -->
@@ -78,9 +63,9 @@ $config = new site_config('get');
 
     <!-- Footer section -->
     <div id="footer">
-            <span id="sign"><?php echo "<a href='$config->repository' target='_blank'>$config->app_name $config->version</a>
+            <span id="sign"><?php echo "<a href='$AppConfig->repository' target='_blank'>$AppConfig->app_name $AppConfig->version</a>
              | <a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3 </a>
-             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $config->author</a>" ?></span>
+             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></span>
     </div>
 
     <!-- Bunch of jQuery functions -->
@@ -89,6 +74,8 @@ $config = new site_config('get');
 
     <!-- TinyMce (Rich-text textarea) -->
     <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript" src="../js/Myupload.js"></script>
+
     <!-- mini upload form plugin -->
     <link type="text/css" href="js/mini-upload-form/assets/css/style.css" rel="stylesheet" />
     <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.knob.js"></script>

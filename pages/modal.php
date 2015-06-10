@@ -29,7 +29,7 @@ echo "
 
     <section class='popupBody'>
 
-        <div class='send_msg'>
+        <div class='modal_section' id='send_msg'>
             <form method='post' action='' class='form' id='contact_form'>
                 <label for='name'>Your name</label><input type='text' name='name' id='contact_name' value='Your name'><br>
                 <label for='mail'>E-mail</label><input type='text' name='mail' id='contact_mail' value='Your email'><br>

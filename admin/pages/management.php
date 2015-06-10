@@ -19,78 +19,18 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
-require_once($_SESSION['path_to_app'].'admin/includes/includes.php');
+require_once('../includes/includes.php');
 check_login();
 
 // Get reference drawing list
-$refdraw = new DrawRef();
+$refdraw = new DrawRef($db);
 $refdrawlist = $refdraw->get_refdrawinglist("file_id");
 $nrefdraw = count($refdrawlist);
 $imglist = "";
-
-if ($nrefdraw>0) {
-
+if (!empty($refdrawlist)) {
 	foreach ($refdrawlist as $cur_ref) {
-		$ref = new DrawRef($cur_ref);
-
-        $itemlist = $ref->displayitems();
-
-		$imgurl = "../images/$ref->file_id/thumb/thumb_$ref->filename";
-		$upload_form = "
-	        <form method='post' action='js/mini-upload-form/upload.php' enctype='multipart/form-data' id='upload' class='upl_newitems_$ref->file_id'>
-		        <div id='drop'>
-		            <a>Add files</a><input type='file' name='item,$ref->file_id' multiple/> Or drag it here
-		        </div>
-		        <ul></ul>
-			</form>";
-
-        $sort_option =  "
-                <label for='order'>Sort by</label>
-	            <select name='order' class='sortitems' data-ref='$ref->file_id'>
-	            	<option value='' selected></option>
-	            	<option value='score'>Score</option>
-	            	<option value='file_id'>File ID</option>
-	            	<option value='nb_occ'>Number of users</option>
-	        	</select>";
-
-	    $imglist .= "
-	    <div class='refdraw-div' id='$ref->file_id'>
-
-	        <div style='width: 100%; margin: auto;'>
-                <div class='refdraw-name'>$ref->file_id</div>
-                <div class='refdraw-delbutton'>
-                <input type='submit' value='Delete' id='submit' data-ref='$ref->file_id' class='deleteref'/>
-                </div>
-	        </div>
-
-	        <div class='refdraw-content'>
-                <div class='refdraw-desc'>
-                    <div class='refdraw-thumb'>
-                        <img src='$imgurl' class='ref-thumb'>
-                    </div>
-
-                    <div class='refdraw-info'>
-                        <p>Number of drawings: $ref->nb_draw</p>
-                        <p>Number of users: $ref->nb_users</p>
-                    </div>
-
-                    <div class='upload_form'>
-                        $upload_form
-                    </div>
-
-                </div>
-
-                <div class='refdraw-half'>
-                    $sort_option
-                   <div class='refdraw-items' id='itemlist_$ref->file_id'>
-                    $itemlist
-                    </div>
-                </div>
-            </div>
-
-	    </div>";
+		$ref = new DrawRef($db,$cur_ref);
+        $imglist .= $ref->showDetails();
 	}
 }
 
@@ -109,6 +49,16 @@ $result = "
     	        	</form>
                 </div>
         	</div>
+
+            <!--<div class='refupload' style='text-align: center; width: 50%; margin-left: 100px;'>
+                <div style='display: block;'>
+                    <label class='label' style='width: auto;'>2. Upload the reference drawing</label>
+                </div>
+                <div class='ref_upl' style='display: block; margin-left: 20%;'>
+                    <input type='file' name='ref' class='upload'>
+                </div>
+            </div>-->
+
             <div class='refupload' style='display: none; text-align: center; width: 50%; margin-left: 100px;'>
                 <div style='display: block;'>
                     <label class='label' style='width: auto;'>2. Upload the reference drawing</label>

@@ -19,20 +19,19 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
+require_once('../includes/boot.php');
 
 # Classes
-$user = new participant($_SESSION['userid'],$_SESSION['refid']);
-$ref = new DrawRef($user->refid);
-$exp = new Experiment($ref,$user->userid);
+$user = new Participant($db,$_SESSION['userid'],$_SESSION['refid']);
+$ref = new DrawRef($db, $user->refid);
+$exp = new Experiment($db, $ref,$user->userid);
 
 // Get trial params
 $trial = $exp->gettrial();
 $pair = $_SESSION['pairslist'][$trial];
 
-$item1 = new ELO($ref->file_id,$pair[0]);
-$item2 = new ELO($ref->file_id,$pair[1]);
+$item1 = new Ranking($db,$ref->file_id,$pair[0]);
+$item2 = new Ranking($db,$ref->file_id,$pair[1]);
 
 $img1 = "images/$ref->file_id/img/$item1->filename";
 $img2 = "images/$ref->file_id/img/$item2->filename";

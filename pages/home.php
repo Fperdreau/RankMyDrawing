@@ -19,20 +19,16 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
+require_once('../includes/boot.php');
 
-# Classes
-$config = new site_config('get');
-$db_set = new DB_set();
-$ref = new DrawRef();
-$user = new participant();
+$ref = new DrawRef($db);
+$user = new Participant($db);
 $ip = $user->getip();
 
 // Check if there are available experiments
 $ref_id = $ref->selectdrawref($ip);
 if (false !== $ref_id) {
-    $ref = new DrawRef($ref_id);
+    $ref = new DrawRef($db, $ref_id);
 
     // Get languages
     $languages = $ref->getlanguages();
@@ -43,7 +39,7 @@ if (false !== $ref_id) {
 }
 
 # Is the experiment ON?
-if ($config->expon == 'on' && $ref_id !== false) {
+if ($AppConfig->expon == 'on' && $ref_id !== false) {
     $content = "
     <form id='user_info'>
         <div class='feedback'></div>

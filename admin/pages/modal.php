@@ -28,7 +28,7 @@ echo "
 
     <section class='popupBody'>
 
-        <div class='user_login'>
+        <div class='modal_section' id='user_login'>
             <form>
             <label for='log_username'>Username</label><input type='text' id='log_username' name='username' value=''/>
             <label for='log_password'>Password</label><input type='password' id='log_password' name='password' value=''/>
@@ -39,7 +39,7 @@ echo "
             <div class='forgot_password'><a href='' class='modal_trigger_changepw'>I forgot my password</a></div>
         </div>
 
-        <div class='user_changepw'>
+        <div class='modal_section' id='user_changepw'>
             <label for='ch_email'>Email</label><input type='text' id='ch_email' name='ch_email' value=''/></br>
             <div class='action_btns'>
                 <div class='one_half'><a href='' class='btn back_btn'><i class='fa fa-angle-double-left'></i> Back</a></div>
@@ -59,7 +59,7 @@ echo "
 
     <section class='popupBody'>
 
-        <div class='item_description'></div>
+        <div class='modal_section' id='item_description'></div>
 
         <div class='feedback'></div>
     </section>

@@ -44,7 +44,7 @@ var processform = function(formid,feedbackid) {
 function checkemail(email) {
     var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
     return pattern.test(email);
-};
+}
 
 //Show feedback
 var showfeedback = function(message,selector) {
@@ -77,53 +77,75 @@ var tinymcesetup = function() {
             {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
             {title: 'Example 1', inline: 'span', classes: 'example1'},
             {title: 'Example 2', inline: 'span', classes: 'example2'},
-            {title: 'Table styles'},
-            {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+            {title: 'AppTable styles'},
+            {title: 'AppTable row 1', selector: 'tr', classes: 'tablerow1'}
         ]
     });
 
 };
 
+function getpage() {
+    var params = getParams();
+    var page = (params.page == undefined) ? 'home':params.page;
+    jQuery.ajax({
+        url: 'php/form.php',
+        data: {get_app_status: true},
+        type: 'POST',
+        async: true,
+        success: function(data) {
+            var json = jQuery.parseJSON(data);
+            console.log('Site status: '+json);
+            console.log('page: '+page);
+            if (json === 'Off') {
+                $('#pagecontent')
+                    .html("<div id='content'><p id='warning'>Sorry, the website is currently under maintenance.</p></div>")
+                    .fadeIn(200);
+            } else {
+                if (page === undefined) {
+                    loadpageonclick('home',false);
+                } else {
+                    if (page !== false && page != 'install') {
+                        var urlparam = parseurl();
+                        loadpageonclick(page,''+urlparam);
+                    }
+                }
+            }
+        }
+    })
+}
+
 // Load page by clicking on menu sections
 var loadpageonclick = function(pagetoload,param) {
-    param = typeof param !== 'undefined' ? param : false;
+    param = (param === undefined || param === "") ? false: param;
     var stateObj = { page: pagetoload };
+    var url = (param === false) ? "index.php?page="+pagetoload:"index.php?page="+pagetoload+"&"+param;
 
-    if (param == false) {
-        jQuery.ajax({
-            url: 'pages/'+pagetoload+'.php',
-            type: 'GET',
-            async: true,
-            data: param,
-            success: function(data){
-                var json = jQuery.parseJSON(data);
-                history.pushState(stateObj, pagetoload, "index.php?page="+pagetoload);
+    jQuery.ajax({
+        url: 'pages/'+pagetoload+'.php',
+        type: 'GET',
+        async: true,
+        data: param,
+        beforeSend: function() {
+            $('#pagecontent').fadeOut(200);
+            $('#loading').show();
+        },
+        complete: function () {
+            $('#loading').hide();
+        },
+        success: function(data){
+            var json = jQuery.parseJSON(data);
+            history.pushState(stateObj, pagetoload, url);
 
-                $('#pagecontent')
-                    .html('<div>'+json+'</div>')
-                    .fadeIn('slow');
-                tinymcesetup();
-
-            }
-        });
-    } else {
-        jQuery.ajax({
-            url: 'pages/'+pagetoload+'.php',
-            type: 'GET',
-            async: false,
-            data: param,
-            success: function(data){
-                var json = jQuery.parseJSON(data);
-                history.pushState(stateObj, pagetoload, "index.php?page="+pagetoload+"&"+param);
-
-                $('#pagecontent')
-                    .html('<div>'+json+'</div>')
-                    .fadeIn('slow');
-                tinymcesetup();
-
-            }
-        });
-    }
+            $('#pagecontent')
+                .empty()
+                .html(json)
+                .fadeIn(200)
+                .find(".section_page").each(function() {
+                    $(this).fadeIn('slow');
+                });
+            tinymcesetup();
+        }
+    });
 };
 
 // Parse URL
@@ -163,14 +185,33 @@ var progressbar = function(id,value) {
         .css({
             background: "linear-gradient(to right, rgba(200,200,200,.7) "+linearprogress+"%, rgba(200,200,200,0) "+linearprogress+"%)"
         });
-}
+};
 
 var logout = function() {
     loadpageonclick('logout');
     $('.warningmsg')
         .show()
         .html("You have been logged out!");
-}
+};
+
+// Close modal window
+var close_modal = function(modal_id) {
+    $("#lean_overlay").fadeOut(200);
+    $(modal_id).css({"display":"none"});
+    $('#submission_form').empty();
+};
+
+// Show the targeted modal section and hide the others
+var showmodal = function(sectionid) {
+    $('.modal_section').each(function() {
+        var thisid = $(this).attr('id');
+        if (thisid === sectionid) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+};
 
 $( document ).ready(function() {
 
@@ -180,17 +221,7 @@ $( document ).ready(function() {
     $('.mainbody')
 
         .ready(function() {
-            // Automatically parse url and load the corresponding page
-            var params = getParams();
-            if (params.page == undefined) {
-                loadpageonclick('home',false);
-            } else {
-                var page = params.page;
-                if (page != false && page != 'install') {
-                    var urlparam = parseurl();
-                    loadpageonclick(page,''+urlparam);
-                }
-            }
+            getpage();
         })
 
         // Trigger modal dialog box for log in/contact
@@ -201,7 +232,7 @@ $( document ).ready(function() {
 
         .on('click','#modal_trigger_contact',function(e) {
             e.preventDefault();
-            $(".send_msg").show();
+            showmodal('send_msg');
             $(".header_title").text('Send a message');
         })
 
@@ -415,6 +446,7 @@ $( document ).ready(function() {
 
                     if (result === "sent") {
                         $('.send_msg').html('<p id="success">Your message has been sent!</p>');
+                        close_modal('.contact_container');
                     } else if (result === "not_sent") {
                         showfeedback('<p id="warning">Oops, something went wrong!</p>');
                     }
@@ -422,8 +454,5 @@ $( document ).ready(function() {
             });
             return false;
         })
-}).on({
-    ajaxStart: function() { $("#loading").show(); },
-    ajaxStop: function() { $("#loading").hide(); }
 });
 

@@ -25,10 +25,102 @@ var display_content = function(type,lang,content,refid) {
     $('.'+type)
         .html(html)
         .fadeIn('slow');
+};
+
+
+function getpage() {
+    var params = getParams();
+    var page = (params.page == undefined) ? 'home':params.page;
+    jQuery.ajax({
+        url: '../php/form.php',
+        data: {get_app_status: true},
+        type: 'POST',
+        async: true,
+        success: function(data) {
+            var json = jQuery.parseJSON(data);
+            if (json === 'Off') {
+                $('#pagecontent')
+                    .html("<div id='content'><p id='warning'>Sorry, the website is currently under maintenance.</p></div>")
+                    .fadeIn(200);
+            } else {
+                if (page === undefined) {
+                    loadpageonclick('home',false);
+                } else {
+                    if (page !== false && page != 'install') {
+                        var urlparam = parseurl();
+                        loadpageonclick(page,''+urlparam);
+                    }
+                }
+            }
+        }
+    })
 }
+
+// Load page by clicking on menu sections
+var loadpageonclick = function(pagetoload,param) {
+    param = (param === undefined || param === "") ? false: param;
+    var stateObj = { page: pagetoload };
+    var url = (param === false) ? "index.php?page="+pagetoload:"index.php?page="+pagetoload+"&"+param;
+
+    jQuery.ajax({
+        url: 'pages/'+pagetoload+'.php',
+        type: 'GET',
+        async: true,
+        data: param,
+        beforeSend: function() {
+            $('#pagecontent').fadeOut(200);
+            $('#loading').show();
+        },
+        complete: function () {
+            $('#loading').hide();
+        },
+        success: function(data){
+            var json = jQuery.parseJSON(data);
+            history.pushState(stateObj, pagetoload, url);
+
+            $('#pagecontent')
+                .empty()
+                .html(json)
+                .fadeIn(200)
+                .find(".section_page").each(function() {
+                    $(this).fadeIn('slow');
+                });
+            tinymcesetup();
+        }
+    });
+};
+
+// Parse URL
+var parseurl = function() {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    vars = vars.slice(1,vars.length);
+    vars = vars.join("&");
+    return vars;
+};
+
+// Get url params ($_GET)
+var getParams = function() {
+    var url = window.location.href;
+    var splitted = url.split("?");
+    if(splitted.length === 1) {
+        return {};
+    }
+    var paramList = decodeURIComponent(splitted[1]).split("&");
+    var params = {};
+    for(var i = 0; i < paramList.length; i++) {
+        var paramTuple = paramList[i].split("=");
+        params[paramTuple[0]] = paramTuple[1];
+    }
+    return params;
+};
 
 $( document ).ready(function() {
     $(".mainbody")
+
+        .ready(function() {
+            getpage();
+        })
 
         /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          Header menu/Sub-menu
@@ -53,7 +145,6 @@ $( document ).ready(function() {
                 async: false,
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     window.location = "index.php";
                 }
             });
@@ -288,8 +379,6 @@ $( document ).ready(function() {
             var lang = $(this).attr('data-lang');
             var content = tinyMCE.get(type).getContent();
             var refid = $(this).attr('data-ref');
-            console.log(lang);
-
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',
@@ -502,7 +591,6 @@ $( document ).ready(function() {
                 },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     $('#item_'+itemid).remove();
                 }
             });
@@ -523,8 +611,7 @@ $( document ).ready(function() {
                 },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
-                    $('#itemlist_'+refdraw).html(result);
+                    $('.itemList#'+refdraw).html(result);
                 }
             });
             return false;
@@ -551,13 +638,12 @@ $( document ).ready(function() {
                     itemid: itemid},
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     $('.item_popupContainer').show();
-                    $(".item_description")
+                    $(".modal_section#item_description")
                         .show()
                         .html(result.content);
                     $(".item_delete").hide();
-                    $(".header_title").text('Item description: '+result.item);
+                    $(".header_title").text("Drawing's description: "+result.item);
                 }
             });
         })
@@ -565,38 +651,20 @@ $( document ).ready(function() {
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      Export tools
      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-        // Do a full backup (database + files) if asked
-        .on('click','.fullbackup',function(){
-            var webproc = true;
-
-            jQuery.ajax({
-                url: '../cronjobs/full_backup.php',
-                type: 'GET',
-                async: false,
-                data: {webproc: webproc},
-                success: function(data){
-                    console.log(data);
-
-                    var json = jQuery.parseJSON(data);
-                    console.log(json);
-                    $('#full_backup').append('<div class="file_link" data-url="'+json+'" style="width: auto;"><a href="' + json + '">Download backup file</a></div>');
-                }
-            });
-        })
-
         // Backup the database only if asked
-        .on('click','.dbbackup',function(){
+        .on('click','.backup',function(){
+            var op = $(this).attr('data-op');
             jQuery.ajax({
-                url: '../cronjobs/db_backup.php',
-                type: 'GET',
-                async: false,
-                data: {webproc: true},
+                url: 'php/form.php',
+                type: 'POST',
+                async: true,
+                data: {
+                    backup: true,
+                    op: op},
                 success: function(data){
-                    console.log(data);
-
                     var json = jQuery.parseJSON(data);
                     console.log(json);
-                    $('#db_backup').append('<div class="file_link" data-url="'+json+'" style="width: auto;"><a href="' + json + '">Download backup file</a></div>');
+                    $('#'+op).append('<div class="file_link" data-url="'+json+'" style="width: auto;"><a href="' + json + '">Download backup file</a></div>');
                 }
             });
         })
@@ -622,42 +690,10 @@ $( document ).ready(function() {
 
         // Show link to created backup
         .on('click','.file_link', function(){
-            var link = $(this).attr('data-url');
+            window.location.href = $(this).attr('data-url');
             $(this)
                 .html('<p id="success">Downloaded</p>')
                 .fadeOut(5000);
-        })
-
-        // Add a news to the homepage
-        .on('click','.post_send',function(e) {
-            e.preventDefault();
-            var new_post = tinyMCE.activeEditor.getContent();
-            var fullname = $("input#fullname").val();
-            console.log(new_post);
-            if (new_post == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("textarea#post").focus();
-                return false;
-            }
-
-            jQuery.ajax({
-                url: 'php/form.php',
-                type: 'POST',
-                async: true,
-                data: {
-                    post_send: true,
-                    fullname: fullname,
-                    new_post: new_post},
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    console.log(result);
-
-                    if (result === "posted") {
-                        showfeedback("<p id='success'>Your message has been posted on the homepage!</p>");
-                    }
-                }
-            });
-            return false;
         })
 
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -768,8 +804,8 @@ $( document ).ready(function() {
                 },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    console.log(result);
                     $('#item_'+itemid).remove();
+                    close_modal('.item_popupContainer');
                 }
             });
         });

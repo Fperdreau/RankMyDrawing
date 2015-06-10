@@ -19,7 +19,30 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-class participant {
+class Participant extends AppTable {
+
+    protected $table_data = array(
+        "id" => array("INT NOT NULL AUTO_INCREMENT", false),
+        "date" => array("DATETIME", false),
+        "userid" => array("CHAR(20)", false),
+        "refid" => array("CHAR(20)", false),
+        "name" => array("CHAR(5)", false),
+        "email" => array("CHAR(50)", false),
+        "ip" => array("CHAR(20)", false),
+        "nb_visit" => array("INT(2)", false),
+        "age" => array("INT(3)", false),
+        "gender" => array("CHAR(10)", false),
+        "language" => array("CHAR(5)", false),
+        "drawlvl" => array("CHAR(10)", false),
+        "artint" => array("CHAR(3)", false),
+        "response1" => array("TEXT", false),
+        "response2" => array("TEXT", false),
+        "pair1" => array("TEXT", false),
+        "pair2" => array("TEXT", false),
+        "time_start" => array("TIMESTAMP", false),
+        "time_end" => array("TIMESTAMP", false),
+        "primary" => "id");
+
     public $date = "";
     public $userid = "";
     public $refid = "";
@@ -39,79 +62,95 @@ class participant {
     public $time_start = "";
     public $time_end = "";
 
-    function __construct($userid=null,$refid=null) {
+    /**
+     * Constructor
+     * @param AppDb $db
+     * @param null $userid
+     * @param null $refid
+     */
+    function __construct(AppDb $db, $userid=null,$refid=null) {
+        parent::__construct($db, 'Participant',$this->table_data, $refid.'_users');
         if ($userid != null) {
             self::get($userid,$refid);
         }
     }
 
-    // Create user
-
+    /**
+     * Create User
+     * @param $post
+     * @param $refid
+     * @return string
+     */
     function make($post,$refid) {
-        $db_set = new DB_set();
-
         $this->refid = $refid;
         $post['date'] = date("Y-m-d H:i:s");
         $post['ip'] = self::getip();
         $post['userid'] = self::makeID();
 
         // Parse variables and values to store in the table
-        $class_vars = get_class_vars("participant");
+        $class_vars = get_class_vars("Participant");
         $class_keys = array_keys($class_vars);
-        $values = array();
-        $variables = array();
+        $content = array();
         foreach ($post as $name => $value) {
-            if (in_array($name,$class_keys)) {
+            if (in_array($name, $class_keys)) {
                 $this->$name = $value;
-                $escaped = mysqli_real_escape_string($db_set->bdd,$value);
-                $values[] = "'$escaped'";
-                $variables[] = $name;
+                $escaped = $this->db->escape_query($value);
+                $content[$name] = $escaped;
             }
         }
-        $values = implode(",", $values);
-        $variables = implode(",", $variables);
-
         // Add user to the database
-        $result = $db_set->addcontent($db_set->dbprefix.$refid."_users",$variables,$values);
+        $result = $this->db->addcontent($this->db->dbprefix.'_'.$refid."_users",$content);
         return $this->userid;
     }
 
+    /**
+     * Update user info
+     * @return bool
+     */
     function update() {
-        $db_set = new DB_set();
-        $users_table = $db_set->dbprefix.$this->refid.'_users';
+        $users_table = $this->db->dbprefix.'_'.$this->refid.'_users';
         foreach ($this as $key=>$value) {
-            $db_set->updatecontent($users_table,$key,"'$value'",array("userid"),array("'$this->userid'"));
+            if (!in_array($key, array("db","tablename",'table_data'))) {
+                $this->db->updatecontent($users_table, array($key => $value), array("userid" => $this->userid));
+            }
         }
         return true;
     }
 
+    /**
+     * Get IP
+     * @return string
+     */
     public function getip() {
         return strval($_SERVER['REMOTE_ADDR']);
     }
 
-    // Make an unique ID
+    /**
+     * Make User ID
+     * @return string
+     */
     function makeID() {
-        $db_set = new DB_set();
         $id = $this->refid."_".rand(1,10000);
-
         // Check if random ID does not already exist in our database
-        $prev_id = $db_set->getinfo($db_set->dbprefix.$this->refid.'_users','id');
+        $prev_id = $this->db->getinfo($this->db->dbprefix.'_'.$this->refid.'_users','id');
         while (in_array($id,$prev_id)) {
             $id = $this->refid."_".rand(1,10000);
         }
         return $id;
     }
 
+    /**
+     * Get user info
+     * @param $userid
+     * @param $refid
+     * @return bool
+     */
     function get($userid,$refid) {
-        $db_set = new DB_set();
-        $users_table = $db_set->dbprefix.$refid.'_users';
-        $class_vars = get_class_vars("participant");
-
+        $users_table = $this->db->dbprefix.'_'.$refid.'_users';
         $sql = "SELECT * FROM $users_table WHERE userid='$userid'";
 
-        $req = $db_set -> send_query($sql);
+        $req = $this->db->send_query($sql);
         $data = mysqli_fetch_assoc($req);
-
         if (!empty($data)) {
             foreach ($data as $varname=>$value) {
                 $this->$varname = $value;

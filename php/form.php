@@ -19,24 +19,25 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-session_start();
 // Includes required files (classes)
-include_once($_SESSION['path_to_includes'].'includes.php');
+require('../includes/boot.php');
+
+if (!empty($_POST['get_app_status'])) {
+    echo json_encode($AppConfig->status);
+}
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Contact form
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 if (!empty($_POST['contact_send'])) {
-    $mail = new myMail();
-    $config = new site_config('get');
     $usr_msg = htmlspecialchars($_POST["message"]);
     $usr_mail = htmlspecialchars($_POST["mail"]);
     $usr_name = htmlspecialchars($_POST["name"]);
     $content = "Message sent by $usr_name ($usr_mail):<br><p>$usr_msg</p>";
-    $body = $mail -> formatmail($content);
+    $body = $AppMail -> formatmail($content);
     $subject = "Contact from $usr_name";
 
-    if ($mail->send_mail($config->mail_from,$subject,$body)) {
+    if ($AppMail->send_mail($AppConfig->mail_from,$subject,$body)) {
         $result = "sent";
     } else {
         $result = "not_sent";
@@ -46,7 +47,7 @@ if (!empty($_POST['contact_send'])) {
 
 // Add user to the database
 if(!empty($_POST['add_user'])) {
-    $user = new participant();
+    $user = new Participant($db);
     $refid = $_POST['refid'];
     $result = $user->make($_POST,$refid);
     $_SESSION['userid'] = $result;
@@ -60,12 +61,14 @@ Experiment
 if (!empty($_POST['startexp'])) {
     $userid = $_POST['userid'];
     $refid = $_POST['refid'];
-    $user = new participant($userid,$refid);
-    $ref = new DrawRef($user->refid);
-    $exp = new Experiment($ref,$userid);
+    $user = new Participant($db,$userid,$refid);
+    $ref = new DrawRef($db,$user->refid);
+    $exp = new Experiment($db,$ref,$userid);
     $exp->genlist();
     $_SESSION['pairslist'] = $exp->pairslist;
 
+    $pair1 = array();
+    $pair2 = array();
     foreach ($exp->pairslist as $trial=>$items) {
         $pair1[] = $items[0];
         $pair2[] = $items[1];
@@ -83,11 +86,11 @@ if (!empty($_POST['endtrial'])) {
     $winnerid = $_POST['winner'];
     $loserid = $_POST['loser'];
 
-    $ref = new DrawRef($refid);
-    $user = new participant($userid,$refid);
-    $exp = new Experiment($ref,$user->userid);
-    $winner = new ELO($refid,$winnerid);
-    $loser = new ELO($refid,$loserid);
+    $ref = new DrawRef($db,$refid);
+    $user = new Participant($db,$userid,$refid);
+    $exp = new Experiment($db,$ref,$user->userid);
+    $winner = new Ranking($db,$refid,$winnerid);
+    $loser = new Ranking($db,$refid,$loserid);
 
     // Update ELO scores
     $new_scores = $exp->updateELO($winnerid,$loserid);
@@ -109,8 +112,8 @@ if (!empty($_POST['endtrial'])) {
         $trialinfo = $pairslist[$nexttrial];
         $item1id = $trialinfo[0];
         $item2id = $trialinfo[1];
-        $item1 = new ELO($refid,$item1id);
-        $item2 = new ELO($refid,$item2id);
+        $item1 = new Ranking($db,$refid,$item1id);
+        $item2 = new Ranking($db,$refid,$item2id);
         $img1 = "images/$ref->file_id/img/$item1->filename";
         $img2 = "images/$ref->file_id/img/$item2->filename";
 
@@ -122,12 +125,9 @@ if (!empty($_POST['endtrial'])) {
         $result['progress'] = $nexttrial/$exp->ntrials;
         $result['stopexp'] = false;
     } else {
-        $config = new site_config('get');
         $result['stopexp'] = true;
-        $result['redirecturl'] = $config->redirecturl;
+        $result['redirecturl'] = $AppConfig->redirecturl;
     }
-
-
     echo json_encode($result);
 }
 

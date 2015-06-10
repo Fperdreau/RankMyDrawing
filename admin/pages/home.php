@@ -19,9 +19,7 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
-
+require_once('../includes/includes.php');
 check_login();
 $result = "
     <div id='content'>
@@ -31,3 +29,4 @@ $result = "
 ";
 
 echo json_encode($result);
+exit;

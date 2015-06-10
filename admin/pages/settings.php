@@ -18,14 +18,10 @@ You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
-require_once($_SESSION['path_to_app'].'admin/includes/includes.php');
-require_once($_SESSION['path_to_app'].'admin/conf/config.php');
+require_once('../includes/includes.php');
 check_login();
 
-$db_set = new DB_set();
-$refdrawlist = $db_set -> getinfo($ref_drawings_table,"file_id");
+$refdrawlist = $db -> getinfo($db->tablesname['DrawRef'],"file_id");
 $options = "
     <label for='select_ref'>Select a reference</label>
     <select name='select_ref' class='select_ref'>

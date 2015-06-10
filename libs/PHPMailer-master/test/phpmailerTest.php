@@ -10,7 +10,7 @@
  * @author Marcus Bointon <phpmailer@synchromedia.co.uk>
  * @copyright 2004 - 2009 Andy Prevost
  * @copyright 2010 Marcus Bointon
- * @license http://www.gnu.org/copyleft/lesser.pages GNU Lesser General Public License
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
 require_once '../PHPMailerAutoload.php';
@@ -145,7 +145,7 @@ class PHPMailerTest extends PHPUnit_Framework_TestCase
         $this->checkChanges();
 
         // Determine line endings for message
-        if ($this->Mail->ContentType == 'text/pages' || strlen($this->Mail->AltBody) > 0) {
+        if ($this->Mail->ContentType == 'text/html' || strlen($this->Mail->AltBody) > 0) {
             $eol = '<br/>';
             $bullet = '<li>';
             $bullet_start = '<ul>';
@@ -757,7 +757,7 @@ class PHPMailerTest extends PHPUnit_Framework_TestCase
         $this->Mail->Subject .= ": HTML only";
 
         $this->Mail->Body = <<<EOT
-<pages>
+<html>
     <head>
         <title>HTML email test</title>
     </head>
@@ -768,7 +768,7 @@ class PHPMailerTest extends PHPUnit_Framework_TestCase
         for new versions of PHPMailer.</p>
         <p>Thank you!</p>
     </body>
-</pages>
+</html>
 EOT;
         $this->buildBody();
         $this->assertTrue($this->Mail->send(), $this->Mail->ErrorInfo);
@@ -779,7 +779,7 @@ EOT;
      */
     public function testMsgHTML()
     {
-        $message = file_get_contents('../examples/contents.pages');
+        $message = file_get_contents('../examples/contents.html');
         $this->Mail->CharSet = 'utf-8';
         $this->Mail->Body = '';
         $this->Mail->AltBody = '';
@@ -1414,7 +1414,7 @@ EOT;
  * This is a sample form for setting appropriate test values through a browser
  * These values can also be set using a file called testbootstrap.php (not in svn) in the same folder as this script
  * which is probably more useful if you run these tests a lot
- * <pages>
+ * <html>
  * <body>
  * <h3>phpmailer Unit Test</h3>
  * By entering a SMTP hostname it will automatically perform tests with SMTP.
@@ -1433,5 +1433,5 @@ EOT;
  *
  * </form>
  * </body>
- * </pages>
+ * </html>
  */

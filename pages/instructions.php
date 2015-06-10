@@ -19,12 +19,11 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
+require_once('../includes/boot.php');
 
 # Classes
-$user = new participant($_SESSION['userid'],$_SESSION['refid']);
-$ref = new DrawRef($user->refid);
+$user = new Participant($db, $_SESSION['userid'],$_SESSION['refid']);
+$ref = new DrawRef($db, $user->refid);
 
 // Get instructions
 $content = $ref->get_content('instruction');

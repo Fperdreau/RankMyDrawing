@@ -5,8 +5,8 @@
  * @(#) $Id: ntlm_sasl_client.php,v 1.3 2004/11/17 08:00:37 mlemos Exp $
  *
  **
- ** Source: http://www.phpclasses.org/browse/file/7495.pages
- ** License: BSD (http://www.phpclasses.org/package/1888-PHP-Single-API-for-standard-authentication-mechanisms.pages)
+ ** Source: http://www.phpclasses.org/browse/file/7495.html
+ ** License: BSD (http://www.phpclasses.org/package/1888-PHP-Single-API-for-standard-authentication-mechanisms.html)
  ** Bundled with Permission
  **
  */

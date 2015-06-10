@@ -41,7 +41,7 @@ try {
     $mail->setFrom('you@example.com', 'Your Name');
     $mail->addAddress('another@example.com', 'John Doe');
     $mail->Subject = 'PHPMailer Test Subject';
-    $mail->msgHTML(file_get_contents('../examples/contents.pages'));
+    $mail->msgHTML(file_get_contents('../examples/contents.html'));
     // optional - msgHTML will create an alternate automatically
     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
     $mail->addAttachment('../examples/images/phpmailer.png'); // attachment

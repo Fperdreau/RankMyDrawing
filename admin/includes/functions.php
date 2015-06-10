@@ -18,22 +18,24 @@ You should have received a copy of the GNU Affero General Public License
 along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-@session_start();
-require_once($_SESSION['path_to_includes'].'includes.php');
-require_once($_SESSION['path_to_app'].'admin/includes/includes.php');
-require_once($_SESSION['path_to_app'].'admin/conf/config.php');
+require_once(realpath(dirname(dirname(__DIR__))).'/includes/boot.php');
 
-// Show selected ref drawing's settings
+/**
+ * Show selected reference drawing's settings
+ * @param string $ref_id
+ * @return string
+ */
 function showrefsettings($ref_id='all') {
+    global $db;
     if ($ref_id == 'all') {
-        $ref = new DrawRef();
+        $ref = new DrawRef($db);
         $refdrawlist = $ref->get_refdrawinglist();
         $result = "";
         foreach ($refdrawlist as $refid) {
             $result .= showrefsettings($refid);
         }
     } else {
-        $ref = new DrawRef($ref_id);
+        $ref = new DrawRef($db,$ref_id);
 
         if ($ref->nb_draw > 0) {
             $ref->max_nb_pairs = factorial($ref->nb_draw)/(factorial($ref->nb_draw-2)*factorial(2));
@@ -42,9 +44,7 @@ function showrefsettings($ref_id='all') {
         }
 
         // Get previous settings
-        $config = new site_config('get');
         $inst_langs = $ref->get_content('instruction');
-        $cons_langs = $ref->get_content('consent');
 
         $option_content = "<select class='select_lang' id='$ref->file_id' data-type='instruction'>
             <option value='' selected></option>
