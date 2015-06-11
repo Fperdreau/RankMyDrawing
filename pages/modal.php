@@ -31,10 +31,10 @@ echo "
 
         <div class='modal_section' id='send_msg'>
             <form method='post' action='' class='form' id='contact_form'>
-                <label for='name'>Your name</label><input type='text' name='name' id='contact_name' value='Your name'><br>
-                <label for='mail'>E-mail</label><input type='text' name='mail' id='contact_mail' value='Your email'><br>
+                <label for='name'>Your name</label><input type='text' name='name' id='contact_name' placeholder='Your name'><br>
+                <label for='mail'>E-mail</label><input type='text' name='mail' id='contact_mail' placeholder='Your email'><br>
                 <label for='message'>Message</label><br>
-                <textarea id='message' name='message' rows='10' cols='50'>Your message</textarea><br>
+                <textarea id='message' name='message' rows='10' cols='50' placeholder='Your message'></textarea><br>
                 <p style='text-align: right;'><input type='submit' name='send' value='Send' id='submit' class='contact_send'></p>
             </form>
         </div>

@@ -739,13 +739,25 @@ $( document ).ready(function() {
         // Dialog log in
         .on('click',"#modal_trigger_login",function(e){
             e.preventDefault();
-            $(".user_login").show();
-            $(".pub_delete").hide();
+            showmodal('user_login');
             $(".header_title").text('Log in');
         });
 
     // Process events happening on the login/sign up modal dialog box
     $(".popupContainer")
+
+        //Change password
+        .on('click','.modal_trigger_changepw',function(e) {
+            e.preventDefault();
+            showmodal('user_changepw');
+        })
+
+        // Going back to Login Forms
+        .on('click',".back_btn",function(){
+            showmodal('user_login');
+            $(".header_title").text('Log in');
+            return false;
+        })
 
         // Login form
         .on('click',".login",function() {

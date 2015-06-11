@@ -111,7 +111,7 @@ class AppConfig extends AppTable {
         $postkeys = array_keys($post);
 
         foreach ($class_vars as $name => $value) {
-            if (in_array($name,array("db","tablename","table_data"))) continue;
+            if (in_array($name,array("db","tablename","table_data","languages"))) continue;
             $newvalue = (in_array($name,$postkeys)) ? $post[$name]:$this->$name;
             $newvalue = ($name == "session_type") ? json_encode($newvalue):$newvalue;
             $this->$name = $newvalue;
