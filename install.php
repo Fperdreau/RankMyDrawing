@@ -214,7 +214,6 @@ if (!empty($_POST['operation'])) {
                 }
             }
         }
-
         // Create config table
         // Get default application settings
         $AppConfig = new AppConfig($db, false);
@@ -653,7 +652,7 @@ if (!empty($_POST['getpagecontent'])) {
                 // Go to next installation step
                 .on('click', '.finish', function(e) {
                     e.preventDefault();
-                    window.location = "index.php";
+                    window.location = "admin/index.php";
                 })
 
                 // Step 1->3: Launch database setup
@@ -815,7 +814,7 @@ if (!empty($_POST['getpagecontent'])) {
 </div>
 
 <!-- Core section -->
-<div id="core">
+<div class="core">
     <div id="loading"></div>
     <div id="pagecontent"></div>
 </div>
