@@ -45,7 +45,6 @@ class Users extends AppTable {
         }
     }
 
-    // Create user
     /**
      * Create user
      * @param $post
