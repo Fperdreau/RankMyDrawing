@@ -310,72 +310,81 @@ input[type='button'].addBtn {
     height: 30px;
 }
 
-/* Bodytext */
-html { height: 100%; }
+/* *********************************************************************/
+/* Body
+/* *********************************************************************/
+html {
+    height: 100%;
+    font-size: 16px;
+}
 
 body {
+    height: 100%;
+    width: 100%;
+    min-width: 320px;
+    margin: 0;
+    padding: 0;
     font-family: 'Lato', Calibri, Arial, sans-serif;
     font-weight: 300;
-    font-size: 15px;
-    line-height: 1.2;
-	width: 100%;
-    margin: auto;
-	background-color: #cccccc;
+    font-size: 1em;
+    box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     overflow-y: scroll;
     overflow-x: scroll;
 }
 
 a {
-	text-decoration: none;
-    color: #CF5151;
+    text-decoration: none;
+    color: rgba(207,81,81,1);
 }
 
 a:hover {
-    color: #aaaaaa;
+    color: #cccccc;
 }
 
-a#menu {
-    text-decoration: none;
-    color: #CF5151;
-}
-
-a#menu:hover {
-    color: #eeeeee;
-}
-
-#pagecontent {
-    display: none;
-}
-
-/* Header */
-#mainheader {
+/* *********************************************************************/
+/* Body
+/* *********************************************************************/
+header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50px;
     z-index: 10;
-    background-color: #555555;
+    background-color: rgba(68, 68, 68, 1);
     text-align: justify;
     padding: 0;
-    box-shadow: 0 2px 2px #555;
+    height: 40px;
 }
 
-.header_container {
-    position: relative;
-    clear: both;
-    width: 1024px;
-    height: 100%;
-    margin: auto;
-}
-
-#title {
-    padding-top: 2px;
+header #sitetitle {
+    background-color: rgba(255, 255, 255, .5);
+    border-right: 3px solid rgba(255, 255, 255, .1);
+    display: inline-block;
+    width: 200px;
+    font-size: 1.5em;
+    text-transform: capitalize;
+    padding: 2px 5px;
     text-align: center;
+    height: 40px;
 }
 
-.displaymenu_btn {
+header #contact {
+    float: right;
+    display: inline-block;
+    text-align: center;
+    background-color: rgba(51, 51, 51, 1);
+    border: 1px double #cccccc;
+    padding: 5px;
+    height: 20px;
+    cursor: pointer;
+}
+
+header #contact:hover {
+    background-color: rgba(80, 80, 80, 1);
+}
+
+#menu_btn {
     z-index: 15;
     position: absolute;
     top: 20px;
@@ -384,20 +393,6 @@ a#menu:hover {
     text-align: center;
     font-size: 20px;
     cursor: pointer;
-}
-
-#welcome {
-    vertical-align: middle;
-    width: auto;
-    text-align: center;
-    background-color: #333333;
-    border: 1px double #cccccc;
-    padding: 5px;
-    border-radius: 5px;
-    float: right;
-    margin-right: 10px;
-    margin-top: 10px;
-    height: 20px;
 }
 
 /* Menu */
@@ -425,7 +420,6 @@ a#menu:hover {
     border-left: 2px solid #b43d3d;
 }
 
-
 .menu-section:hover {
     cursor: pointer;
     font-size: 20px;
@@ -446,55 +440,211 @@ a#menu:hover {
     color: #cccccc;
 }
 
-/* Content */
-.core {
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+#core {
     position: relative;
-    z-index: 3;
-    width: 1024px;
-    box-shadow: 0px 0px 12px #555;
+    max-width: 100%;
+    min-width: 300px;
+    box-sizing: border-box;
     padding: 0;
-    margin: 50px auto;
-    background-color: #eeeeee;
+    margin: auto;
     min-height: 768px;
-    height: auto !important;
-    height: 100%;
 }
 
-#loading {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
+#footer {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    min-height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 20px auto;
+    background-color: rgba(50,50,50,1);
+    padding: 0;
+}
+
+#sign {
+    padding: 5px 50px;
+}
+
+#sign>div {
+    vertical-align: middle;
+    display:inline-block;
+    margin: 5px 10px;
+    color: #cccccc;
+    font-size: 0.9em;
+}
+
+#appTitle {
+    text-transform: uppercase;
+    color: #cccccc;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#appVersion {
+    border-top: 1px solid rgba(150,150,150,.5);
+    color: rgba(150,150,150,.5);
+    margin-top: 0;
+    font-size: 0.9em;
+    font-weight: 200;
+}
+
+#colBar {
+    display: block;
+    width: 100%;
+    background: rgba(150,150,150,.5);
+    height: 30px;
+}
+
+/* *********************************************************************/
+/* Page Content
+/* *********************************************************************/
+.loadingDiv {
+    position:   absolute;
+    z-index:    90;
     top:        0;
     left:       0;
     width:      100%;
     height: 100%;
-    background: rgba( 0, 0, 0, .7)
+    background: rgba( 255, 255, 255, .7)
     url('../images/spinner.gif')
     50% 50%
     no-repeat;
+    background-size: 50px;
 }
 
-#content {
+#pagecontent {
+    display: none;
     position: relative;
-    margin-top: 50px;
-    padding: 50px;
-    width: 90%;
-    margin: auto;
-    vertical-align: middle;
+    padding: 50px 0 50px 0;
+    margin: 0 auto;
+    max-width: 70%;
+    min-width: 320px;
 }
 
-#footer {
-    position: fixed;
-    bottom: 0;
-    clear: both;
-    vertical-align: middle;
+.plugins {
+    display: block;
+}
 
-    z-index: 0;
-    width: 100%;
+.plugins>div {
+    display: inline-block;
+}
+
+.page_description {
+    text-align: justify;
+    margin: 10px auto 10px auto;
+    width: 80%;
+    color: rgba(68,68,68,1);
+    font-style: italic;
+    font-size: 14px; /* Set message font size  */
+    padding: 10px; /* Some padding to make some more space for our text  */
+    border: 2px dashed rgba(207,81,81,.5); /* Add a border arround our status message   */
+}
+
+section {
+    position: relative;
+    box-sizing: border-box;
     text-align: left;
-    margin: 20px auto;
-    background-color: rgba(50,50,50,1);
+    display: block;
+    font-size: 16px;
+    margin: 20px 20px 20px auto;
+    padding: 0 10px 20px 10px;
+    background-color: rgba(200,200,200,.1);
+    border: 1px solid #ddd;
+    min-width: 300px;
+}
+
+section>div {
+    margin: auto;
+}
+
+.section_container {
+    width: 100%;
+    text-align: justify;
+    margin:auto;
+}
+
+.section_container>div, .section_container>section{
+    display: inline-block;
+    vertical-align: top;
+    width: 45%;
+    min-width: 300px;
+    text-align: left;
+}
+
+.section_container:after{
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.half_section {
+}
+
+.half_section>div{
+    vertical-align: top;
+}
+
+.section_left {
+    margin-right: 20px;
+}
+
+.section_right {
+}
+
+.row_container {
+    position: relative;
+    box-sizing: border-box;
+    text-align: justify;
+}
+
+.row_container>div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.row_container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+h1 {
+    display: block;
+    margin-left: -10px;
+    color: #555555;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
+
+h2 {
+    display: block;
+    color: rgba(68,68,68,1);
+    margin: 5px 0 20px 5px;
     padding: 0;
+    vertical-align: top;
+    font-weight: 500;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    text-align: left;
+
+}
+
+h3 {
+    display: block;
+    font-size: 1.1em;
+    margin: 20px 0 5px auto;
+    padding: 0;
+    border-top: 1px solid #999999;
+    color: #444444;
+    height: 20px;
+    line-height: 20px;
+    text-align: left;
+    font-weight: 500;
 }
 
 /* Home */
@@ -1071,24 +1221,6 @@ a#menu:hover {
 }
 
 /* Text/Messages */
-#sitetitle {
-    display: inline-block;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    border: none;
-    color: rgba(48,48,48,1);
-    text-align: left;
-    text-transform: normal;
-    -o-text-overflow: clip;
-    text-overflow: clip;
-    white-space: pre;
-    text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
-
-    margin-left: 30px;
-    font-size: 40px;
-}
-
 #pagename {
     display: block;
     margin-left: -10px;
@@ -1130,9 +1262,6 @@ a#menu:hover {
     padding: 10px; /* Some padding to make some more space for our text  */
     background: rgba(207,81,81,.1); /* Add a background color to our status message   */
     border: 1px solid rgba(207,81,81,.2); /* Add a border arround our status message   */
-}
-
-.fullbackup {
 }
 
 /* Home sections */

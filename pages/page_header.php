@@ -19,17 +19,10 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// Page Header
-$contact = "
-    <span style='font-size: 16px; color: #FFFFFF;'>
-    <a rel='leanModal' id='modal_trigger_contact' href='#modal' class='modal_trigger'>Contact</a>";
-
 echo "
 <div id='progressbar'>Progression: 0%</div>
-<div class='header_container'>
-    <div id='title'>
-        <span id='sitetitle'>$AppConfig->sitetitle</span>
-        <div id='welcome'>$contact</div>
-    </div>
+<div id='title'>$AppConfig->sitetitle</div>
+<div id='contact_btn'>
+    <a class='leanModal' id='contact' data-section='contact'>Contact</a>
 </div>
 ";

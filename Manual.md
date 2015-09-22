@@ -94,11 +94,11 @@ Step 1: Upload files on the server
 
 ### Using GIT
 
-Simply clone the Journal Club Manager repository (https://github.com/Fperdreau/rankmydrawings.git) at the root of your web-server.
+Simply clone the RankMyDrawings repository (https://github.com/Fperdreau/rankmydrawings.git) to the root of your web-server.
 
 ### Using FTP
 
--   Upload the “rankmydrawings” folder to the root of your web-server using a FTP client (e.g. Filezilla).
+-   Upload the “rankmydrawings” folder to the root of your web-server using a FTP client (e.g. FileZilla).
 
 -   Make sure that you have the writing permissions for all the folders and files (set folders chmod to 0755 and files chmod to 0644).
 

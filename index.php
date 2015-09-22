@@ -35,6 +35,7 @@ require('includes/boot.php');
         <!-- JQuery -->
         <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <script type="text/javascript" src="js/loading.js"></script>
 
         <title><?php $AppConfig->sitetitle ?></title>
     </head>
@@ -42,10 +43,15 @@ require('includes/boot.php');
     <body class="mainbody">
         <div class='warningmsg' style='position: fixed; display: none; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background-color: #550000; color: #EEEEEE;'><input type='button' id='submit'></div>
 
-        <div id="mainheader">
-            <!-- Header section -->
-            <?php require(PATH_TO_PAGES.'page_header.php'); ?>
-        </div>
+        <header>
+            <div id='progressbar'>Progression: 0%</div>
+            <div id='sitetitle'>
+                <span style="color: rgba(68, 68, 68, 1);">Rank</span><!--
+                --><span style="color: rgba(255, 255, 255, 1);">My</span><!--
+                --><span style="color: rgba(68, 68, 68, 1);">Drawings</span>
+            </div>
+            <div class='leanModal' id='contact' data-section='contact'>Contact</div>
+        </header>
 
         <!-- Core section -->
         <div class="core">
