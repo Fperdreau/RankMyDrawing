@@ -18,39 +18,137 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-@import url('forms.css');
-
-
-/* Forms */
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
 
 /* Forms & Input field styles */
+.formcontrol {
+    vertical-align: top;
+    margin: 5px;
+    font-size: 0;
+    min-width: 60%;
+    max-width: 100%;
+}
+
+.formcontrol>div.inputFeedback {
+    display: inline-block;
+    font-size: 25px;
+    font-weight: 500;
+    background: rgba(207,81,81,.8);
+    color: #FFF;
+    border: 1px solid rgba(207,81,81,.5);
+    max-width: 20px;
+    min-width: 0;
+    text-align: center;
+    height: 20px;
+    line-height: 20px;
+    margin: 0;
+    padding: 4px 4px 4px 4px;
+    vertical-align: middle;
+}
+
+.formcontrol>div {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+    padding: 4px 2px 4px 10px;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    line-height: 20px;
+    min-height: 20px;
+
+    min-width: 40%;
+    border: 1px solid rgba(207, 81, 81, .3);
+    color: #777;
+}
+
+/* Div specific to tinyMCE textarea */
+.formcontrol>div.mce-tinymce {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    color: #777;
+}
+
 form {
     position: relative;
+    max-width: 100%;
     margin: auto;
-    text-align: left;
 }
 
-.valid_input{
-    border: 1px solid #3CB371;
-    box-shadow: 0 0 10px #3CB371;
-}
-
-.wrong_input{
-    border: 1px solid #3CB371;
-    box-shadow: 0 0 10px #3CB371;
-}
-
-input[type="text"], input[type="email"], input[type="password"] {
+label{
     display: inline-block;
-    width:200px;
-    padding: 10px;
-    border:1px solid rgba(207, 81, 81, .3);
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-    margin: 10px auto;
+    vertical-align: top;
+    background-color: rgba(207,81,81,1);
+    border: 1px solid rgba(207,81,81,1);
+    text-align: center;
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: #EEE;
+    padding: 4px 1px;
 
-    /* Styles */
-    background: #f9f9f9;
+    min-width: 110px;
+    height: 20px;
+    line-height: 20px;
+}
+
+input[type='text'], input[type='email'], input[type='password'], input[type='date'], .formcontrol select, textarea {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+    padding: 4px 2px 4px 10px;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    line-height: 20px;
+    min-height: 20px;
+
+    min-width: 10%;
+    max-width: 50%;
+    border: 1px solid rgba(207, 81, 81, .3);
     color: #777;
+}
+
+input[type='date'] {
+    padding: 3px 2px 3px 10px;
+}
+
+select {
+    -webkit-appearance: menulist-button;
+    height: 30px;
+    text-transform: capitalize;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-bottom: 1px solid rgba(207,81,81,1);
+}
+
+input[type='radio'] {
+    display: inline-block;
+    width: 10%;
+}
+
+textarea {
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    font-weight: 400;
+    resize: none;
+
+    /* Size and position */
+    width: 90%;
+    min-height: 150px;
 }
 
 input.input_opt {
@@ -71,66 +169,30 @@ select.select_opt {
     color: #555;
 }
 
-input[type="checkbox"] {
-    float:left;
-    margin-right:5px;
+/* Submit and action buttons */
+.submit_btns {
+    margin: 0 auto 0 0;
+    top: 0;
+    right: 20px;
+    text-align: right;
+    font-size:0;
 }
 
-input[type="checkbox"]+label {float:left;}
-
-textarea {
-    font-family: 'Lato', Calibri, Arial, sans-serif;
-    margin: 10px auto;
-    font-size: 13px;
-    font-weight: 400;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-    resize: none;
-
-    /* Size and position */
-    width: 90%;
-    height: 200px;
-    padding: 10px 18px 10px 45px;
-
-    /* Styles */
-    border:1px solid rgba(207, 81, 81, .3);
-    background: #f9f9f9;
-    color: #555;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    box-shadow: 0 0 5px #CF5151;
-    border: 1px solid #CF5151;
-}
-
-select {
-    min-width: 50px;
-    width: auto;
-    border:1px solid rgba(207, 81, 81, .3);
-    padding: 7px 6px;
-    color: #555;
-}
-
-select:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(207, 81, 81, 1);
-    border: 1px solid rgba(207, 81, 81, .8);
-}
-
-select#select_wish {
-    width: 400px;
+.submit_btns>div {
+    display: inline-block;
 }
 
 input[type="submit"], input[type="button"] {
-    background: #F9F9F9; /* Set button background */
+    cursor: pointer;
+    background: rgba(249, 249, 249, 1); /* Set button background */
     border: 1px solid rgba(207, 81, 81, 1); /* Small border around our submit button */
     padding: 8px; /* Add some more space around our button text */
+    transition: all 0.3s ease 0s;
 }
 
 input[type="submit"]:hover, input[type="button"]:hover {
     color: #FFF;
     background: rgba(207, 81, 81, 1); /* Set button background */
-    border: 1px solid #DFDFDF; /* Small border around our submit button */
     padding: 8px; /* Add some more space around our button text */
 }
 
@@ -141,80 +203,111 @@ input[type="submit"]:active, input[type="button"]:active {
     padding: 8px; /* Add some more space around our button text */
 }
 
-input.field {
-    padding: 10px;
-    display: inline-block;
-    width: 300px;
+input[type='button'].addBtn {
+    font-weight: 500;
+    padding: 0 10px 0 10px;
+    box-sizing: border-box;
+    line-height: 28px;
+    font-size: 20px;
 }
 
-label.label {
-    display: inline-block;
-    min-width: 150px;
-    text-align: right;
-    padding: 10px 0 10px 10px;
-    margin: 0px 0 5px 5px;
+/* Semi-transparent layer added on top of a form in order to show a feedback */
+.feedbackForm {
+    position : absolute;
+    z-index : 1000;
+    top : 0;
+    left : 0;
+    display : inline-flex;
+    text-align :center;
+    min-width : 100%;
+    min-height : 100%;
+    background : rgba(255,255,255,.9);
+    margin : auto;
 }
 
-.formcontrol {
-    vertical-align: top;
-    position: relative;
-    display: inline-block;
-    margin: 10px;
-    height: auto;
+.feedbackForm > div {
+    vertical-align: middle;
 }
 
-.formcontrol>div {
-    display: block;
-    top: 0;
-    left: 0;
-    bottom: 0;
+/* Change background color of invalid fields */
+.wrongField {
+    background: rgba(200,0,0,.1);
+}
+
+/* Feedback div to display other messages */
+.feedbackSubmit {
     margin: 0;
-    padding: 7px 6px;
-    font-size: 12px;
-    font-weight: 300;
-    border:1px solid rgba(207, 81, 81, .3);
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    box-sizing: border-box;
 
-    /* Styles */
-    background: #f9f9f9;
-    color: #777;
-}
+    padding: 8px 3px 9px 3px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(200, 0, 0, .5);
 
-.formcontrol label{
     display: inline-block;
-    top: 0;
-    left: 0;
-    bottom: 0;
-
-    background-color: rgba(207,81,81,.8);
+    color: #FFF;
+    min-width: 0;
+    max-width: 70%;
     text-align: center;
-    font-size: 12px;
-    font-weight: 300;
-    color: #EEE;
-    padding: 5px;
+
+    vertical-align: top;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.formcontrol input, .formcontrol select, .formcontrol textarea {
-    width: 90%;
-    display: block;
-    top: 0;
-    left: 0;
-    bottom: 0;
+.feedback {
     margin: 0;
-    padding: 7px 6px;
-    font-size: 12px;
-    font-weight: 300;
+    padding: 0;
 }
 
-.formcontrol input[type='radio'] {
+.formRequired {
+    margin: 0;
+    padding: 8px 3px 9px 3px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(200, 0, 0, .5);
+}
+
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+
+#sign {
+    padding: 5px 50px;
     display: inline-block;
-    width: 10%;
+    text-align: right;
 }
 
-.submit_btns {
-    margin: 0 auto 0 0;
-    float: right;
-    text-align: right;
+#sign>div {
+    vertical-align: middle;
+    display:inline-block;
+    margin: 5px 10px;
+    color: #cccccc;
+    font-size: 0.9em;
+}
+
+#appTitle {
+    text-transform: uppercase;
+    color: #cccccc;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#appVersion {
+    border-top: 1px solid rgba(150,150,150,.5);
+    color: rgba(150,150,150,.5);
+    margin-top: 0;
+    font-size: 0.9em;
+    font-weight: 200;
+}
+
+#colBar {
+    display: block;
+    width: 100%;
+    background: rgba(150,150,150,.5);
+    height: 30px;
 }
 
 /* Bodytext */
@@ -393,15 +486,15 @@ a#menu:hover {
 #footer {
     position: fixed;
     bottom: 0;
-    z-index: 10;
-    width: 100%;
-    padding: 10px;
     clear: both;
-    height: 25px;
-    text-align: center;
     vertical-align: middle;
-    margin: auto;
-    background-color: #555555;
+
+    z-index: 0;
+    width: 100%;
+    text-align: left;
+    margin: 20px auto;
+    background-color: rgba(50,50,50,1);
+    padding: 0;
 }
 
 /* Home */
@@ -1003,12 +1096,6 @@ a#menu:hover {
     font-size: 35px;
 }
 
-#sign {
-    text-align: right;
-    color: #cccccc;
-    font-size: 14px;
-}
-
 #warning {
     color: #990000;
     font-size: 13px; /* Set message font size  */
@@ -1128,90 +1215,3 @@ a#menu:hover {
     padding: 10px;
     background-color: rgba(127,127,127,.1);
 }
-
-/* *********************************************************************/
-/* Modal dialog box
-/* *********************************************************************/
-#lean_overlay {
-    position: fixed;
-    z-index:100;
-    top: 0;
-    left: 0;
-    height:100%;
-    width:100%;
-    background: #000;
-    display: none;
-}
-
-
-.action_btns {
-    display: inline-block;
-    width: 100%;
-    margin: 20px 0 10px;
-    clear: both;
-    text-decoration: none;
-    color:#ED6347;
-}
-
-#modal_trigger {
-    margin: 100px auto;
-    width: 100px;
-    display: block;
-}
-
-.error {
-    display: none;
-}
-
-.btn {padding:10px 20px; background: #F4F4F2;}
-.btn_red {background: #CF5151; color: #FFF;}
-
-.btn:hover {background: #E4E4E2;}
-.btn_red:hover {background: #BE4141;}
-
-a.btn {color:#666; text-align: center; text-decoration: none;}
-a.btn_red {color: #FFF;}
-
-.one_half {width:50%; display: block; float:left;}
-.one_half.last {width:45%; margin-left:5%; text-align: right;}
-
-/* Popup Styles*/
-.popupHeader {font-size:16px; font-weight: 300; text-transform: uppercase; color: #222;}
-.popupHeader {background: rgba(207,81,81,.8); position: relative; padding:10px 20px; border-bottom:1px solid #DDD; font-weight:bold;}
-.popupHeader .modal_close {position: absolute; right: 0; top:0; padding:10px 15px;
-    background: url('../images/delete.png') no-repeat center center;
-    background-size: 50% auto; cursor: pointer; color:#aaa; font-size:16px;}
-
-.popupBody {
-    max-height: 500px;
-    padding:20px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
-    -moz-box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
-    box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
-}
-
-
-/* Publication modal window */
-.popupContainer{
-    position:absolute;
-    width:400px;
-    height: auto;
-    left:400px;
-    top:30px;
-    background: #FFF;
-}
-
-.popupContainer .modal_section {
-    display: none;
-}
-
-.forgot_password {
-    display:block;
-    margin: 20px 0 10px;
-    clear: both;
-    text-align: center;
-    text-decoration: none;
-    color:#ED6347;}
-

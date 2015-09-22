@@ -21,15 +21,12 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 echo "
 
-<div id='modal' class='contact_container' style='display:none;'>
- <header class='popupHeader'>
- <span class='header_title'>Login</span>
- <span class='modal_close'><i class='fa fa-times'></i></span>
- </header>
+<div id='modal' class='modalContainer' style='display:none;'>
+    <section class='popupBody' style='display:inline-block'>
+        <div class='popupHeader'></div>
 
-    <section class='popupBody'>
-
-        <div class='modal_section' id='send_msg'>
+        <!-- Sign in section -->
+        <div class='modal_section' id='send_msg' data-title='Send a message'>
             <form method='post' action='' class='form' id='contact_form'>
                 <label for='name'>Your name</label><input type='text' name='name' id='contact_name' placeholder='Your name'><br>
                 <label for='mail'>E-mail</label><input type='text' name='mail' id='contact_mail' placeholder='Your email'><br>

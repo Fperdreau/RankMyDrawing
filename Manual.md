@@ -1,12 +1,44 @@
-RankMyDrawings: a web-based tool for assessing drawing accuracy
+# RankMyDrawings: a web-based tool for assessing drawing accuracy
+Version 1.3 | Copyright © 2014 Florian Perdreau
 
-Author: Florian Perdreau, Laboratoire Psychologie de la Perception, Paris, France.
+If you wish to use this tool in your research, please cite: 
+“Perdreau, F., & Cavanagh, P. (2014). Drawing skill is related to the efficiency of encoding object structure. *i-Perception*, *5*(2), 101–119.”
 
-Contact: [*fp@florianperdreau.fr*](mailto:fp@florianperdreau.fr)
+Summary
+=======
+1. [License](#license)
+2. [Introduction](#introduction)
+3. [System Requirements] (#system-requirements)
+4. [Installation](#installation)
+5. [Sections](#sections)
+6. [Registration](#registration-procedure)
 
-If you wish to use this tool in your research, please cite: “Perdreau, F., & Cavanagh, P. (2014). Drawing skill is related to the efficiency of encoding object structure. *i-Perception*, *5*(2), 101–119.”
+License:
+=======
+Copyright &copy; 2014 Florian Perdreau
 
-Description
+*RankMyDrawings* is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+*RankMyDrawings* is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
+
+External sources
+----------------
+*RankMyDrawings* also depends on several external free softwares:
+
+* PHPMailer, Copyright &copy; 2014 Marcus Bointon, licenced under the [LGPL 2.1 ](http://www.gnu.org/licenses/lgpl-2.1.html "LGPL 2.1").
+* html2text, Copyright &copy; 2010 Jevon Wright and others, licenced under the [LGPL 2.1 ](http://www.gnu.org/licenses/lgpl-2.1.html "LGPL 2.1").
+* TinyMCE Copyright &copy; Moxiecode Systems AB, licenced under the [LGPL 2.1 ](http://www.gnu.org/licenses/lgpl-2.1.html "LGPL 2.1").
+
+Introduction
 ===========
 
 RankMyDrawings is a web-based tool designed for helping researchers assessing their participants’ drawing accuracy. It uses an online ELO ranking system (Elo, 1978) that updates drawings’ rank according to their total number of wins against other drawings, the number of times they have been compared as well as their opponents’ current rank.
@@ -39,29 +71,46 @@ This probability is then used to compute the item a’s new score:
 
 \(\text{Scor}e_{a,\text{new}} = \text{Scor}e_{a,\text{prev}} + \frac{800}{2n}(W_{a} - p_{a}\left( \text{win} \right))\) (3)
 
-![](./media/image1.png)where *W* is the item’s outcome for the current comparison, a vs b, (*W* = 1 for a win, 0.5 for a draw, and 0 for a loss) and *n* is the number of previous comparisons for the item. These scores for each item reach a final value across all the comparisons made for that item across all the participants.
+![image1](./media/image1.png)
 
- Installation
-=============
+where *W* is the item’s outcome for the current comparison, a vs b, (*W* = 1 for a win, 0.5 for a draw, and 0 for a loss) and *n* is the number of previous comparisons for the item. These scores for each item reach a final value across all the comparisons made for that item across all the participants.
 
 System requirements
--------------------
+===================
 
-This web-based tool requires a dedicated server running PHP (v.5 or later), MySQL (SQLite) and PhPMyAdmin (v.5 or later).
+-   A web server running PHP 5.2 or later
 
-Preparation
------------
+-   MySQLi (5.0 or later)
 
-1.  Upload the archive content to a dedicated server using a FTP client (e.g. FileZilla).
+-   CRON table (on Linux servers) or scheduled tasks (on Microsoft Windows servers) *\*required for email notifications*
 
-2.  Make sure that you have the writing authorization for all the folders and files (set folders chmod to 0777 and files chmod to 0666).
+-   SMTP server (or a Google Mail account)
 
-3.  Go to your PhPMyAdmin interface and create a new database.
+Installation
+=============
 
-Online installer
-----------------
+Step 1: Upload files on the server
+----------------------------------
 
-In your favorite web-browser, go to the URL: [*http://yourwebsite/install.php*](http://yourwebsite/install.php) (replacing “yourwebsite” by your domain address; e.g: www.domainname.com/mywebsite/).
+### Using GIT
+
+Simply clone the Journal Club Manager repository (https://github.com/Fperdreau/rankmydrawings.git) at the root of your web-server.
+
+### Using FTP
+
+-   Upload the “rankmydrawings” folder to the root of your web-server using a FTP client (e.g. Filezilla).
+
+-   Make sure that you have the writing permissions for all the folders and files (set folders chmod to 0755 and files chmod to 0644).
+
+Step 2: Preparation of the database
+-----------------------------------
+
+Go to your SQL database interface (e.g. PhpMyAdmin) and create a new database (if you have the rights, however, ask your admin for the name of the database). That’s it!
+
+Step 3: Online installer
+------------------------
+
+In your favorite web-browser, go to the URL: <http://www.mydomain.com/jcm/install.php>.
 
 ### Step 1: Database information
 

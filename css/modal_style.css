@@ -19,7 +19,7 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* *********************************************************************/
-/* Global overlay */
+/* Modal dialog box
 /* *********************************************************************/
 #lean_overlay {
     position: fixed;
@@ -32,35 +32,76 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
     display: none;
 }
 
-/* *********************************************************************/
-/* Publication modal window*/
-/* *********************************************************************/
-.popupContainer{
-	position:absolute;
-	width:400px;
-	height: auto;
-	left:45%;
-	top:30px;
-	background: #FFF;
+/* Publication modal window */
+.modalContainer {
+    position:absolute;
+    padding: 0;
+    min-width: 300px;
+    width: 40%;
+    height: auto;
+    top:80px;
+}
+
+.modalContainer .modal_section {
+    display: none;
+    margin: 0;
+    width: auto;
+    position: relative;
+}
+
+.popupBody {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background: #FFF;
+    -webkit-box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
+    box-shadow: 0px 0px 1px 1px rgba(0,0,0,1);
+}
+
+.modal_section {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 500px;
+    padding: 0 10px;
+}
+
+/* Popup Styles*/
+.popupHeader {
+    font-size:1.2em;
+    font-weight: 500;
+    text-transform: uppercase;
+    border-bottom:1px solid #DDD;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
+
+.modal_close {
+    vertical-align: top;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top:0;
+    padding:10px 15px;
+    background: url('../images/close.png') no-repeat;
+    background-position: center center;
+    background-size: 50% auto;
+    cursor: pointer;
+    color:#aaa;
+    font-size:1.2em;
 }
 
 .action_btns {
-	display: inline-block;
-	width: 100%;
-	margin: 20px 0 10px;
-	clear: both;
-	text-decoration: none;
-	color:#ED6347;
-}
-
-#modal_trigger {}
-
-.error {
-    display: none;
+    width: 100%;
+    display: inline-block;
+    margin: 20px 0 10px;
+    clear: both;
+    text-decoration: none;
+    color:#ED6347;
 }
 
 .btn {padding:10px 20px; background: #F4F4F2;}
-.btn_red {background: #CF5151; color: #FFF;}
+.btn_red {background: rgba(207,81,81,1); color: #FFF;}
 
 .btn:hover {background: #E4E4E2;}
 .btn_red:hover {background: #BE4141;}
@@ -69,72 +110,11 @@ a.btn {color:#666; text-align: center; text-decoration: none;}
 a.btn_red {color: #FFF;}
 
 .one_half {width:50%; display: block; float:left;}
-.one_half.last {width:45%; margin-left:5%;}
+.one_half.last {width:45%; margin-left:5%; text-align: right;}
 
-/* Popup Styles*/
-.popupHeader {font-size:16px; text-transform: uppercase;}
-.popupHeader {background:#F4F4F2; position:relative; padding:10px 20px; border-bottom:1px solid #DDD; font-weight:bold;}
-.popupHeader .modal_close {position: absolute; right: 0; top:0; padding:10px 15px; background:#E4E4E2; cursor: pointer; color:#aaa; font-size:16px;}
-
-.popupBody {padding:20px;}
-
-/* User Login Form */
-.user_login {display: none;}
-.user_login label {display: block; margin-bottom:5px;}
-.user_login input[type="text"], .user_login input[type="email"], .user_login input[type="password"] {display: block; width:90%; padding: 10px; border:1px solid #DDD; color:#666;}
-.user_login input[type="checkbox"] {float:left; margin-right:5px;}
-.user_login input[type="checkbox"]+label {float:left;}
-
-.user_login .checkbox {margin-bottom: 10px; clear: both; overflow: hidden;}
 .forgot_password {
-	display:block;
-	margin: 20px 0 10px;
-	clear: both;
-	text-align: center;
-	text-decoration: none;
-	color:#ED6347;}
-
-/* change password Form */
-.user_changepw {display: none;}
-.user_changepw label {display: block; margin-bottom:5px;}
-.user_changepw input[type="text"], .user_changepw input[type="email"], .user_changepw input[type="password"] {display: block; width:90%; padding: 10px; border:1px solid #DDD; color:#666;}
-.user_changepw input[type="checkbox"] {float:left; margin-right:5px;}
-.user_changepw input[type="checkbox"]+label {float:left;}
-.user_changepw .checkbox {margin-bottom: 10px; clear: both; overflow: hidden;}
-
-/* *********************************************************************/
-/* Item modal window*/
-/* *********************************************************************/
-
-.item_popupContainer{
-    position:absolute;
-    width:800px;
-    height: auto;
-    left:45%;
-    top:80px;
-    background: #FFF;
+    margin: 10px auto 10px auto;
+    text-align: center;
+    text-decoration: none;
+    color:#ED6347;
 }
-
-/* publication form */
-.item_description {display: none;}
-.item_delete {display: none;}
-
-/* *********************************************************************/
-/* Contact modal window*/
-/* *********************************************************************/
-.contact_container {
-    position:absolute;
-    width:800px;
-    height: auto;
-    left:45%;
-    top:80px;
-    background: #FFF;
-}
-
-/* change password Form */
-.send_msg {display: none;}
-.send_msg label {display: block; margin-bottom:5px;}
-.send_msg input[type="text"], .send_msg input[type="email"], .send_msg input[type="password"] {display: block; width:90%; padding: 10px; border:1px solid #DDD; color:#666;}
-.send_msg input[type="checkbox"] {float:left; margin-right:5px;}
-.send_msg input[type="checkbox"]+label {float:left;}
-.send_msg .checkbox {margin-bottom: 10px; clear: both; overflow: hidden;}

@@ -30,13 +30,10 @@ require('includes/boot.php');
         <META NAME="keywords" CONTENT="Journal Club">
         <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link type='text/css' rel='stylesheet' href="css/stylesheet.css"/>
-        <link type='text/css' rel='stylesheet' href="css/jquery-ui.css"/>
-        <link type='text/css' rel='stylesheet' href="css/jquery-ui.theme.css"/>
         <link type="text/css" rel="stylesheet" href="css/modal_style.css" />
 
         <!-- JQuery -->
         <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
-        <script type="text/javascript" src="js/jquery.leanModal.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
 
         <title><?php $AppConfig->sitetitle ?></title>
@@ -45,8 +42,6 @@ require('includes/boot.php');
     <body class="mainbody">
         <div class='warningmsg' style='position: fixed; display: none; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background-color: #550000; color: #EEEEEE;'><input type='button' id='submit'></div>
 
-        <?php require(PATH_TO_PAGES.'modal.php'); ?>
-
         <div id="mainheader">
             <!-- Header section -->
             <?php require(PATH_TO_PAGES.'page_header.php'); ?>
@@ -54,29 +49,27 @@ require('includes/boot.php');
 
         <!-- Core section -->
         <div class="core">
-        	<div id="loading"></div>
-        	<div id="pagecontent"></div>
+            <?php require(PATH_TO_PAGES.'modal.php'); ?>
+            <div id="pagecontent"></div>
         </div>
 
         <!-- Footer section -->
-        <div id="footer">
-            <span id="sign"><?php echo "<a href='$AppConfig->repository' target='_blank'>$AppConfig->app_name $AppConfig->version</a>
-             | <a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3 </a>
-             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></span>
-        </div>
+        <footer id="footer">
+            <div id="colBar"></div>
+            <div id="appTitle"><?php echo $AppConfig->app_name; ?></div>
+            <div id="appVersion">Version <?php echo $AppConfig->version; ?></div>
+            <div id="sign">
+                <div><?php echo "<a href='$AppConfig->repository' target='_blank'>Sources</a></div>
+                <div><a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3</a></div>
+                <div><a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></div>
+            </div>
+        </footer>
 
         <!-- Bunch of jQuery functions -->
         <script type="text/javascript" src="js/index.js"></script>
-
-        <!-- TinyMce (Rich-text textarea) -->
-        <script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
-        <!-- mini upload form plugin -->
-        <link type="text/css" href="js/mini-upload-form/assets/css/style.css" rel="stylesheet" />
-        <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.knob.js"></script>
-        <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.ui.widget.js"></script>
-        <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.iframe-transport.js"></script>
-        <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.fileupload.js"></script>
-        <script  type="text/javascript" src="js/mini-upload-form/assets/js/script.js"></script>
-
+        <script type="text/javascript" src="js/form.js"></script>
+        <script type="text/javascript" src="js/plugins.js"></script>
+        <script type="text/javascript" src="js/Myupload.js"></script>
+        <script type="text/javascript" src="js/jquery.leanModal.js"></script>
     </body>
 </html>
