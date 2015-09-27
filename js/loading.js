@@ -21,7 +21,6 @@
  * along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * Parse url and get page content accordingly
  * @param page

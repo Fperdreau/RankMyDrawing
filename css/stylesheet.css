@@ -624,18 +624,12 @@ section>div {
     display: inline-block;
 }
 
-.half_section {
-}
-
 .half_section>div{
     vertical-align: top;
 }
 
 .section_left {
     margin-right: 20px;
-}
-
-.section_right {
 }
 
 .row_container {
