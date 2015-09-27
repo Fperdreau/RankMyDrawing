@@ -1,1 +1,1 @@
-<?php $config = array("version" => "v1.2.5","host" => "localhost","username" => "root","passw" => "","dbname" => "test","dbprefix" => "rmd"); ?>
+<?php $config = array("version" => "1.3","host" => "localhost","username" => "root","passw" => "","dbname" => "test","dbprefix" => "rmd"); ?>

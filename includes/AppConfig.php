@@ -37,7 +37,7 @@ class AppConfig extends AppTable {
      */
     public $status = 'On';
     public $app_name = "RankMyDrawings";
-    public $version = "v1.2.5";
+    public $version = "1.3";
     public $author = "Florian Perdreau";
     public $repository = "https://github.com/Fperdreau/RankMyDrawings";
     public $sitetitle = "RankMyDrawings";

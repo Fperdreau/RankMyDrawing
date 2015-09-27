@@ -382,7 +382,7 @@ header .headerbox {
     cursor: pointer;
     box-sizing: border-box;
     line-height: 28px;
-    font-size: 15px;
+    font-size: 13px;
     width: 75px;
     text-transform: uppercase;
 }
@@ -756,15 +756,23 @@ h3 {
 /* Instructions
 /* *********************************************************************/
 .instructions {
-    display: table-cell;
-    width: 30%;
-    vertical-align: middle;
+    display: inline-block;
+    width: 35%;
+    min-width: 300px;
+    vertical-align: top;
 }
 
 .example {
-    display: table-cell;
-    padding: 50px;
+    vertical-align: top;
+    display: inline-block;
+    padding-left: 20px;
     width: 50%;
+    min-width: 250px;
+    box-sizing: border-box;
+}
+
+.example>img {
+    width: 100%;
 }
 
 .start_btn {

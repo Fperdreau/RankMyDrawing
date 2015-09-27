@@ -35,7 +35,7 @@ $result = "
     <h2>Instructions</h2>
     <div class='instructions'>$instruction</div>
     <div class='example'>
-        <img src='$exampleurl' style='width: 500px'>
+        <img src='$exampleurl'>
     </div>
 	<div id='submit' class='start_btn' data-user='$user->userid' data-ref='$ref->file_id'>Start</div>
 </section>

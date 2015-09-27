@@ -320,7 +320,7 @@ if (!empty($_POST['getpagecontent'])) {
                 <p>Hello</p>
                 <p>The current version of <i>RankMyDrawings</i> installed here is $version. You are about to install the version $new_version.</p>
                 <p>You can choose to either do an entirely new installation by clicking on 'New installation' or to simply update your current version to the new one by clicking on 'Update'.</p>
-                <p id='warning'>Please, be aware that choosing to perform a new installation will completely erase all the data present in your <i>Journal Club Manager</i> database!!</p>
+                <p id='warning'>Please, be aware that choosing to perform a new installation will completely erase all the data present in your <i>RankMyDrawings</i> database!!</p>
                 <p style='text-align: center'>
                 <input type='button' value='New installation'  class='start' data-op='new'>
                 <input type='button' value='Update' class='start' data-op='update'>
