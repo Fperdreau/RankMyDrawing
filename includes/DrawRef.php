@@ -72,13 +72,24 @@ class DrawRef extends AppTable {
     public function make($file_id,$file) {
         $this->file_id = $file_id;
 
-        // Make folders
-        $result = self::make_folders();
-        if ($result == false) {
+        // First, check uploads
+        $result['error'] = $this->checkupload($file);
+        if ($result['error'] != true) {
             return $result;
         }
 
-        $this->filename = self::upload($file);
+        // Make folders
+        $result = self::make_folders();
+        if ($result['error'] == false) {
+            return $result;
+        }
+
+        $result = self::upload($file);
+        if ($result['error'] !== true) {
+            return $result;
+        }
+
+        $this->filename = $result['status'];
         $this->date = date('Y-m-d H:i:s');
         $this->drawlist = self::get_refdrawinglist("filename");
         $this->nb_draw = count($this->drawlist);
@@ -91,8 +102,32 @@ class DrawRef extends AppTable {
         // Create corresponding tables
         self::create_reftable();
         self::get($this->file_id);
-        return $this->filename;
+
+        return $result;
 	}
+
+    /**
+     * Validate upload
+     * @param $file
+     * @return bool|string
+     */
+    private function checkupload($file) {
+        // Check $_FILES['upfile']['error'] value.
+        if ($file['error'][0] != 0) {
+            switch ($file['error'][0]) {
+                case UPLOAD_ERR_OK:
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    return "No file to upload";
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    return 'File Exceeds size limit';
+                default:
+                    return "Unknown error";
+            }
+        }
+        return true;
+    }
 
     /**
      * Create picture folders corresponding to this reference drawing
@@ -102,30 +137,31 @@ class DrawRef extends AppTable {
         $ref_directory = PATH_TO_IMG."$this->file_id/";
         $img_directory = PATH_TO_IMG."$this->file_id/img/";
         $thumb_directory = PATH_TO_IMG."$this->file_id/thumb/";
+        $result['error'] = true;
         if (!is_dir($ref_directory)) {
             if (!mkdir($ref_directory)) {
-                echo json_encode("Failed to create $ref_directory");
-                return false;
+                $result['error'] = false;
+                $result['status'] = "Failed to create $ref_directory";
             }
         }
         chmod($ref_directory,0755);
 
         if (!is_dir($img_directory)) {
             if (!mkdir($img_directory)) {
-                echo json_encode("Failed to create $img_directory");
-                return false;
+                $result['error'] = false;
+                $result['status'] = "Failed to create $img_directory";
             }
         }
         chmod($img_directory,0755);
 
         if (!is_dir($thumb_directory)) {
             if (!mkdir($thumb_directory)) {
-                echo json_encode("Failed to create $thumb_directory");
-                return false;
+                $result['error'] = false;
+                $result['status'] = "Failed to create $thumb_directory";
             }
         }
         chmod($thumb_directory,0755);
-        return true;
+        return $result;
     }
 
     /**
@@ -135,20 +171,17 @@ class DrawRef extends AppTable {
      * @return string
      */
     public function update($post,$file_id=null) {
+        $post = self::sanitize($post);
 
         if (null!=$file_id) {
-            $this->$file_id = $file_id;
-        } elseif (array_key_exists('id',$post)) {
-            $this->$file_id = $_POST['id'];
+            $this->file_id = $file_id;
+        } elseif (array_key_exists('refid',$post)) {
+            $this->file_id = $post['refid'];
         }
 
         $class_vars = get_class_vars("DrawRef");
         $content = $this->parsenewdata($class_vars,$post,array('drawlist'));
-        if ($this->db->updatecontent($this->tablename,$content,array("file_id"=>$this->file_id))) {
-            return 'updated';
-        } else {
-            return false;
-        }
+        return $this->db->updatecontent($this->tablename,$content,array("file_id"=>$this->file_id));
     }
 
     /**
@@ -243,10 +276,10 @@ class DrawRef extends AppTable {
      * @return string
      */
     function upload($file) {
-
-		if (isset($file['tmp_name']) && !empty($file['name'])) {
-            $tmp = htmlspecialchars($file['tmp_name']);
-            $splitname = explode(".", strtolower($file['name']));
+        $result['status'] = false;
+        if (isset($file['tmp_name'][0]) && !empty($file['name'][0])) {
+            $tmp = htmlspecialchars($file['tmp_name'][0]);
+            $splitname = explode(".", strtolower($file['name'][0]));
             $extension = end($splitname);
 
 			$img_directory = PATH_TO_IMG."$this->file_id/img/";
@@ -258,17 +291,21 @@ class DrawRef extends AppTable {
 
             if (upload_img($tmp,$img_directory,$newname)) {
                 if (upload_thumb($newname,$img_directory,$thumb_directory,100)) {
-                    return $newname;
+                    $result['status'] = $newname;
+                    $result['error'] = true;
                 } else {
-                    return "thumb not uploaded";
+                    $result['error'] = false;
+                    $result['status'] = "thumb not uploaded";
                 }
             } else {
-                return "file not uploaded";
+                $result['error'] = false;
+                $result['status'] = "file not uploaded";
             }
         } else {
-            $newname = "no_file";
-            return $newname;
+            $result['error'] = false;
+            $result['status'] = "No file to upload";
         }
+        return $result;
 	}
 
     /**
@@ -461,24 +498,23 @@ class DrawRef extends AppTable {
             foreach ($drawlist as $id) {
                 $item = new Ranking($this->db,$this->file_id,$id);
                 $thumb_url = "../images/$item->refid/thumb/thumb_$item->filename";
-                $del_url = "../images/delete.png";
                 $content .= "
                     <div class='item' id='item_$item->file_id'>
                         <div style='font-size: 12px; float: left;'>Score: $item->score</div>
                         <div class='delete_btn_item' id='$item->file_id' data-item='$item->refid'>
-                            <img src='$del_url' alt='Delete $item->file_id' style='width: 10px; height: 10px;'>
                         </div>
-                        <div class='thumb'>
-                            <a rel='item_leanModal' id='modal_trigger_showitem' href='#item_modal' class='modal_trigger' data-ref='$item->refid' data-item='$item->file_id'><img src='$thumb_url' class='thumb' alt='$item->file_id'></a>
+                        <div class='thumb leanModal' data-modal='item_modal' data-section='item_description' data-ref='$item->refid' data-item='$item->file_id'>
+                            <img src='$thumb_url' class='thumb' alt='$item->file_id'>
                         </div>
                     </div>
                 ";
             }
         } else {
-            $content = "<span id='warning'>There are no items for this reference drawing yet</span>";
+            $content = "<span class='upload_msg'>There are no items for this reference drawing yet</span>";
         }
 
-        $result = "<div class='upl_container' id='$this->file_id'>
+        $result = "
+            <div class='upl_container' id='$this->file_id'>
                <div class='upl_form'>
                     <form method='post' enctype='multipart/form-data'>
                         <input type='file' name='item,$this->file_id'  class='upl_input' id='$this->file_id' multiple style='display: none;' />
@@ -495,41 +531,127 @@ class DrawRef extends AppTable {
         return $result;
     }
 
+    /**
+     * showSettings()
+     * Generate HTML and Display reference's settings
+     * @return string
+     */
+    public function showSettings() {
+        $this->max_nb_pairs = ($this->nb_draw > 0) ? factorial($this->nb_draw)/(factorial($this->nb_draw-2)*factorial(2)):0;
+        $inst_langs = $this->get_content('instruction');
+
+        // Get installed languages
+        $option_content = "";
+        foreach ($inst_langs as $lang=>$content) {
+            $option_content .= "<option value='$lang'>$lang</option>";
+        }
+
+        // Generate HTML
+        $result = "
+        <div class='refdraw-param'>
+            <div class='section_param'>
+                <form id='ref_settings'>
+                    <input type='hidden' name='mod_ref_params' value='true'/>
+                    <input type='hidden' name='refid' value='$this->file_id'>
+
+                    <div class='formcontrol'>
+                        <label for='initial_score' class='label'>Initial Elo score</label>
+                        <input type='text' name='initial_score' value='$this->initial_score' required/>
+                        <span id='info'>Modifying this value will result in the recomputation of all items' score</span>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='nb_pairs' class='label'>Number of trials</label>
+                        <input type='text' name='nb_pairs' value='$this->nb_pairs' max='$this->max_nb_pairs'/>
+                        <span id='info'>Max number: $this->max_nb_pairs</span>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='max_nb_users' class='label'>Max number of users</label>
+                        <input type='text' name='max_nb_users' value='$this->max_nb_users' required min='0' max='$this->max_nb_users'/>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='status' class='label'>Status</label>
+                        <select name='status' data-ref='$this->file_id'>
+                            <option value='$this->status' selected>$this->status</option>
+                            <option value='on'>on</option>
+                            <option value='off'>off</option>
+                        </select>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='filter' class='label'>Filter user</label>
+                        <select name='filter' data-ref='$this->file_id'>
+                            <option value='$this->filter' selected>$this->filter</option>
+                            <option value='on'>on</option>
+                            <option value='off'>off</option>
+                        </select>
+                    </div>
+                    <div class='submit_btns'>
+                        <input type='submit' class='processform' />
+                        <div class='feedback_params'></div>
+                    </div>
+                </form>
+            </div>
+
+            <div class='section_param'>
+                <div class='section_param-header'>Instructions & Consent form</div>
+                <div class='feedback_content'></div>
+                <div class='formcontrol'>
+                    <label for='lang'>Language</label>
+                    <select class='select_lang' id='$this->file_id' data-type='instruction'>
+                        <option value='' selected></option>
+                        <option value='add' style='background-color: #dddddd;'>Add</option>
+                        $option_content
+                    </select>
+                </div>
+                <div class='lang_label'></div>
+                    <div class='formcontrol'>
+                       <label class='label'>Instructions</label>
+                        <div class='instruction'></div>
+                    </div>
+                    <div class='formcontrol'>
+                        <label class='label'>Consent form</label>
+                        <div class='consent'></div>
+                    </div>
+                    <div class='refdraw-submit-div'></div>
+                </div>
+            </div>
+        </div>
+        ";
+        return $result;
+    }
+
     public function showDetails() {
         $itemlist = $this->displayitems();
-
         $imgurl = "../images/$this->file_id/thumb/thumb_$this->filename";
 
         $sort_option =  "
-                <label for='order'>Sort by</label>
-	            <select name='order' class='sortitems' data-ref='$this->file_id'>
-	            	<option value='' selected></option>
-	            	<option value='score'>Score</option>
-	            	<option value='file_id'>File ID</option>
-	            	<option value='nb_occ'>Number of users</option>
-	        	</select>";
+                <div class='formcontrol'>
+                    <label for='order'>Sort</label>
+                    <select name='order' class='sortitems' data-ref='$this->file_id'>
+                        <option value='' selected></option>
+                        <option value='score'>Score</option>
+                        <option value='file_id'>File ID</option>
+                        <option value='nb_occ'>Number of users</option>
+                    </select>
+	        	</div>";
 
         $content = "
-	    <div class='refdraw-div' id='$this->file_id'>
+	    <section class='refdraw-div' id='$this->file_id'>
 
-	        <div style='width: 100%; margin: auto;'>
+	        <div class='refdraw-header'>
+                <div class='refdraw-delbutton' data-ref='$this->file_id'></div>
                 <div class='refdraw-name'>$this->file_id</div>
-                <div class='refdraw-delbutton'>
-                <input type='submit' value='Delete' id='submit' data-ref='$this->file_id' class='deleteref'/>
-                </div>
+                <div class='refdraw-settings leanModal' data-modal='modal' data-section='item_settings' data-ref='$this->file_id'></div>
 	        </div>
 
 	        <div class='refdraw-content'>
+
                 <div class='refdraw-desc'>
-                    <div class='refdraw-thumb'>
-                        <img src='$imgurl' class='ref-thumb'>
+                      <div class='refdraw-thumb' style='background: url($imgurl) no-repeat; background-size: 100% 100%;'>
+                        <div class='item_caps' style='width: 80%; text-align: left;'>
+                            <span style='color:#CF5151; font-weight: bold;'>Number of drawings: </span>$this->nb_draw<br>
+                            <span style='color:#CF5151; font-weight: bold;'>Number of users: </span>$this->nb_users<br>
+                        </div>
                     </div>
-
-                    <div class='refdraw-info'>
-                        <p>Number of drawings: $this->nb_draw</p>
-                        <p>Number of users: $this->nb_users</p>
-                    </div>
-
                 </div>
 
                 <div class='refdraw-half'>
@@ -538,7 +660,7 @@ class DrawRef extends AppTable {
                 </div>
             </div>
 
-	    </div>";
+	    </section>";
         return $content;
     }
 

@@ -31,26 +31,31 @@ foreach ($refdrawlist as $cur_refdraw) {
 }
 
 $result = "
-    <div id='content'>
-		<span id='pagename'>Admin tools</span>
-        <div class='section_header'>Tools</div>
+    <div id='section_container'>
         <div class='section_content'>
+            <h2>Tools</h2>
         	<div id='exportdb'>
-                <label for='export'>Export Database in XLS</label>
-                <select class='exportdb'>
-                    <option value='' selected>Select a database</option>
-                    $optioncontent
-                </select>
-            </div><br>
+        	    <div class='formcontrol'>
+                    <label for='export'>Export Database in XLS</label>
+                    <select class='exportdb'>
+                        <option value='' selected>Select a database</option>
+                        $optioncontent
+                    </select>
+                </div>
+            </div>
 
             <div id='dbbackup'>
-            <label for='backup'>Backup databases</label>
-            <input type='button' name='backup' value='Proceed' id='submit' class='backup' data-op='dbbackup'/>
+                <div class='formcontrol'>
+                    <label for='backup'>Backup databases</label>
+                    <input type='button' name='backup' value='Proceed' id='submit' class='backup' data-op='dbbackup'/>
+                </div>
             </div><br>
 
             <div id='fullbackup'>
-            <label for='full_backup'>Full backup (all databases + files)</label>
-            <input type='button' name='full_backup' value='Proceed' id='submit' class='backup' data-op='fullbackup'/>
+                <div class='formcontrol'>
+                    <label for='full_backup'>Full backup (all databases + files)</label>
+                    <input type='button' name='full_backup' value='Proceed' id='submit' class='backup' data-op='fullbackup'/>
+                </div>
             </div>
 
         </div>

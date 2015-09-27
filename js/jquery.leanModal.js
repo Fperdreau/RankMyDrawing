@@ -49,7 +49,7 @@
                 $(this).click(function(e){
                     var overlayEL = $('#lean_overlay');
                     var modal_id = $(this).data("modal");
-                    modal_id = (modal_id === undefined) ? '#modal':modal_id; // Define default DOM target
+                    modal_id = (modal_id === undefined) ? '#modal':'#'+modal_id; // Define default DOM target
                     var section = $(this).data('section');
 
                     overlayEL.click(function(){
@@ -114,8 +114,35 @@ function show_section(sectionid,modalid) {
     });
 }
 
+/**
+ * adaptSize()
+ * Responsive design: Adapt modal window size to document size
+ */
+function adaptSize() {
+    var winWidth = $(window).width();
+
+    var modal = $(".modalContainer");
+    var modalWidth = modal.outerWidth();
+    var modalMargin = (modalWidth<winWidth) ? modalWidth/2:0;
+    var modalLeft = (modalWidth<winWidth) ? 50:0;
+    modal
+        .css({
+            'margin-left':-modalMargin+'px',
+            'left':modalLeft+'%'});
+}
+
 $(document).ready(function() {
+
+    $(window).resize(function () {
+        adaptSize();
+    });
+    
     $('body')
+        
+        .ready(function () {
+            adaptSize();
+        })
+
         // Bind leanModal to triggers
         .on('mouseover',".leanModal",function(e) {
             e.preventDefault();

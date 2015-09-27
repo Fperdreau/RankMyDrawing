@@ -24,65 +24,84 @@ require('../includes/boot.php');
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
     <head>
+        <META NAME="viewport" CONTENT="width=device-width, target-densitydpi=device-dpi, initial-scale=1.0, user-scalable=yes">
+
         <META http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <META NAME="description" CONTENT="Journal Club Manager. Organization. Submit or suggest a presentation. Archives.">
         <META NAME="keywords" CONTENT="Journal Club">
         <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link type='text/css' rel='stylesheet' href="../css/stylesheet.css"/>
-        <link type='text/css' rel='stylesheet' href="../css/jquery-ui.css"/>
-        <link type='text/css' rel='stylesheet' href="../css/jquery-ui.theme.css"/>
         <link type="text/css" rel="stylesheet" href="../css/modal_style.css" />
+        <link type="text/css" rel="stylesheet" href="js/myupload/uploader.css" />
 
         <!-- JQuery -->
         <script type="text/javascript" src="../js/jquery-1.11.1.js"></script>
-        <script type="text/javascript" src="../js/jquery.leanModal.min.js"></script>
         <script type="text/javascript" src="../js/jquery-ui.js"></script>
+        <script type="text/javascript" src="js/loading.js"></script>
 
         <title><?php $AppConfig->sitetitle ?></title>
     </head>
 
     <body class="mainbody">
-    <?php require('pages/modal.php'); ?>
 
-    <div id="mainheader">
-        <!-- Header section -->
-        <?php require('pages/page_header.php'); ?>
-    </div>
-
-    <!-- Menu section -->
-    <div class='menu'>
-        <?php require('pages/page_menu.php'); ?>
-    </div>
-
-    <!-- Core section -->
-    <div class="core">
-        <div id="loading"></div>
-        <div id="pagecontent">
+        <!-- Menu section -->
+        <div class='sideMenu' id='off'>
+            <nav>
+                <ul>
+                    <li><a href='index.php?page=admininfo' class='menu-section' id='admininfo'>Admin Info</a></li>
+                    <li><a href='index.php?page=export' class='menu-section' id='export'>Export</a></li>
+                    <li><a href='index.php?page=management' class='menu-section' id='management'>Drawing Management</a></li>
+                    <li><a href='index.php?page=application' class='menu-section' id='application'>Settings</a></li>
+                </ul>
+            </nav>
         </div>
-    </div>
 
-    <!-- Footer section -->
-    <div id="footer">
-            <span id="sign"><?php echo "<a href='$AppConfig->repository' target='_blank'>$AppConfig->app_name $AppConfig->version</a>
-             | <a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3 </a>
-             | <a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></span>
-    </div>
+        <header>
+            <div class='menu_btn'></div>
+            <div id='sitetitle'>
+                <span style="color: rgba(68, 68, 68, 1);">Rank</span><!--
+                    --><span style="color: rgba(255, 255, 255, 1);">My</span><!--
+                    --><span style="color: rgba(68, 68, 68, 1);">Drawings</span>
+            </div>
 
-    <!-- Bunch of jQuery functions -->
-    <script type="text/javascript" src="../js/index.js"></script>
-    <script type="text/javascript" src="js/admin.js"></script>
+            <?php
+            if (!isset($_SESSION['logok']) || !$_SESSION['logok']) {
+                $showlogin = "<div class='leanModal headerbox' id='user_login' data-section='user_login'>LogIn</div>";
+            } else {
+                $showlogin = "<div class='headerbox' id='logout'>LogOut</div>";
+            }
+            echo $showlogin;
+            ?>
+        </header>
 
-    <!-- TinyMce (Rich-text textarea) -->
-    <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
-    <script type="text/javascript" src="../js/Myupload.js"></script>
+        <!-- Core section -->
+        <div id="core">
+            <?php require('pages/modal.php'); ?>
+            <div id="pagecontent"></div>
+        </div>
 
-    <!-- mini upload form plugin -->
-    <link type="text/css" href="js/mini-upload-form/assets/css/style.css" rel="stylesheet" />
-    <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.knob.js"></script>
-    <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.ui.widget.js"></script>
-    <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.iframe-transport.js"></script>
-    <script  type="text/javascript" src="js/mini-upload-form/assets/js/jquery.fileupload.js"></script>
-    <script  type="text/javascript" src="js/mini-upload-form/assets/js/script.js"></script>
+        <!-- Footer section -->
+        <footer id="footer">
+            <div id="colBar"></div>
+            <div id="appTitle"><?php echo $AppConfig->app_name; ?></div>
+            <div id="appVersion">Version <?php echo $AppConfig->version; ?></div>
+            <div id="sign">
+                <div><?php echo "<a href='$AppConfig->repository' target='_blank'>Sources</a></div>
+                    <div><a href='http://www.gnu.org/licenses/agpl-3.0.html' target='_blank'>GNU AGPL v3</a></div>
+                    <div><a href='http://www.florianperdreau.fr' target='_blank'>&copy2014 $AppConfig->author</a>" ?></div>
+            </div>
+        </footer>
+
+        <!-- Bunch of jQuery functions -->
+        <script type="text/javascript" src="js/admin.js"></script>
+        <script type="text/javascript" src="../js/form.js"></script>
+        <script type="text/javascript" src="../js/jquery.leanModal.js"></script>
+
+        <!-- TinyMce (Rich-text textarea) -->
+        <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
+
+        <!-- MyUploads -->
+        <script type="text/javascript" src="js/myupload/Myupload.js"></script>
 
     </body>
 </html>

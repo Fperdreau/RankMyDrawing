@@ -24,24 +24,46 @@ require_once('../includes/includes.php');
 check_login();
 $user = new Users($db,$_SESSION['username']);
 $result = "
-    <div id='content'>
-    <span id='pagename'>Admin Information</span>
-        <form method='post' action=''>
-            <label for='username' class='label'>Username</label><input type='text' name='username' id='ch_username' value='$user->username'/><br>
-            <label for='email' class='label'>Email</label><input type='text' name='email' id='ch_email' value='$user->email'/><br>
-            <p style='text-align: right'><input type='submit' value='Apply' name='submit' id='submit' class='change_admininfo'/></p>
+    <section>
+    <h2>Admin Information</h2>
+        <form id='admin_info'>
+            <input type='hidden' name='mod_admininfo' value='true'/>
+            <div class='formcontrol'>
+                <label for='username' class='label'>Username</label>
+                <input type='text' name='username' value='$user->username'/>
+            </div>
+            <div class='formcontrol'>
+                <label for='email' class='label'>Email</label>
+                <input type='email' name='email' value='$user->email'/>
+            </div>
+            <div class='submit_btns'>
+               <input type='submit' value='Apply' name='submit' class='processform'/>
+            </div>
+        </form>
 
-            <input type='button' value='Modify password' class='change_pwd' id='submit' />
+        <form id='admin_pwd'>
+            <input type='hidden' name='conf_changepw' value='true' />
+            <input type='hidden' name='username' value='$user->username' />
+            <input type='button' value='Modify password' class='change_pwd' /><br>
             <div class='change_pwd_form' style='display: none;'>
-                <label for='ch_oldpassword' class='label'>Old Password</label><input type='password' id='ch_oldpassword' name='ch_oldpassword' value=''/><br>
-            	<label for='new_password' class='label'>New Password</label><input type='password' id='ch_password' name='new_password' value=''/></br>
-            	<label for='new_conf_password' class='label'>Confirm new Password</label><input type='password' id='ch_conf_password' name='new_password' value=''/>
-	            <p style='text-align: left'><input type='submit' name='submit' id='submit' value='Modify' class='conf_changepw'/></p>
+                <div class='formcontrol'>
+                    <label for='old_password' class='label'>Old Password</label>
+                    <input type='password' name='old_password' value='' required/>
+                </div>
+                <div class='formcontrol'>
+            	    <label for='new_password' class='label'>New Password</label>
+            	    <input type='password' name='password' value='' required/>
+                </div>
+                <div class='formcontrol'>
+            	    <label for='new_conf_password' class='label'>Confirm new Password</label>
+            	    <input type='password' name='conf_password' value='' required/>
+                </div>
+	            <p style='text-align: left'><input type='submit' name='submit' value='Modify' class='processform'/></p>
             </div>
         </form>
         <div class='feedback'></div>
         <br/>
-    </div>
+    </section>
 ";
 
 echo json_encode($result);

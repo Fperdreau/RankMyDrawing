@@ -1,46 +1,47 @@
 <?php
-/*
-Copyright © 2014, F. Perdreau, Radboud University Nijmegen
-=======
-This file is part of RankMyDrawings.
+/**
+ * File for class Uploads and class Media
+ *
+ * PHP version 5
+ *
+ * @author Florian Perdreau (fp@florianperdreau.fr)
+ * @copyright Copyright (C) 2014 Florian Perdreau
+ * @license <http://www.gnu.org/licenses/agpl-3.0.txt> GNU Affero General Public License v3
+ *
+ * This file is part of Journal Club Manager.
+ *
+ * Journal Club Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Journal Club Manager is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-RankMyDrawings is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+class Uploads {
 
-RankMyDrawings is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
-class Uploads extends AppTable{
-
-    protected $table_data = array(
-        "id" => array("INT NOT NULL AUTO_INCREMENT", false),
-        "date" => array('DATETIME', false),
-        "fileid" => array('CHAR(20)', false),
-        "filename" => array('CHAR(20)', false),
-        "presid" => array('CHAR(20)', false),
-        "type" => array('CHAR(5)', false),
-        "primary" => 'id');
     protected $directory;
     protected $maxsize;
     protected $allowed_types;
+    public $presid;
+    public $fileid;
+    public $date;
+    public $filename;
+    public $type;
 
     /**
      * Constructor
      * @param AppDb $db
      */
     function __construct(AppDb $db) {
-        parent::__construct($db, 'Media', $this->table_data);
         $config = new AppConfig($db);
-        $this->directory = PATH_TO_APP.'/uploads/';
+        $this->directory = PATH_TO_APP.'/images/';
         $this->maxsize = $config->upl_maxsize;
         $this->allowed_types = explode(',',$config->upl_types);
 
@@ -51,93 +52,16 @@ class Uploads extends AppTable{
     }
 
     /**
-     * Delete all files corresponding to the actual presentation
-     * @return bool
-     */
-    public function delete_files($presid) {
-        $sql = "SELECT fileid FROM $this->tablename WHERE presid='$presid'";
-        $req = $this->db->send_query($sql);
-        while ($row=mysqli_fetch_assoc($req)) {
-            $up = new Media($this->db, $row['fileid']);
-            $result = $up->delete();
-            if ($result !== true) {
-                return $result;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Get uploades associated to a presentation
-     * @param $presid
-     * @return array
-     */
-    function get_uploads($presid) {
-        $sql = "SELECT fileid FROM " .$this->tablename. " WHERE presid=$presid";
-        $req = $this->db->send_query($sql);
-        $uploads = array();
-        while ($row=mysqli_fetch_assoc($req)) {
-            $up = new Media($this->db, $row['fileid']);
-            $uploads[$row['fileid']] = array('date'=>$up->date,'filename'=>$up->filename,'type'=>$up->type);
-        }
-        return $uploads;
-    }
-
-    /**
-     * Check correspondence between files present on the server and those registered in the db
-     * @return bool
-     */
-    protected function files2db() {
-        $dbfiles = $this->db->getinfo($this->tablename, 'filename');
-        $files = scandir($this->directory);
-        foreach ($dbfiles as $filename) {
-            // Delete Db entry if the file does not exit on the server
-            if (!in_array($filename,$files)) {
-                $sql = "SELECT fileid FROM $this->tablename WHERE filename='$filename'";
-                $req = $this->db->send_query($sql);
-                $data = mysqli_fetch_assoc($req);
-                $file = new Media($this->db,$data['fileid']);
-                if  (!$this->db->deletecontent($this->tablename,'fileid',$file->fileid)) {
-                    return False;
-                }
-            }
-        }
-        return true;
-    }
-}
-
-class Media extends Uploads {
-
-    public $presid;
-    public $fileid;
-    public $date;
-    public $filename;
-    public $type;
-
-    /**
-     * @param DbSet $db
-     * @param null $fileid
-    */
-    function __construct(DbSet $db, $fileid=null){
-        parent::__construct($db);
-
-        if (null != $fileid) {
-            self::get($fileid);
-        }
-    }
-
-    /**
      * Create Media object
      * @param $file
      * @return bool|mixed|mysqli_result|string
-     * @internal param $presid
      */
     public function make($file) {
 
         // First check the file
-        $valid = $this->checkupload($file);
-        if ($valid !== true) {
-            return $valid;
+        $result['error'] = $this->checkupload($file);
+        if ($result['error'] != true) {
+            return $result;
         }
 
         // Second: Proceed to upload
@@ -213,16 +137,21 @@ class Media extends Uploads {
         if (is_file($this->directory.$this->filename)) {
             if (unlink($this->directory.$this->filename)) {
                 if ($this->db->deletecontent($this->tablename,'fileid',$this->fileid)) {
-                    return true;
+                    $result['status'] = true;
+                    $result['msg'] = "<p id='success'>File Deleted</p>";
                 } else {
-                    return 'table_failed';
+                    $result['status'] = false;
+                    $result['msg'] = "<p id='success'>Oops!</p>";
                 }
             } else {
-                return 'not_deleted';
+                $result['status'] = false;
+                $result['msg'] = "<p id='success'>Oops!</p>";
             }
         } else {
-            return 'no_file ';
+            $result['status'] = false;
+            $result['msg'] = "<p id='success'>Oops!</p>";
         }
+        return $result;
     }
 
     /**

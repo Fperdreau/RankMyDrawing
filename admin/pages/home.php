@@ -22,10 +22,9 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 require_once('../includes/includes.php');
 check_login();
 $result = "
-    <div id='content'>
-        <span id='pagename'>Home</span>
+    <section>
         <p>Welcome to the RankMyDrawings Administration Interface.</p>
-    </div>
+    </section>
 ";
 
 echo json_encode($result);

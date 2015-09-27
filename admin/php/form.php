@@ -23,27 +23,27 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 require_once('../includes/includes.php');
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Login
+Login/Logout
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+// Logout
+if (!empty($_POST['logout'])) {
+    session_unset();
+    session_destroy();
+    echo json_encode(true);
+    exit;
+}
+
 // Check login
 if (!empty($_POST['login'])) {
-    $user = new Users($db);
-
     $username = htmlspecialchars($_POST['username']);
-    $password = htmlspecialchars($_POST['password']);
-    $result = "nothing";
-    if ($user -> get($username) == true) {
-        if ($user -> check_pwd($password) == true) {
-            $_SESSION['logok'] = true;
-            $_SESSION['username'] = $user -> username;
-            $result = "logok";
-        } else {
-            $_SESSION['logok'] = false;
-            $result = "wrong_password";
-        }
-    } else {
-        $result = "wrong_username";
-    }
+    $user = new Users($db,$username);
+    $result = $user->login($_POST);
+    echo json_encode($result);
+    exit;
+}
+
+if (!empty($_POST['isLogged'])) {
+    $result = (isset($_SESSION['logok']) && $_SESSION['logok']);
     echo json_encode($result);
     exit;
 }
@@ -51,34 +51,37 @@ if (!empty($_POST['login'])) {
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Admin information
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 // Send password change request if email exists in database
 if (!empty($_POST['change_pw'])) {
     $email = htmlspecialchars($_POST['email']);
     $user = new Users($db);
 
     if ($user->mail_exist($email)) {
-        $username = $db_set ->getinfo($users_table,'username',array("email"),array("'$email'"));
+        $username = $db ->getinfo($db->tablesname['User'],'username',array("email"),array("'$email'"));
         $user->get($username);
-        $reset_url = $AppMail->site_url."index.php?page=renew_pwd&hash=$user->hash&email=$user->email";
+        $reset_url = $AppConfig->site_url."index.php?page=renew&hash=$user->hash&email=$user->email";
         $subject = "Change password";
         $content = "
-            Hello $user->firstname $user->lastname,<br>
+            Hello $user->username,<br>
             <p>You requested us to change your password.</p>
             <p>To reset your password, click on this link:
             <br><a href='$reset_url'>$reset_url</a></p>
             <br>
             <p>If you did not request this change, please ignore this email.</p>
-            The Journal Club Team
             ";
 
-        $body = $AppMail -> formatmail($content);
+        $body = $AppMail->formatmail($content);
         if ($AppMail->send_mail($email,$subject,$body)) {
-            $result = "sent";
+            $result['msg'] = "An email has been sent to your address with further information";
+            $result['status'] = true;
         } else {
-            $result = "not_sent";
+            $result['msg'] = "Oops, we couldn't send you the verification email";
+            $result['status'] = false;
         }
     } else {
-        $result = "wrong_email";
+        $result['msg'] = "This email does not exist in our database";
+        $result['status'] = false;
     }
     echo json_encode($result);
     exit;
@@ -87,17 +90,18 @@ if (!empty($_POST['change_pw'])) {
 // Change user password after confirmation
 if (!empty($_POST['conf_changepw'])) {
     $username = htmlspecialchars($_POST['username']);
-    $oldpassword = htmlspecialchars($_POST['oldpassword']);
+    $oldpassword = htmlspecialchars($_POST['old_password']);
     $password = htmlspecialchars($_POST['password']);
 
 	$user = new Users($db,$username);
 	if ($user->check_pwd($oldpassword)) {
 	    $crypt_pwd = $user->crypt_pwd($password);
 	    $db->updatecontent($db->tablesname['Users'],array("password"=>$crypt_pwd),array("username"=>$username));
-	    $result = "changed";
+        $result['status'] = true;
 	} else {
-		$result = "wrong";
-	}
+        $result['status'] = false;
+        $result['msg'] = "Wrong password!";
+    }
 
     echo json_encode($result);
     exit;
@@ -106,39 +110,27 @@ if (!empty($_POST['conf_changepw'])) {
 // Process user modifications
 if (!empty($_POST['mod_admininfo'])) {
     $user = new Users($db,$_POST['username']);
-    if ($user -> updateuserinfo($_POST)) {
-        $result = "<p id='success'>The modification has been made!</p>";
+    if ($user -> update($_POST)) {
+        $result['status'] = true;
+        $result['msg'] = "The modification has been made!";
     } else {
-        $result = "<p id='warning'>Something went wrong!</p>";
+        $result['status'] = false;
     }
     echo json_encode($result);
     exit;
 }
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Experiment settings
+Reference Drawing settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-// Show ref drawings settings
-if(!empty($_POST['select_ref'])) {
-    $ref = $_POST['refid'];
-    $result = showrefsettings($ref);
-    echo json_encode($result);
-    exit;
-}
-
 // Modify ref drawing settings
 if (!empty($_POST['mod_ref_params'])) {
     $ref = new DrawRef($db,$_POST['refid']);
-    $elo = $_POST['initial_score'];
-    $pair = $_POST['nb_pairs'];
-    $filter = $_POST['filter'];
-    $status = $_POST['status'];
-
-    if ($pair > $ref->max_nb_pairs) {
-        $result = "<p id='warning'>The chosen number of pairs exceeds the maximum possible number of pairs</p>";
+    if ($ref->update($_POST)) {
+        $result['msg'] = "Modifications have been successfully made";
+        $result['status'] = true;
     } else {
-        $ref->update($_POST);
-        $result = "<p id='success'>Modifications have been successfully made</p>";
+        $result['status'] = false;
     }
     echo json_encode($result);
     exit;
@@ -244,9 +236,16 @@ if (!empty($_POST['getItems'])) {
 
 // Check availability of the new reference drawing's label
 if (!empty($_POST['check_availability'])) {
+    include_once('../js/myupload/uploader.php');
     $refid = $_POST['refid'];
     $ref = new DrawRef($db);
-    $result = $ref->exists($refid);
+    if ($ref->exists($refid)) {
+        $result['status'] = true;
+        $result['msg'] = "This name is already taken. Please choose another one.";
+    } else {
+        $result['status'] = false;
+        $result['msg'] = uploader(array(),$refid);
+    }
     echo json_encode($result);
     exit;
 }
@@ -297,6 +296,17 @@ if(!empty($_POST['show_item'])) {
     exit;
 }
 
+// Show item description
+if(!empty($_POST['show_item_settings'])) {
+    $refid = $_POST['refid'];
+    $ref = new DrawRef($db, $refid);
+
+    // Add a delete link (only for admin and organizers or the authors)
+    $result['content'] = $ref->showSettings();
+    $result['ref'] = $refid;
+    echo json_encode($result);
+    exit;
+}
 // Delete item drawing
 if (!empty($_POST['delete_item'])) {
     $item_id = htmlspecialchars($_POST['delete_item']);
@@ -316,17 +326,17 @@ if (!empty($_POST['export'])) {
     $ref_id = htmlspecialchars($_POST['refid']);
     $ref = new DrawRef($db,$ref_id);
     $tablenames = $ref->get_tables();
-    $result = '';
-    foreach ($tablenames as $table_name) {
-        $result = exportdbtoxls($table_name);
-    }
+    $result = exportdbtoxls($ref_id,$tablenames);
     echo json_encode($result);
     exit;
 }
 
 if (!empty($_POST['config_modify'])) {
-    $AppConfig->update($_POST);
-    $result = "<p id='success'>Modifications have been made!</p>";
+    if ($AppConfig->update($_POST)) {
+        $result['status'] = true;
+    } else {
+        $result['status'] = false;
+    }
     echo json_encode($result);
     exit;
 }

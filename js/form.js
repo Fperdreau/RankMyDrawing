@@ -156,6 +156,16 @@ var checkform = function(el) {
             msg = 'Too short! (minimum: '+$(this).attr('minlength')+')';
         }
 
+        if ($(this).attr('min') && $(this).val() < $(this).attr('min')) {
+            thisField = false;
+            msg = 'Should be greater than: '+$(this).attr('min')+')';
+        }
+
+        if ($(this).attr('max') && $(this).val() > $(this).attr('max')) {
+            thisField = false;
+            msg = 'Should be smaller than: '+$(this).attr('max')+')';
+        }
+
         // Check if provided email is valid
         if ($(this).attr('type') == 'email' && !checkemail($(this).val())) {
             msg = "Invalid email";

@@ -23,15 +23,27 @@ class Users extends AppTable {
 
     protected $table_data = array(
         "id" => array("INT NOT NULL AUTO_INCREMENT", false),
+        "date" => array("DATETIME", false),
         "username" => array("CHAR(50)", false),
         "password" => array("CHAR(50)", false),
         "email" => array("CHAR(50)",false),
+        "status" => array("CHAR(50)",false),
+        "hash" => array("CHAR(32)", false),
+        "active" => array("INT(1) NOT NULL", 0),
+        "attempt" => array("INT(1) NOT NULL", 0),
+        "last_login" => array("DATETIME NOT NULL"),
         "primary" => "id"
     );
 
-    public $username = "";
-    public $password = "";
-    public $email = "";
+    public $date;
+    public $username;
+    public $password;
+    public $email;
+    public $status;
+    public $active;
+    public $attempt;
+    public $last_login;
+    public $hash;
 
     /**
      * Constructor
@@ -52,6 +64,8 @@ class Users extends AppTable {
      */
     function make($post) {
         $post['password'] = self::crypt_pwd($post['password']);
+        $post['hash'] = $this->make_hash(); // Create an unique hash for this user
+        $this->date = date("Y-m-d H:i:s"); // Date of creation (today)
 
 		// Parse variables and values to store in the table
         $class_vars = get_class_vars("Users");
@@ -59,10 +73,13 @@ class Users extends AppTable {
         if (self :: user_exist($this->username) == false && self :: mail_exist($this->email) == false) {
 			// Add to user table
             $this->db->addcontent($this->tablename,$content);
-            return true;
+            $result['status'] = true;
+            $result['msg'] = "Your account has been successfully created!";
 		} else {
-			return false;
+            $result['status'] = false;
+            $result['msg'] = "This username/email address already exist in our database";
 		}
+        return $result;
     }
 
     /**
@@ -94,17 +111,11 @@ class Users extends AppTable {
      * @param $post
      * @return bool
      */
-    function updateuserinfo($post) {
+    function update($post) {
         $class_vars = get_class_vars("Users");
-        $class_keys = array_keys($class_vars);
-        foreach ($post as $name => $value) {
-            $value = htmlspecialchars($value);
-            if (in_array($name,$class_keys)) {
-                $this->db->updatecontent($this->tablename,"$name","'$value'",array("username"),array("'$this->username'"));
-            }
-        }
-        self::get($this->username);
-        return true;
+        $content = $this->parsenewdata($class_vars,$post);
+        $result['status'] = $this->db->updatecontent($this->tablename,$content,array("username"=>$this->username));
+        return $result;
     }
 
     /**
@@ -140,35 +151,8 @@ class Users extends AppTable {
      * Generate random 32 character hash and assign it to a local variable.
      * @return string
      */
-    function create_hash() {
+    function make_hash() {
         $hash = md5( rand(0,1000) );
-        return $hash;
-    }
-
-    /**
-     * Check password
-     * @param $password
-     * @return bool
-     */
-    function check_pwd($password) {
-        $truepwd = $this->db->getinfo($this->tablename,"password",array("username"),array("'$this->username'"));
-        $check = validate_password($password, $truepwd);
-        if ($check == 1) {
-            $this->logged = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Encrypt password
-     * @param $password
-     * @return string
-     */
-    function crypt_pwd($password) {
-        require_once(PATH_TO_INCLUDES.'PasswordHash.php');
-        $hash = create_hash($password);
         return $hash;
     }
 
@@ -177,6 +161,93 @@ class Users extends AppTable {
      */
     function delete_user() {
         $this->db->deletecontent($this->tablename,array("username"),array("'$this->username'"));
+    }
+
+    /**
+     * User login
+     * @param $post
+     * @return mixed
+     */
+    public function login($post) {
+        $password = htmlspecialchars($post['password']);
+        if ($this->get($this->username) == true) {
+            if ($this -> check_pwd($password) == true) {
+                $_SESSION['logok'] = true;
+                $_SESSION['username'] = $this -> username;
+                $_SESSION['status'] = $this -> status;
+                $result['msg'] = "Hi $this->username,<br> welcome back!";
+                $result['status'] = true;
+            } else {
+                $_SESSION['logok'] = false;
+                $result['status'] = false;
+                $attempt = $this->checkattempt();
+                if ($attempt == false) {
+                    $result['msg'] = "Wrong password. You have exceeded the maximum number
+                        of possible attempts, hence your account has been deactivated for security reasons.
+                        We have sent an email to your address including an activation link.";
+                } else {
+                    $result['msg'] = "Wrong password. $attempt login attempts remaining";
+                }
+            }
+        } else {
+            $result['status'] = false;
+            $result['msg'] = "Wrong username";
+        }
+        return $result;
+    }
+
+    /**
+     * Check number of unsuccessful login attempts.
+     * Deactivate the user's account if this number exceeds the maximum
+     * allowed number of attempts and send an email to the user with an activation link.
+     * @return int
+     */
+    private function checkattempt() {
+        $last_login = new DateTime($this->last_login);
+        $now = new DateTime();
+        $diff = $now->diff($last_login);
+        // Reset the number of attempts if last login attempt was 1 hour ago
+        $this->attempt = $diff->h >= 1 ? 0:$this->attempt;
+        $this->attempt += 1;
+        $AppConfig = new AppConfig($this->db);
+        if ($this->attempt >= $AppConfig->max_nb_attempt) {
+            self::activation(0); // We deactivate the user's account
+            $this->send_activation_mail();
+            return false;
+        }
+        $this->last_login = date('Y-m-d H:i:s');
+        $this->db->updatecontent($this->tablename,array('attempt'=>$this->attempt,'last_login'=>$this->last_login),array("username"=>$this->username));
+        return $AppConfig->max_nb_attempt - $this->attempt;
+    }
+
+    /**
+     * Check if the provided password is correct (TRUE) or not (FALSE)
+     *
+     * @param $password
+     * @return bool
+     */
+    function check_pwd($password) {
+        $truepwd = $this->db-> getinfo($this->tablename,"password",array("username"),array("'$this->username'"));
+        $check = validate_password($password, $truepwd);
+        if ($check == 1) {
+            $this->attempt = 0;
+            $this->last_login = date('Y-m-d H:i:s');
+            $this->db->updatecontent($this->tablename,array('attempt'=>$this->attempt,'last_login'=>$this->last_login),array("username"=>$this->username));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Encrypt the password before adding it to the database
+     *
+     * @param $password
+     * @return string
+     */
+    function crypt_pwd($password) {
+        $hash = create_hash($password);
+        return $hash;
     }
 
 }

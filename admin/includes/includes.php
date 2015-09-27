@@ -21,7 +21,6 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 // Includes required files (classes)
 require_once(realpath(dirname(dirname(__DIR__))).'/includes/boot.php');
-require_once('functions.php');
 
 // Get site config
 $config_file = PATH_TO_APP."admin/conf/config.php";

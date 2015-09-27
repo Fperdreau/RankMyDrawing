@@ -24,6 +24,7 @@ require('../includes/boot.php');
 
 if (!empty($_POST['get_app_status'])) {
     echo json_encode($AppConfig->status);
+    exit;
 }
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,9 +39,10 @@ if (!empty($_POST['contact_send'])) {
     $subject = "Contact from $usr_name";
 
     if ($AppMail->send_mail($AppConfig->mail_from,$subject,$body)) {
-        $result = "sent";
+        $result['status'] = true;
+        $result['msg'] = "Thank you for your message";
     } else {
-        $result = "not_sent";
+        $result['status'] = false;
     }
     echo json_encode($result);
 }

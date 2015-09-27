@@ -20,16 +20,13 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 */
 echo "
 
-<div id='modal' class='popupContainer' style='display:none;'>
- <header class='popupHeader'>
- <span class='header_title'>Login</span>
- <span class='modal_close'><i class='fa fa-times'></i></span>
- </header>
+<div id='modal' class='modalContainer' style='display:none;'>
+    <section class='popupBody' style='display:inline-block'>
+        <div class='popupHeader'></div>
 
-    <section class='popupBody'>
-
-        <div class='modal_section' id='user_login'>
+        <div class='modal_section' id='user_login' data-title='Sign In'>
             <form id='login_form'>
+                <input type='hidden' name='login' value='true'/>
                 <div class='formcontrol' style='width: 100%;'>
                     <label for='log_username'>Username</label>
                     <input type='text' id='log_username' name='username'>
@@ -39,9 +36,7 @@ echo "
                     <input type='password' id='log_password' name='password'>
                 </div>
                 <div class='action_btns'>
-                    <div class='one_half'>
-                        <input type='submit' id='submit' value='Log In' class='login'/>
-                    </div>
+                    <input type='submit' id='submit' value='Log In' class='login'/>
                 </div>
             </form>
             <div class='forgot_password'><a href='' class='modal_trigger_changepw'>I forgot my password</a></div>
@@ -58,21 +53,17 @@ echo "
             </div>
         </div>
 
+        <div class='modal_section' id='item_settings'></div>
+
         <div class='feedback'></div>
+        <div class='modal_close'></div>
     </section>
 </div>
 
-<div id='item_modal' class='item_popupContainer' style='display:none;'>
- <header class='popupHeader'>
- <span class='header_title'>Description</span>
- <span class='modal_close'><i class='fa fa-times'></i></span>
- </header>
-
-    <section class='popupBody'>
-
+<div id='item_modal' class='modalContainer' style='display:none;'>
+    <section class='popupBody' style='display:inline-block'>
         <div class='modal_section' id='item_description'></div>
-
-        <div class='feedback'></div>
+        <div class='modal_close'></div>
     </section>
 </div>
 ";

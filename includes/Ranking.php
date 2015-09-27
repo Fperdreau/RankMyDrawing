@@ -54,18 +54,16 @@ class Ranking {
     function make($refid,$file) {
         $this->refid = $refid;
         $this->file_id = self::makeID();
-        $result = self::upload($file);
+        $result = $this->upload($file);
 
-        if ($result['status'] == true) {
-            $this->filename = $result['msg'];
+        if ($result['error'] == true) {
+            $this->filename = $result['status'];
             $this->date = date('Y-m-d H:i:s');
             // Create corresponding tables
             self::add();
             self::get($this->refid,$this->file_id);
-            return $this->filename;
-        } else {
-            return false;
         }
+        return $result;
     }
 
     /**
@@ -109,7 +107,7 @@ class Ranking {
 
         // Update ranking table
         $initial_score = $this->db->getinfo($this->db->tablesname['AppConfig'],"value",array("variable"),array("'initial_score'"));
-        $this->db -> addcontent($tables["table2"],array("file_id"=>$this->file_id,'filename'=>$this->filename,'date'=>$this->date,'score'=>$initial_score));
+        $this->db->addcontent($tables["table2"],array("file_id"=>$this->file_id,'filename'=>$this->filename,'date'=>$this->date,'score'=>$initial_score));
 
         // Update other tables
         for ($t=3;$t<=$ntable;$t++) {
@@ -119,7 +117,7 @@ class Ranking {
             $sql = "ALTER TABLE $table_name ADD $this->file_id INT NOT NULL";
             $this->db->send_query($sql);
 
-            $this->db -> addcontent($table_name,array("file_id"=>$this->file_id));
+            $this->db->addcontent($table_name,array("file_id"=>$this->file_id));
         }
     }
 
@@ -142,15 +140,15 @@ class Ranking {
 
         if (upload_img($tmp,$img_directory,$newname)) {
             if (upload_thumb($newname,$img_directory,$thumb_directory,100)) {
-                $result['msg'] = $newname;
-                $result['status'] = true;
+                $result['status'] = $newname;
+                $result['error'] = true;
             } else {
-                $result['status'] = false;
-                $result['msg'] = "thumb not uploaded";
+                $result['error'] = false;
+                $result['status'] = "thumb not uploaded";
             }
         } else {
-            $result['status'] = false;
-            $result['msg'] = "file not uploaded";
+            $result['error'] = false;
+            $result['status'] = "file not uploaded";
         }
         return $result;
     }

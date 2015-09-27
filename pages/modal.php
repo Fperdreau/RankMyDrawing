@@ -26,20 +26,29 @@ echo "
         <div class='popupHeader'></div>
 
         <!-- Sign in section -->
-        <div class='modal_section' id='send_msg' data-title='Send a message'>
-            <form method='post' action='' class='form' id='contact_form'>
-                <label for='name'>Your name</label><input type='text' name='name' id='contact_name' placeholder='Your name'><br>
-                <label for='mail'>E-mail</label><input type='text' name='mail' id='contact_mail' placeholder='Your email'><br>
-                <label for='message'>Message</label><br>
-                <textarea id='message' name='message' rows='10' cols='50' placeholder='Your message'></textarea><br>
-                <p style='text-align: right;'><input type='submit' name='send' value='Send' id='submit' class='contact_send'></p>
+        <div class='modal_section' id='contact' data-title='Send a message'>
+            <form id='contact_form'>
+                <div class='formcontrol'>
+                    <label for='name'>Your name</label><input type='text' name='name' placeholder='Your name' required>
+                </div>
+                <div class='formcontrol'>
+                    <label for='mail'>E-mail</label><input type='email' name='mail' placeholder='Your email' required>
+                </div>
+                <div class='formcontrol'>
+                    <label for='message'>Message</label><br>
+                    <textarea id='message' name='message' placeholder='Your message' required></textarea>
+                </div>
+                <div class='submit_btns'>
+                    <input type='submit' name='send' value='Send' class='contact_send'>
+                </div>
+
             </form>
         </div>
 
         <div class='feedback'></div>
+        <div class='modal_close'></div>
     </section>
 </div>
-
     ";
 
 

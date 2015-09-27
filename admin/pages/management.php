@@ -35,42 +35,32 @@ if (!empty($refdrawlist)) {
 }
 
 $result = "
-	<div id='content'>
-		<span id='pagename'>Drawing Management</span>
-        <div class='refdraw-add' style='padding: 10px; background-color: #dddddd; margin: 10px auto 10px auto; height: 150px; width: 90%;'>
+	<section>
+		<h2>Add a reference drawing</h2>
+        <div class='refdraw-add'>
         	<div style='display: table-cell; width: 30%;'>
                 <div style='display: block;'>
-	        	  <label for='newref' class='label' style='width: auto;'>1. Choose a reference name</label>
+	        	  <div class='newref_label'>1. Choose a name</div>
                 </div>
                 <div style='display: block;'>
-                    <form action='' id='newrefid'>
+                    <form id='newrefid'>
     	        		<input type='text' value='' name='newref' id='newref' />
-    	        		<input type='submit' id='submit' class='newrefid' />
+    	        		<input type='submit' id='submit' class='newrefid' value='Add'/>
     	        	</form>
                 </div>
         	</div>
 
-            <!--<div class='refupload' style='text-align: center; width: 50%; margin-left: 100px;'>
-                <div style='display: block;'>
-                    <label class='label' style='width: auto;'>2. Upload the reference drawing</label>
-                </div>
-                <div class='ref_upl' style='display: block; margin-left: 20%;'>
-                    <input type='file' name='ref' class='upload'>
-                </div>
-            </div>-->
-
             <div class='refupload' style='display: none; text-align: center; width: 50%; margin-left: 100px;'>
-                <div style='display: block;'>
-                    <label class='label' style='width: auto;'>2. Upload the reference drawing</label>
-                </div>
-                <div style='display: block; margin-left: 20%;'>
-                    <div id='upref''></div>
+                <div class='newref_label'>2. Upload the reference drawing</div>
+                <div style='margin: 0 20%;'>
+                    <div id='upref'></div>
                 </div>
             </div>
             <div class='feedback'></div>
         </div>
-
-        $imglist
+    </section>
+    <div class='section_container'>
+            $imglist
     </div>
 ";
 

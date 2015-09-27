@@ -64,8 +64,7 @@ class FullBackup extends AppCron {
 
         // file backup
         $zipfile = file_backup(); // Backup site files (archive)
-        $filelink = json_encode($zipfile);
-
+        $filelink = $zipfile;
         // Write log only if server request
         $result = "Full Backup successfully done.";
         $this->logger("$this->name.txt",$result);

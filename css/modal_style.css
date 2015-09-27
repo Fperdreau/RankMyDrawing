@@ -37,7 +37,7 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
     position:absolute;
     padding: 0;
     min-width: 300px;
-    width: 40%;
+    width: auto;
     height: auto;
     top:80px;
 }
@@ -63,7 +63,9 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 500px;
-    padding: 0 10px;
+    max-width: 600px;
+    width: 95%;
+    padding: 0 10px 10px 10px;
 }
 
 /* Popup Styles*/
@@ -83,8 +85,8 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
     right: 0;
     top:0;
     padding:10px 15px;
-    background: url('../images/close.png') no-repeat;
-    background-position: center center;
+    background: url('../images/close.png') no-repeat center center;
+    background-color: rgba(255, 255, 255, .5);
     background-size: 50% auto;
     cursor: pointer;
     color:#aaa;

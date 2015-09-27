@@ -30,16 +30,16 @@ $content = $ref->get_content('consent');
 $consent = $content[$user->language];
 
 $result = "
-<div id='content'>
-    <span id='pagename'>Consent Form</span>
-    <div class='section_content'>
+<section>
+    <h2>Consent Form</h2>
+    <div style='padding: 20px;'>
         $consent
     </div>
-    <div class='action_btn'>
-        <div class='part_btn agree' id='agree'>I agree</div>
-        <div class='part_btn decline' id='decline'>I decline</div>
+    <div class='action_btn' style='width: 50%; margin: auto;'>
+        <div class='part_btn agree'>I agree</div>
+        <div class='part_btn decline'>I decline</div>
     </div>
-</div>
+</section>
 ";
 
 echo json_encode($result);

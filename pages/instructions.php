@@ -31,16 +31,14 @@ $instruction = $content[$user->language];
 $exampleurl = 'images/example.png';
 
 $result = "
-<div id='content'>
-    <span id='pagename'>Instructions</span>
-    <div class='section_content'>
-        <div class='instructions'>$instruction</div>
-        <div class='example'>
-        	<img src='$exampleurl' style='width: 500px'>
-    	</div>
+<section>
+    <h2>Instructions</h2>
+    <div class='instructions'>$instruction</div>
+    <div class='example'>
+        <img src='$exampleurl' style='width: 500px'>
     </div>
 	<div id='submit' class='start_btn' data-user='$user->userid' data-ref='$ref->file_id'>Start</div>
-</div>
+</section>
 ";
 
 echo json_encode($result);

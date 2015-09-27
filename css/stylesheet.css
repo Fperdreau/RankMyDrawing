@@ -19,10 +19,8 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* *********************************************************************/
-/* HTML Structure
+/* Forms & Input field styles
 /* *********************************************************************/
-
-/* Forms & Input field styles */
 .formcontrol {
     vertical-align: top;
     margin: 5px;
@@ -214,7 +212,7 @@ input[type='button'].addBtn {
 /* Semi-transparent layer added on top of a form in order to show a feedback */
 .feedbackForm {
     position : absolute;
-    z-index : 1000;
+    z-index : 900;
     top : 0;
     left : 0;
     display : inline-flex;
@@ -310,194 +308,390 @@ input[type='button'].addBtn {
     height: 30px;
 }
 
-/* Bodytext */
-html { height: 100%; }
+/* *********************************************************************/
+/* Body
+/* *********************************************************************/
+html {
+    height: 100%;
+    font-size: 16px;
+}
 
 body {
+    height: 100%;
+    width: 100%;
+    min-width: 320px;
+    margin: 0;
+    padding: 0;
     font-family: 'Lato', Calibri, Arial, sans-serif;
     font-weight: 300;
-    font-size: 15px;
-    line-height: 1.2;
-	width: 100%;
-    margin: auto;
-	background-color: #cccccc;
+    font-size: 1em;
+    box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     overflow-y: scroll;
-    overflow-x: scroll;
+    overflow-x: hidden;
 }
 
 a {
-	text-decoration: none;
-    color: #CF5151;
+    text-decoration: none;
+    color: rgba(207,81,81,1);
 }
 
 a:hover {
-    color: #aaaaaa;
+    color: #cccccc;
 }
 
-a#menu {
-    text-decoration: none;
-    color: #CF5151;
-}
-
-a#menu:hover {
-    color: #eeeeee;
-}
-
-#pagecontent {
-    display: none;
-}
-
-/* Header */
-#mainheader {
+/* *********************************************************************/
+/* Body
+/* *********************************************************************/
+header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50px;
-    z-index: 10;
-    background-color: #555555;
+    z-index: 1000;
+    background-color: rgba(68, 68, 68, 1);
     text-align: justify;
     padding: 0;
-    box-shadow: 0 2px 2px #555;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 0;
+
 }
 
-.header_container {
-    position: relative;
-    clear: both;
-    width: 1024px;
-    height: 100%;
-    margin: auto;
-}
-
-#title {
-    padding-top: 2px;
+header #sitetitle {
+    background-color: rgba(255, 255, 255, .5);
+    border-right: 3px solid rgba(255, 255, 255, .1);
+    display: inline-block;
+    width: 205px;
+    font-size: 25px;
+    text-transform: capitalize;
+    padding: 2px 5px;
     text-align: center;
+    height: 40px;
+    box-sizing: border-box;
 }
 
-.displaymenu_btn {
-    z-index: 15;
-    position: absolute;
-    top: 20px;
-    left: 40px;
-    color: #DDDDDD;
-    text-align: center;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-#welcome {
-    vertical-align: middle;
-    width: auto;
-    text-align: center;
-    background-color: #333333;
-    border: 1px double #cccccc;
-    padding: 5px;
-    border-radius: 5px;
+header .headerbox {
     float: right;
-    margin-right: 10px;
-    margin-top: 10px;
-    height: 20px;
+    text-align: center;
+    background-color: rgba(51, 51, 51, 1);
+    color: rgba(255, 255, 255, 1);
+    border-left: 1px double #cccccc;
+    padding: 5px;
+    height: 40px;
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 28px;
+    font-size: 15px;
+    width: 75px;
+    text-transform: uppercase;
+}
+
+header .headerbox:hover {
+    background-color: rgba(80, 80, 80, 1);
+}
+
+.menu_btn {
+    display: inline-block;
+    vertical-align: top;
+
+    width: 30px;
+    height: 40px;
+    background: url('../images/menu.png') no-repeat center center;
+    background-size: 80% auto;
+    background-color: rgba(255,255,255,.5);
+
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.menu_btn:hover{
+    background-color: rgba(255,255,255,.8);
+}
+
+.menu_btn>img {
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
 }
 
 /* Menu */
-.menu {
+li {
+    text-transform: uppercase;
+}
+
+li a {
+    color: rgba(207,81,81,1);
+}
+
+.sideMenu {
     position: fixed;
-    top: 50px;
-    left: 0;
-    width: 150px;
-    min-height: 400px;
-    background-color: #333333;
-    padding: 5px;
+    z-index: 800;
+    top: 40px;
+    left: -250px;
+    width: 250px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background: rgba(68,68,68,1);
+    border-right: 5px solid rgba(207,81,81,1);
+    border-top: 5px solid rgba(207,81,81,1);
+}
+
+.sideMenu nav {
+    display: block;
+    max-width: 250px;
+    padding: 0;
+    margin: 0;
     box-shadow: 0 2px 2px #555;
-    z-index: 5;
 }
 
-.menu-section {
-    margin-top: 10px;
-    width: 90%; /* Declare your value. Can be in relative units. */
-    height: 100%;
-    text-align: center;
-    font-size: 20px;
-    color: #CF5151;
-    padding: 5px;
-    border-bottom: 1px solid #999999;
-    border-left: 2px solid #b43d3d;
+.sideMenu nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
-
-.menu-section:hover {
+.sideMenu nav li {
+    text-align: left;
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid rgba(255,255,255,.5);
+    color: #eee;
+    padding: 10px;
     cursor: pointer;
-    font-size: 20px;
-    color: #cccccc;
-    border-left: 2px solid #999999;
-    border-bottom: 1px solid #b43d3d;
-    background-color: #555555;
 }
 
-.menu-section-active {
-    background-color: #222222;
-    font-size: 20px;
-    color: #cccccc;
+.sideMenu nav li:hover {
+    border-bottom: 1px solid rgba(34,34,34,.5);
+    background: rgba(255,255,255,.5);
+    color: rgba(68,68,68,1);
+}
+
+.sideMenu nav li:hover>a {
+    color: #ffffff;
 }
 
 .activepage {
-    font-size: 22px;
     color: #cccccc;
 }
 
-/* Content */
-.core {
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+#core {
     position: relative;
-    z-index: 3;
-    width: 1024px;
-    box-shadow: 0px 0px 12px #555;
+    max-width: 100%;
+    min-width: 300px;
+    box-sizing: border-box;
     padding: 0;
-    margin: 50px auto;
-    background-color: #eeeeee;
-    min-height: 768px;
-    height: auto !important;
-    height: 100%;
-}
-
-#loading {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    width:      100%;
-    height: 100%;
-    background: rgba( 0, 0, 0, .7)
-    url('../images/spinner.gif')
-    50% 50%
-    no-repeat;
-}
-
-#content {
-    position: relative;
-    margin-top: 50px;
-    padding: 50px;
-    width: 90%;
     margin: auto;
-    vertical-align: middle;
+    min-height: 768px;
 }
 
-#footer {
-    position: fixed;
-    bottom: 0;
-    clear: both;
-    vertical-align: middle;
-
-    z-index: 0;
+/* *********************************************************************/
+/* Footer
+/* *********************************************************************/
+footer {
+    position: relative;
     width: 100%;
-    text-align: left;
-    margin: 20px auto;
+    min-height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 20px auto 0 auto;
     background-color: rgba(50,50,50,1);
     padding: 0;
 }
 
-/* Home */
+#sign {
+    padding: 5px 50px;
+}
+
+#sign>div {
+    vertical-align: middle;
+    display:inline-block;
+    margin: 5px 10px;
+    color: #cccccc;
+    font-size: 0.9em;
+}
+
+#appTitle {
+    text-transform: uppercase;
+    color: #cccccc;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#appVersion {
+    border-top: 1px solid rgba(150,150,150,.5);
+    color: rgba(150,150,150,.5);
+    margin-top: 0;
+    font-size: 0.9em;
+    font-weight: 200;
+}
+
+#colBar {
+    display: block;
+    width: 100%;
+    background: rgba(150,150,150,.5);
+    height: 30px;
+}
+
+/* *********************************************************************/
+/* Page Content
+/* *********************************************************************/
+.loadingDiv {
+    position:   absolute;
+    z-index:    90;
+    top:        0;
+    left:       0;
+    width:      100%;
+    height: 100%;
+    background: rgba( 255, 255, 255, .7)
+    url('../images/spinner.gif')
+    50% 50%
+    no-repeat;
+    background-size: 50px;
+}
+
+#pagecontent {
+    display: none;
+    position: relative;
+    padding: 50px 0 50px 0;
+    margin: 0 auto;
+    max-width: 70%;
+    min-width: 320px;
+}
+
+.plugins {
+    display: block;
+}
+
+.plugins>div {
+    display: inline-block;
+}
+
+.page_description {
+    text-align: justify;
+    margin: 10px auto 10px auto;
+    width: 80%;
+    color: rgba(68,68,68,1);
+    font-style: italic;
+    font-size: 14px; /* Set message font size  */
+    padding: 10px; /* Some padding to make some more space for our text  */
+    border: 2px dashed rgba(207,81,81,.5); /* Add a border arround our status message   */
+}
+
+section {
+    position: relative;
+    box-sizing: border-box;
+    text-align: left;
+    display: block;
+    font-size: 16px;
+    margin: 20px auto 20px auto;
+    padding: 0 10px 20px 10px;
+    background-color: rgba(200,200,200,.1);
+    border: 1px solid #ddd;
+    min-width: 300px;
+}
+
+section>div {
+    margin: auto;
+}
+
+.section_container {
+    width: 100%;
+    text-align: justify;
+    margin:auto;
+}
+
+.section_container>div, .section_container>section{
+    display: inline-block;
+    vertical-align: top;
+    width: 45%;
+    min-width: 300px;
+    text-align: left;
+}
+
+.section_container:after{
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.half_section {
+}
+
+.half_section>div{
+    vertical-align: top;
+}
+
+.section_left {
+    margin-right: 20px;
+}
+
+.section_right {
+}
+
+.row_container {
+    position: relative;
+    box-sizing: border-box;
+    text-align: justify;
+}
+
+.row_container>div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.row_container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+h1 {
+    display: block;
+    margin-left: -10px;
+    color: #555555;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
+
+h2 {
+    display: block;
+    color: rgba(68,68,68,1);
+    margin: 5px 0 20px 5px;
+    padding: 0;
+    vertical-align: top;
+    font-weight: 500;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    text-align: left;
+
+}
+
+h3 {
+    display: block;
+    font-size: 1.1em;
+    margin: 20px 0 5px auto;
+    padding: 0;
+    border-top: 1px solid #999999;
+    color: #444444;
+    height: 20px;
+    line-height: 20px;
+    text-align: left;
+    font-weight: 500;
+}
+
+/* *********************************************************************/
+/* Home Page
+/* *********************************************************************/
 .user_info {
     margin: 50px auto;
     width: 50%;
@@ -506,7 +700,9 @@ a#menu:hover {
     background-color: rgba(127,127,127,.1);
 }
 
-/* Participation */
+/* *********************************************************************/
+/* Consent form
+/* *********************************************************************/
 .action_btn {
     clear: both;
     width: 50%;
@@ -533,23 +729,38 @@ a#menu:hover {
 
 .part_btn:hover {
     cursor: pointer;
+    transition: all 0.3s ease 0s;
 }
 
 .decline {
     padding:10px 10px;
-    background: #CF5151;
+    background: rgba(207, 81, 81, 1);
     color: #FFFFFF;
-    border: 1px solid #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.decline:hover {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
+
 }
 
 .agree {
     padding:10px 20px;
-    background: #FFFFFF;
-    color: #CF5151;
-    border: 1px solid #CF5151;
+    background: rgba(255, 255, 255, 1);
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
 }
 
-/* Instructions */
+.agree:hover {
+    background: rgba(207, 81, 81, 1);
+    color: #FFFFFF;
+}
+
+/* *********************************************************************/
+/* Instructions
+/* *********************************************************************/
 .instructions {
     display: table-cell;
     width: 30%;
@@ -567,49 +778,70 @@ a#menu:hover {
     margin: auto;
     width: 100px;
     cursor: pointer;
+    padding:10px 20px;
+    background: #FFFFFF;
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
+    transition: all 0.3s ease 0s;
+    text-transform: uppercase;
 }
 
-/* Experiment */
+.start_btn:hover {
+    background: rgba(207, 81, 81, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+/* *********************************************************************/
+/* Experiment
+/* *********************************************************************/
 #progressbar {
+    display: inline-block;
     width: 200px;
-    height: 34px;
+    height: 30px;
     text-align: center;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 30px;
-    display: none;
-    position: absolute;
-    top: 10px;
-    left: 100px;
-    border: 1px solid #EEEEEE;
+    border: 1px solid rgba(100, 100, 100, .7);
     border-radius: 5px;
-    padding: 0px;
-    color: #FFFFFF;
-    background-color: #222222;
+    padding: 0;
+    margin: auto;
+    color: rgba(100, 100, 100, 1);
+    background-color: rgba(255, 255, 255, 1);
 }
 
 #experiment_frame {
     width: 100%;
+    min-height: 400px;
+}
+
+.progress {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    margin: 20px;
+    height: 30px;
+}
+
+.picture {
+    width: 500px;
+    min-height: 300px;
 }
 
 .original {
-    width: 70%;
     margin: auto;
     text-align: center;
-    background-color: #eeeeee;
 }
 
 .original_container {
     margin: auto;
     padding: 0;
-    background-color: #eeeeee;
     width: 100%;
     text-align: justify;
 }
 
 .img_container {
-    margin: 50px auto;
+    margin: 0 auto;
     padding: 0;
-    background-color: #dddddd;
     width: 100%;
     text-align: justify;
     display: block;
@@ -626,7 +858,7 @@ a#menu:hover {
 }
 
 .drawing {
-    box-shadow: 0px 0px 12px #555;
+    box-shadow: 0 0 12px #555;
     width: auto;
     margin: auto;
     text-align: center;
@@ -635,189 +867,18 @@ a#menu:hover {
 }
 
 .drawing_img {
-    width: 400px;
+    width: 500px;
     height: auto;
 }
 
 .drawing:hover {
-    box-shadow: 0px 0px 12px #FF0000;
+    box-shadow: 0 0 12px #FF0000;
     border: 1px solid #999999;
 }
 
-
-/* *********************************************************************/
-/* Uploads
-/* *********************************************************************/
-
-/* Reference Drawing */
-.ref_upl {
-    position: relative;
-    overflow: hidden;
-    margin: 10px;
-}
-
-.ref_upl input.upload::-webkit-file-upload-button {
-    visibility: hidden;
-}
-
-.ref_upl input.upload::before {
-    content: 'Upload';
-    font-size: 10pt;
-    cursor: pointer;
-    border: 1px solid #999;
-    border-radius: 3px;
-    padding: 5px 8px;
-    outline: none;
-    white-space: nowrap;
-    -webkit-user-select: none;
-}
-
-.ref_upl input.upload:hover::before {
-    border-color: #000000;
-}
-
-.ref_upl input.upload:active::before {
-    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-}
-.upl_container {
-    display: block;
-    width: 500px;
-    height: auto;
-    padding: 10px;
-    margin: 20px auto 10px auto;
-    background-color: #222222;
-    border: 1px solid #000000;
-    text-align: center;
-    -webkit-box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
-    -moz-box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
-    box-shadow: inset 0px 0px 37px 1px rgba(0,0,0,1);
-}
-
-.dragging {
-    background-color: #444444;
-}
-
-.upl_form {
-    width: 400px;
-    text-align: center;
-    margin: auto;
-    clear: both;
-}
-
-.upl_btn {
-    display: block;
-    margin: 0 auto 0 auto;
-    width: 200px;
-    height: auto;
-    line-height: 30px;
-    background-color: #444444;
-    color: #CF5151;
-    border: 1px solid #999;
-    padding: 0px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 18px;
-    text-align: center;
-    -webkit-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-    -moz-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-    box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-}
-
-.upl_btn:hover {
-    background-color: #666666;
-}
-
-.upl_btn:active {
-    background-color: #222222;
-    padding: 6px 10px 4px;
-}
-
-.upl_errors {
-    display: none;
-    width: 100%;
-    color: #990000;
-    font-size: 13px; /* Set message font size  */
-    padding: 5px; /* Some padding to make some more space for our text  */
-    background-color: rgba(255,255,255,.9); /* Add a background color to our status message   */
-    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
-}
-
-.upl_filetypes {
-    display: block;
-    margin: 0 auto;
-    font-size: 10px;
-    font-weight: normal;
-}
-
-.upl_filelist {
-    width: 95%;
-    height: auto;
-    padding: 10px;
-    margin: 0;
-}
-
-.upl_info {
-    display: inline-block;
-    width: 190px;
-    font-size: 12px;
-    height: 30px;
-    line-height: 30px;
-    margin: 5px;
-    cursor: pointer;
-    background-color: #bbbbbb;
-    -webkit-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-    -moz-box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-    box-shadow: 0px 0px 15px 1px rgba(0,0,0,1);
-}
-
-.upl_info>div {
-    display: table-cell;
-    height: 30px;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-.upl_name {
-    line-height: 30px;
-    white-space: pre-wrap;
-    width: 160px;
-    font-weight: bold;
-}
-
-.upl_name:hover {
-    background-color:rgba(207,81,81,1);
-    color: #EEEEEE;
-}
-
-.upl_type {
-    display: inline-block;
-    padding: 0 5px 0 5px;
-    margin-left: 0;
-    font-weight: bold;
-    background-color: #555555;
-    color: #EEEEEE;
-}
-
-.del_upl {
-    background-color: #666666;
-    line-height: 30px;
-    border-left: 1px solid #999999;
-    width: 30px;
-    padding-left: 5px;
-}
-
-.del_upl:hover {
-    background-color: rgba(207,81,81,.8);
-}
-
-.del_upl:active {
-    background-color: #444444;
-}
-
-/* Modal */
-
-/* Publication modal dialog */
+/************************************************
+* Publication modal dialog
+************************************************/
 .item_caps {
     display: block;
     width: 30%;
@@ -861,7 +922,7 @@ a#menu:hover {
     cursor: pointer;
     padding: 10px 10px;
     height: 20px;
-    background-color: #CF5151;
+    background-color: rgba(207, 81, 81, 1);
     color: #EEEEEE;
     width: 100px;
     text-align: center;
@@ -869,7 +930,7 @@ a#menu:hover {
 
 .del_item:hover {
     background-color: #EEEEEE;
-    color: #CF5151;
+    color: rgba(207, 81, 81, 1);
 }
 
 /* Login and register forms */
@@ -908,40 +969,65 @@ a#menu:hover {
 }
 
 /* Drawing Management */
+.newref_label {
+    font-size: 1.2em;
+    font-weight: 400;
+    display: block;
+}
+
 .refdraw-div {
-    display: table;
-    background-color: #dddddd;
-    padding: 5px;
+    padding: 0;
     margin-top: 10px;
     text-align: justify;
+
 }
 
 .refdraw-content {
-    width: 100%;
     margin: auto;
-    padding: 10px;
+    text-align: center;
     vertical-align: top;
+    box-sizing: border-box;
+    background-color: rgba(68,68,68,1);
 }
 
 .refdraw-name {
-    background-color: #CF5151;
-    width: 200px;
+    background-color: rgba(207, 81, 81, 1);
+    width: auto;
     color: #eeeeee;
-    padding: 5px;
+    padding: 0 5px;
     text-align: center;
     font-weight: bold;
     font-size: 16px;
-    border-bottom: 2px solid #CF5151;
+    height: 30px;
+    line-height: 30px;
+    box-sizing: border-box;
+    border-bottom: 2px solid rgba(207, 81, 81, 1);
+    display: inline-block;
+    vertical-align: top;
+}
+
+.refdraw-settings {
+    background: url('../images/settings.png') no-repeat center center;
+    background-size: 50% auto;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
     display: inline-block;
 }
 
+.refdraw-settings:hover{
+    background-color: rgba(207, 81, 81, .5);
+}
+
 .refdraw-desc {
-    display: table-cell;
-    width: 20%;
+    display: inline-block;
+    text-align: center;
+    min-width: 250px;
     height: auto;
-    padding: 10px;
-    vertical-align: top;
-    background-color: #bbbbbb;
+    padding: 0;
+    margin: auto;
+    vertical-align: middle;
+    background-color: rgba(68,68,68,1);
 }
 
 .refdraw-info {
@@ -952,13 +1038,11 @@ a#menu:hover {
     border-bottom: 1px dashed #555555;
 }
 
-
 .refdraw-half {
     vertical-align: top;
     text-align: center;
-    margin-right: 10px;
-    width: 40%;
-    display: table-cell;
+    min-width: 250px;
+    display: inline-block;
 }
 
 .refdraw-items {
@@ -974,10 +1058,10 @@ a#menu:hover {
     padding: 10px;
     border: 1px solid #999999;
     border-radius: 5px;
-    background-color: #222222;
+    background-color: rgba(34,34,34,1);
     margin: 10px auto 10px auto;
-    width: 100px;
-    height: auto;
+    width: 200px;
+    height: 150px;
     text-align: center;
 }
 
@@ -987,32 +1071,56 @@ a#menu:hover {
 }
 
 .refdraw-delbutton {
-	display: inline-block;
-	margin-left: 70%;
+    vertical-align: top;
+    display: inline-block;
+
+    width: 30px;
+    height: 30px;
+    background: url('../images/close.png') no-repeat center center;
+    background-size: 50% auto;
+    cursor: pointer;
+    color:#aaa;
+    font-size:1.2em;
 }
 
-.deleteref {
+.refdraw-delbutton:hover{
+    background-color: rgba(207, 81, 81, .5);
 }
 
 .sortitems {
     margin-bottom: 10px;
 }
 
+.upload_msg {
+    padding: 5px;
+    background-color: rgba(207, 81, 81, .5);
+    color: rgba(255, 255, 255, 1);
+    font-size: 10px;
+}
+
 .delete_btn_item {
-    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
     text-align: right;
     width: 20px;
     height: 20px;
-}
-
-.delete_btn_item:hover {
+    background: url('../images/close.png') no-repeat center center;
+    background-size: 50% auto;
+    background-color: rgba(68, 68, 68, .5);
     cursor: pointer;
 }
 
+.delete_btn_item:hover {
+    background-color: rgba(207, 81, 81, .5);
+}
+
 .item {
+    position: relative;
+    vertical-align: top;
     display: inline-block;
-    width: 110px;
-    min-height: 110px;
+    width: 100px;
+    height: 80px;
     background-color: #ffffff;
     padding: 5px;
     margin: 5px;
@@ -1027,28 +1135,30 @@ a#menu:hover {
     margin: auto;
 }
 
-/* Experiments settings */
+.refdraw-add {
+    padding: 10px;
+    margin: 10px auto 10px auto;
+}
+
 .refdraw-header {
-    background-color: #CF5151;
-    display: block;
-    width: 300px;
+    box-sizing: border-box;
+    font-size: 0;
+    background-color: rgba(255, 255, 255, 1);
+    border-bottom: 2px solid rgba(207, 81, 81, 1);
     color: #eeeeee;
-    padding: 5px;
-    text-align: center;
+    padding: 0;
     font-weight: bold;
-    font-size: 16px;
-    border-bottom: 2px solid #CF5151;
-    margin: 5px 20px auto auto;
+    height: 30px;
 }
 
 .refdraw-param {
-    background-color: #dddddd;
+    background-color: rgba(255,255,255,.9);
     margin: 20px 20px auto auto;
+    border: 1px dashed rgba(68, 68, 68, .3);
 }
 
 .section_param {
     padding: 10px;
-    border-bottom: 1px dashed #222222;
 }
 
 .section_param-header {
@@ -1062,61 +1172,63 @@ a#menu:hover {
 }
 
 .div_display_content {
-    border: 1px dashed #bbbbbb;
-    background-color: #eeeeee;
     padding: 10px;
     cursor: pointer;
-    margin-top: 10px;
-    text-align: justify;
+    margin: auto;
 }
 
-/* Text/Messages */
-#sitetitle {
-    display: inline-block;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    border: none;
-    color: rgba(48,48,48,1);
-    text-align: left;
-    text-transform: normal;
-    -o-text-overflow: clip;
-    text-overflow: clip;
-    white-space: pre;
-    text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
-
-    margin-left: 30px;
-    font-size: 40px;
+/* *********************************************************************/
+/* Text/Messages
+/* *********************************************************************/
+.logoutWarning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+    width: 100%;
+    height: auto;
+    background-color: rgba(164, 33, 27, .9);
+    color: #FFF;
+    padding: 10px;
 }
 
-#pagename {
-    display: block;
-    margin-left: -10px;
-    color: #555555;
-    font-size: 35px;
+#nopage {
+    width: 80%;
+    font-size: 1.1em;
+    color: rgba(207,81,81,1);
+    text-transform: uppercase;
 }
 
 #warning {
+    margin: auto;
     color: #990000;
-    font-size: 13px; /* Set message font size  */
-    padding: 5px; /* Some padding to make some more space for our text  */
-    background-color: rgba(255,200,200,.7); /* Add a background color to our status message   */
-    border: 1px solid rgba(255,200,200,.7); /* Add a border arround our status message   */
+    padding: 10px; /* Some padding to make some more space for our text  */
+    background-color: rgba(127,0,0,.2); /* Add a background color to our status message   */
+    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
 }
 
-#info {
+#status {
+    margin: auto;
     color: #000099;
-    font-size: 13px; /* Set message font size  */
-    padding: 5px; /* Some padding to make some more space for our text  */
     background-color: rgba(0,0,127,.2); /* Add a background color to our status message   */
     border: 1px solid #DFDFDF; /* Add a border arround our status message   */
 }
 
 #success {
+    margin: auto;
     color: #009900;
-    font-size: 13px; /* Set message font size  */
-    padding: 3px; /* Some padding to make some more space for our text  */
+    padding: 10px; /* Some padding to make some more space for our text  */
     background-color: rgba(0,127,0,.2); /* Add a background color to our status message   */
+    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
+}
+
+#info {
+    display: inline-block;
+    color: #000099;
+    font-size: 10px; /* Set message font size  */
+    padding: 5px; /* Some padding to make some more space for our text  */
+    background-color: rgba(0,0,127,.2); /* Add a background color to our status message   */
     border: 1px solid #DFDFDF; /* Add a border arround our status message   */
 }
 
@@ -1130,9 +1242,6 @@ a#menu:hover {
     padding: 10px; /* Some padding to make some more space for our text  */
     background: rgba(207,81,81,.1); /* Add a background color to our status message   */
     border: 1px solid rgba(207,81,81,.2); /* Add a border arround our status message   */
-}
-
-.fullbackup {
 }
 
 /* Home sections */

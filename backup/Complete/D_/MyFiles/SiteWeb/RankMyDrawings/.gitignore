@@ -1,0 +1,7 @@
+.idea/
+*.xls
+*.sql
+*.zip
+config/config.php
+*.txt
+readme.docx

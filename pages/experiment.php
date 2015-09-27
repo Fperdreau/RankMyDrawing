@@ -38,17 +38,18 @@ $img2 = "images/$ref->file_id/img/$item2->filename";
 $original = "images/$ref->file_id/img/$ref->filename";
 
 $result = "
-<div id='experiment_frame' data-user='$user->userid'>
+<div id='experiment_frame' data-user='$user->userid' data-ref='$ref->file_id'>
 	<div class='original_container'>
-		<div class='original' id='$ref->file_id'>
+		<div class='picture original' id='$ref->file_id'>
 			<img src='$original' class='drawing_img'>
 		</div>
 	</div>
+	<div class='progress'><div id='progressbar'>Progression: 0%</div></div>
 	<div class='img_container'>
-		<div class='drawing' id='item1'>
+		<div class='picture drawing' id='item1'>
 			<img src='$img1' class='drawing_img' data-item='$item1->file_id' data-opp='$item2->file_id'>
 		</div>
-		<div class='drawing' id='item2'>
+		<div class='picture drawing' id='item2'>
 			<img src='$img2' class='drawing_img' data-item='$item2->file_id' data-opp='$item1->file_id'>
 		</div>
 	</div>

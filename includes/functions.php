@@ -27,8 +27,8 @@ function check_login() {
     if ($cond) {
         $result = "
 		    <div id='content'>
-        		<p id='warning'>You must <a rel='leanModal' id='modal_trigger_login' href='#modal' class='modal_trigger'>log in</a> to access the different options of this interface</p>
-		        </p>
+        		<p id='warning'>You must <span class='leanModal' id='user_login' data-section='user_login'>
+        		log in</span> to access the different options of this interface</p>
 		    </div>
 		    ";
 		echo json_encode($result);
@@ -77,24 +77,13 @@ function browse($dir, $dirsNotToSaveArray = array()) {
 }
 
 // Export target db to xls file
-function exportdbtoxls($tablename) {
-    /***** EDIT BELOW LINES *****/
-    $db_set = new AppDb();
-    $DB_Server = $db_set->host; // MySQL Server
-    $DB_Username = $db_set->username; // MySQL Username
-    $DB_Password = $db_set->passw; // MySQL Password
-    $DB_DBName = $db_set->dbname; // MySQL Database Name
-    $DB_TBLName = $tablename; // MySQL AppTable Name
-    $xls_filename = 'backup/export_'.$tablename.date('Y-m-d').'.xls'; // Define Excel (.xls) file name
-	$out = "";
-    /***** DO NOT EDIT BELOW LINES *****/
-    // Create MySQL connection
-    $sql = "Select * from $DB_TBLName";
-    $Connect = @mysql_connect($DB_Server, $DB_Username, $DB_Password) or die("Failed to connect to MySQL:<br />" . mysql_error() . "<br />" . mysql_errno());
-    // Select database
-    $Db = @mysql_select_db($DB_DBName, $Connect) or die("Failed to select database:<br />" . mysql_error(). "<br />" . mysql_errno());
-    // Execute query
-    $result = @mysql_query($sql,$Connect) or die("Failed to execute query:<br />" . mysql_error(). "<br />" . mysql_errno());
+function exportDb($tablename) {
+    global $db;
+    $out = "";
+    $xls_filename = $tablename."_".date('Y-m-d').'.xls'; // Define Excel (.xls) file name
+
+    $sql = "Select * from $tablename";
+    $result = $db->send_query($sql);
 
     // Header info settings
     header("Content-Type: application/xls");
@@ -106,24 +95,23 @@ function exportdbtoxls($tablename) {
     // Define separator (defines columns in excel &amp; tabs in word)
     $sep = "\t"; // tabbed character
 
+    $columns = $db->getcolumns($tablename);
+    foreach ($columns as $column) {
     // Start of printing column names as names of MySQL fields
-    for ($i = 0; $i<mysql_num_fields($result); $i++) {
-        $out .= mysql_field_name($result, $i) . "\t";
+        $out .= $column . "\t";
     }
     $out .= "\n";
     // End of printing column names
 
     // Start while loop to get data
-    while($row = mysql_fetch_row($result))
-    {
+    while($row = mysqli_fetch_assoc($result)) {
         $schema_insert = "";
-        for($j=0; $j<mysql_num_fields($result); $j++)
-        {
-            if(!isset($row[$j])) {
+        foreach ($columns as $column) {
+            if(empty($row[$column])) {
                 $schema_insert .= "NULL".$sep;
             }
-            elseif ($row[$j] != "") {
-                $schema_insert .= "$row[$j]".$sep;
+            elseif ($row[$column] != "") {
+                $schema_insert .= "$row[$column]".$sep;
             }
             else {
                 $schema_insert .= "".$sep;
@@ -136,22 +124,53 @@ function exportdbtoxls($tablename) {
         $out .=  "\n";
     }
 
-	if ($fp = fopen(PATH_TO_APP.'/'.$xls_filename, "w+")) {
+    if ($fp = fopen(PATH_TO_APP.'/backup/'.$xls_filename, "w+")) {
         if (fwrite($fp, $out) == true) {
             fclose($fp);
         } else {
             $result = "Impossible to write";
-	        echo json_encode($result);
-			exit;
+            echo json_encode($result);
+            exit;
         }
     } else {
         $result = "Impossible to open the file";
         echo json_encode($result);
         exit;
     }
-    chmod(PATH_TO_APP.'/'.$xls_filename,0644);
+    chmod(PATH_TO_APP.'/backup/'.$xls_filename,0644);
+    return PATH_TO_APP."/backup/$xls_filename";
+}
 
-    return $xls_filename;
+/**
+ * exportdbtoxls()
+ * Export reference drawing's tables to xls file and return an archive
+ * @param $refname
+ * @param $tableList
+ * @return string
+ */
+function exportdbtoxls($refname, $tableList) {
+    global $AppConfig;
+
+    $zipSaveDir = PATH_TO_APP.'/backup/Complete';
+    $fileNamePrefix = $refname."_".date('Y-m-d_H-i-s');
+    $filenames = array();
+    foreach ($tableList as $tablename) {
+        $filenames[] = exportDb($tablename);
+    }
+    $zipfile = $zipSaveDir.'/'.$fileNamePrefix.'.zip';
+
+    $zip = new ZipArchive();
+
+    if ($zip->open($zipfile, ZIPARCHIVE::CREATE)!==TRUE) {
+        return "cannot open <$zipfile>";
+    } else {
+        foreach ($filenames as $filename) {
+            $zip->addFile($filename);
+        }
+
+        $zip->close();
+        return $AppConfig->site_url."backup/Complete/$fileNamePrefix.zip";
+    }
 }
 
 // Backup routine
@@ -203,7 +222,7 @@ function backup_db(){
     fclose($handle);
 
     cleanbackups($mysqlSaveDir);
-    return "http://".$AppConfig->site_url."/backup/Mysql/$fileNamePrefix.sql";
+    return $AppConfig->site_url."/backup/Mysql/$fileNamePrefix.sql";
 }
 
 // Mail backup file to admins
@@ -267,7 +286,7 @@ function cleanbackups($mysqlSaveDir) {
 
 // Full backup routine
 function file_backup() {
-
+    global  $AppConfig;
     $dirToSave = PATH_TO_APP;
     $dirsNotToSaveArray = array(PATH_TO_APP."/backup");
     $mysqlSaveDir = PATH_TO_APP.'/backup/Mysql';
@@ -288,15 +307,14 @@ function file_backup() {
 
     $zip = new ZipArchive();
 
-    if ($zip->open($zipfile, ZIPARCHIVE::CREATE)!==TRUE) {
+    if ($zip->open($zipfile, ZipArchive::CREATE)!==true) {
         return "cannot open <$zipfile>";
     } else {
         foreach ($filenames as $filename) {
-            $zip->addFile($filename,$filename);
+            $zip->addFile($filename);
         }
-
         $zip->close();
-        return "backup/complete/$fileNamePrefix.zip";
+        return $AppConfig->site_url."backup/Complete/$fileNamePrefix.zip";
     }
 }
 

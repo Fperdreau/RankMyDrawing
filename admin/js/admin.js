@@ -18,367 +18,222 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// Display reference drawing content (instructions or consent form)
-var display_content = function(type,lang,content,refid) {
+/**
+ * display_content
+ * Display reference drawing content (instructions or consent form)
+ * @param type
+ * @param lang
+ * @param content
+ * @param refid
+ */
+function display_content(type,lang,content,refid) {
     var html = "<div class='div_display_content' id='display_"+type+"' data-lang='"+lang
         +"' data-ref='"+refid+"' data-type='"+type+"'>"+content+"</div>";
     $('.'+type)
         .html(html)
         .fadeIn('slow');
-};
-
-
-function getpage() {
-    var params = getParams();
-    var page = (params.page == undefined) ? 'home':params.page;
-    jQuery.ajax({
-        url: '../php/form.php',
-        data: {get_app_status: true},
-        type: 'POST',
-        async: true,
-        success: function(data) {
-            var json = jQuery.parseJSON(data);
-            if (json === 'Off') {
-                $('#pagecontent')
-                    .html("<div id='content'><p id='warning'>Sorry, the website is currently under maintenance.</p></div>")
-                    .fadeIn(200);
-            } else {
-                if (page === undefined) {
-                    loadpageonclick('home',false);
-                } else {
-                    if (page !== false && page != 'install') {
-                        var urlparam = parseurl();
-                        loadpageonclick(page,''+urlparam);
-                    }
-                }
-            }
-        }
-    })
 }
 
-// Load page by clicking on menu sections
-var loadpageonclick = function(pagetoload,param) {
-    param = (param === undefined || param === "") ? false: param;
-    var stateObj = { page: pagetoload };
-    var url = (param === false) ? "index.php?page="+pagetoload:"index.php?page="+pagetoload+"&"+param;
+/**
+ * Show form to submit a presentation
+ * @param refid
+ * @param itemid
+ */
+function showItem(refid, itemid) {
+    var formel = $('#item_description');
+    var data = {
+        show_item: true,
+        refid: refid,
+        itemid: itemid
+    };
+    // First we remove any existing submission form
+    var callback = function(result) {
+        formel
+            .html(result.content)
+            .fadeIn(200);
+    };
+    processAjax(formel,data,callback,'../admin/php/form.php');
+}
 
+/**
+ * Show item's settings in a modal window
+ * @param refid
+ */
+function showItemSettings(refid) {
+    var formel = $('#item_settings');
+    var data = {
+        show_item_settings: true,
+        refid: refid
+    };
+    // First we remove any existing submission form
+    var callback = function(result) {
+        formel
+            .html(result.content)
+            .fadeIn(200);
+        $('.popupHeader').html(result.ref+' | Settings');
+    };
+    processAjax(formel,data,callback,'../admin/php/form.php');
+}
+
+/**
+ * logout()
+ * Log out the user and trigger a modal window informing the user he/she has been logged out
+ */
+function logout() {
+    $('.warningmsg').remove();
     jQuery.ajax({
-        url: 'pages/'+pagetoload+'.php',
-        type: 'GET',
-        async: true,
-        data: param,
-        beforeSend: function() {
-            $('#pagecontent').fadeOut(200);
-            $('#loading').show();
-        },
-        complete: function () {
-            $('#loading').hide();
-        },
-        success: function(data){
-            var json = jQuery.parseJSON(data);
-            history.pushState(stateObj, pagetoload, url);
-
-            $('#pagecontent')
-                .empty()
-                .html(json)
-                .fadeIn(200)
-                .find(".section_page").each(function() {
-                    $(this).fadeIn('slow');
-                });
-            tinymcesetup();
+        url: '../admin/php/form.php',
+        type: 'POST',
+        data: {logout: true},
+        success: function() {
+            $('.mainbody').append("<div class='logoutWarning'>You have been logged out!</div>");
+            $('.logoutWarning').fadeIn(200);
+            setTimeout(function() {
+                $('.logoutWarning')
+                    .fadeOut(200)
+                    .empty()
+                    .hide();
+                location.reload();
+            },3000);
         }
     });
-};
+}
 
-// Parse URL
-var parseurl = function() {
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    vars = vars.slice(1,vars.length);
-    vars = vars.join("&");
-    return vars;
-};
-
-// Get url params ($_GET)
-var getParams = function() {
-    var url = window.location.href;
-    var splitted = url.split("?");
-    if(splitted.length === 1) {
-        return {};
-    }
-    var paramList = decodeURIComponent(splitted[1]).split("&");
-    var params = {};
-    for(var i = 0; i < paramList.length; i++) {
-        var paramTuple = paramList[i].split("=");
-        params[paramTuple[0]] = paramTuple[1];
-    }
-    return params;
-};
+/**
+ * Automatically show login window on start (if user is not already logged in)
+ */
+function showLogin() {
+    jQuery.ajax({
+        url: '../admin/php/form.php',
+        type: 'POST',
+        data: {isLogged: true},
+        success: function(data) {
+            var json = jQuery.parseJSON(data);
+            if (json === false) {
+                $('.leanModal#user_login')
+                    .leanModal({top : 50, overlay : 0.6, closeButton: ".modal_close" })
+                    .click();
+            }
+        }
+    });
+}
 
 $( document ).ready(function() {
-    $(".mainbody")
+    $('body').ready(function() {
+        showLogin();
+    });
 
-        .ready(function() {
-            getpage();
-        })
+    $(".mainbody")
 
         /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          Header menu/Sub-menu
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-        // Display/Hide sub-menu
         // Main menu sections
-        .on('click',".menu-section",function(){
+        .on('click',".menu-section",function(e){
+            e.preventDefault();
+            e.stopPropagation();
+
             $(".menu-section").removeClass("activepage");
             $(this).addClass("activepage");
+            var sideMenu = $('.sideMenu');
+            var width = sideMenu.width();
+            if ($(this).is('[id]')) {
+                var pagetoload = $(this).attr("id");
+                var param = ($(this).is('[data-param]'))? $(this).data('param'):false;
+                getPage(pagetoload,param);
+                sideMenu
+                    .animate({left: "-="+width+"px"},300)
+                    .attr('id','off');
+                $('#core').animate({left: "-="+width+"px"},300);
 
-            if ($(this).is('[data-url]')) {
-                var pagetoload = $(this).attr("data-url");
-                loadpageonclick(pagetoload,false);
             }
-        })
-
-        // Log out
-        .on('click',"#logout",function(){
-            jQuery.ajax({
-                url: 'pages/logout.php',
-                type: 'POST',
-                async: false,
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    window.location = "index.php";
-                }
-            });
         })
 
         // Show menu
-        .on('click','.displaymenu_btn',function() {
-            var status = $(this).attr('id');
+        .on('click','.menu_btn',function() {
+            var sideMenu = $('.sideMenu');
+            var core = $('#core');
+            var status = sideMenu.attr('id');
+            var width = sideMenu.width();
+            var height = core.outerHeight()-$('header').height();
+            sideMenu.css('height',height+'px');
             if (status == 'off') {
-                $('.menu').animate({left: "+=150px"},300);
-                $(this).attr('id','on');
+                sideMenu
+                    .animate({left: "+="+width+"px"},300)
+                    .attr('id','on');
+                core.animate({left: "+="+width+"px"},300);
             } else {
-                $('.menu').animate({left: "-=150px"},300);
-                $(this).attr('id','off');
+                sideMenu
+                    .animate({left: "-="+width+"px"},300)
+                    .attr('id','off');
+                core.animate({left: "-="+width+"px"},300);
             }
         })
 
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Admin information
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-		// Display change password form
-		.on('click','.change_pwd', function(e) {
-			$('.change_pwd_form').toggle();
-		})
-
-		// Change password on confirmation
-		.on('click','.conf_changepw',function(e) {
-			e.preventDefault();
-			var username = $("input#ch_username").val();
-			var oldpassword = $("input#ch_oldpassword").val();
-			var password = $("input#ch_password").val();
-            var conf_password = $("input#ch_conf_password").val();
-
-            if (oldpassword == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#ch_oldpassword").focus();
-                return false;
+        .on('click','#core',function(e) {
+            var sideMenu = $('.sideMenu');
+            var status = sideMenu.attr('id');
+            var width = sideMenu.width();
+            if (status == 'on') {
+                sideMenu
+                    .animate({left: "-="+width+"px"},300)
+                    .attr('id','off');
+                $('#core').animate({left: "-="+width+"px"},300);
             }
-
-            if (password == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#ch_password").focus();
-                return false;
-            }
-
-            if (conf_password == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#ch_conf_password").focus();
-                return false;
-            }
-
-            if (password !== conf_password) {
-                showfeedback('<p id="warning">Passwords must match!</p>');
-                $("input#ch_conf_password").focus();
-                return false;
-            }
-
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: true,
-                data: {
-                    conf_changepw: true,
-                    username: username,
-                    oldpassword: oldpassword,
-                    password: password
-                    },
-                	success: function(data){
-	                    var result = jQuery.parseJSON(data);
-	                    if (result === "changed") {
-	                        $('.change_pwd_form').html('<p id="success">Your password has been modified.</p>');
-	                    } else if (result === "wrong") {
-	                        showfeedback('<p id="warning">Wrong password!</p>');
-                            $("input#ch_oldpassword").focus();
-	                    }
-	                }
-            });
-		})
-
-		// Modify admin information
-		.on('click','.change_admininfo',function(e) {
-            e.preventDefault();
-			var username = $('input#ch_username').val();
-			var email = $('input#ch_email').val();
-
-            if (username == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#ch_username").focus();
-                return false;
-            }
-
-            if (email == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#ch_email").focus();
-                return false;
-            }
-
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: true,
-                data: {
-                    mod_admininfo: true,
-                    username: username,
-                    email: email
-                    },
-                    success: function(data){
-                        var result = jQuery.parseJSON(data);
-                        showfeedback(result);
-                    }
-            });
         })
 
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Experiment settings
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+        /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         Admin information
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+        // Display change password form
+        .on('click','.change_pwd', function() {
+            $('.change_pwd_form').toggle();
+        })
+
+        /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         Experiment settings
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+        .on('click','.refdraw-settings',function(e) {
+            var refid = $(this).data('ref');
+            showItemSettings(refid)
+        })
         // Select ref drawing
         .on('change','.select_ref', function(e) {
             e.preventDefault();
+            var form = $(this).parent('section');
             var refid = $(this).val();
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: false,
-                data: {
-                    select_ref: true,
-                    refid: refid},
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    $('.all_ref_params').html(result);
-                }
-            });
+            var data = {select_ref: true, refid: refid};
+            var callback = function(result) {
+                $('.all_ref_params').html(result);
+            };
+            processAjax(form, data, callback,'../admin/php/form.php');
         })
 
-        // Modify parameters
-        .on('click','.mod_ref_params',function(e) {
-            e.preventDefault();
-            var refid = $(this).attr('data-ref');
-            var elo = $('input#elo_'+refid).val();
-            var pair = $('input#pair_'+refid).val();
-            var max_nb_users = $('input#max_nb_users_'+refid).val();
-            var status = $('select#status_'+refid).val();
-            var filter = $('select#filter_'+refid).val();
-
-            if (elo == "") {
-                showfeedback('<p id="warning">This field is required</p>','.feedback_params');
-                $("input#elo").focus();
-                return false;
-            }
-
-            if (pair == "" || pair == 0) {
-                showfeedback('<p id="warning">This value must be greater than 0</p>','.feedback_params');
-                $("input#pair").focus();
-                return false;
-            }
-
-            if (max_nb_users == "" || max_nb_users == 0) {
-                showfeedback('<p id="warning">This value must be greater than 0</p>','.feedback_params');
-                $("input#max_nb_users").focus();
-                return false;
-            }
-
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: false,
-                data: {
-                    mod_ref_params: true,
-                    initial_score: elo,
-                    refid: refid,
-                    nb_pairs: pair,
-                    max_nb_users: max_nb_users,
-                    status: status,
-                    filter: filter},
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    showfeedback(result,'.feedback_params');
-                }
-            });
-        })
-
-		// Add content to the database
+        // Add content to the database
         .on('click','.addcontent',function(e) {
             e.preventDefault();
-            var lang = $('input#lang_name').val();
-            var instruction = tinyMCE.get('instruction').getContent()
-            var consent = tinyMCE.get('consent').getContent()
-            var refid = $(this).attr('data-ref');
-
-            if (lang == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#lang_name").focus();
-                return false;
-            }
-
-            if (instruction == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                tinymce.execCommand('mceFocus',false,'instruction');
-                return false;
-            }
-
-            if (consent == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                tinymce.execCommand('mceFocus',false,'consent');
-                return false;
-            }
-
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: false,
-                data: {
-                    add_content: true,
-                    lang: lang,
-                    refid: refid,
-                    instruction: instruction,
-                    consent: consent},
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    $('.'+type)
-                        .html(result)
-                        .fadeIn();
-                }
-            });
+            var form = $(this).closest('#mailing_send');
+            if (!checkform(form)) {return false;}
+            var data = form.serializeArray();
+            var consent = tinyMCE.get('consent').getContent();
+            var instruction = tinyMCE.get('instruction').getContent();
+            data = modArray(data,'consent',consent);
+            data = modArray(data,'instruction',instruction);
+            var callback = function(result) {
+                $('.'+type)
+                    .html(result)
+                    .fadeIn();
+            };
+            processAjax(form,data, callback);
         })
 
-		// Confirm modification and update the database
+        // Confirm modification and update the database
         .on('click','.modcontent',function(e) {
             e.preventDefault();
-            var type = $(this).attr('data-type');
-            var lang = $(this).attr('data-lang');
+            var type = $(this).data('type');
+            var lang = $(this).data('lang');
             var content = tinyMCE.get(type).getContent();
-            var refid = $(this).attr('data-ref');
+            var refid = $(this).data('ref');
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',
@@ -396,17 +251,15 @@ $( document ).ready(function() {
             });
         })
 
-		// Delete the selected content (instruction or consent form)
+        // Delete the selected content (instruction or consent form)
         .on('click','.delcontent',function(e) {
             e.preventDefault();
             var type = $(this).attr('data-type');
             var lang = $('select#select_lang').val();
             var refid = $(this).attr('data-ref');
-
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',
-                async: false,
                 data: {
                     del_content: true,
                     type: type,
@@ -418,16 +271,15 @@ $( document ).ready(function() {
             });
         })
 
-		// Modify content of the consent form (replace the current div by a textarea)
+        // Modify content of the consent form (replace the current div by a textarea)
         .on('click','#display_consent',function(e) {
             e.preventDefault();
-            var type = $(this).attr('data-type');
-            var lang = $(this).attr('data-lang');
-            var refid = $(this).attr('data-ref');
+            var type = $(this).data('type');
+            var lang = $(this).data('lang');
+            var refid = $(this).data('ref');
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',
-                async: false,
                 data: {
                     cha_content: true,
                     type: type,
@@ -444,7 +296,7 @@ $( document ).ready(function() {
             });
         })
 
-		// Modify content of the instructions (replace the current div by a textarea)
+        // Modify content of the instructions (replace the current div by a textarea)
         .on('click','#display_instruction',function(e) {
             e.preventDefault();
             var type = $(this).attr('data-type');
@@ -486,11 +338,11 @@ $( document ).ready(function() {
                     .fadeIn();
                 $('.instruction')
                     .html("<textarea name='instruction' "+
-                        "class='tinymce' id='instruction'></textarea>")
+                    "class='tinymce' id='instruction'></textarea>")
                     .fadeIn();
                 $('.consent')
                     .html("<textarea name='consent' class='tinymce' id='consent'></textarea>"
-                        +"<p style='text-align: right'><input type='submit' id='submit' class='addcontent' data-ref='"+refid+"'></p>")
+                    +"<p style='text-align: right'><input type='submit' id='submit' class='addcontent' data-ref='"+refid+"'></p>")
                     .fadeIn();
                 window.tinymce.dom.Event.domLoaded = true;
                 tinymcesetup();
@@ -512,11 +364,11 @@ $( document ).ready(function() {
             }
         })
 
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Drawing management
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+        /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         Drawing management
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
         // Add a reference drawing
-         .on('click','.newrefid',function(e) {
+        .on('click','.newrefid',function(e) {
             e.preventDefault();
             var refid = $("input#newref").val();
             if (refid == "") {
@@ -535,17 +387,18 @@ $( document ).ready(function() {
                 },
                 success: function(data){
                     var result = jQuery.parseJSON(data);
-                    if (result == true) {
-                        showfeedback('<p id="warning">Sorry, this name is already taken. Please choose another one.</p>');
+                    if (result.status == true) {
+                        showfeedback(result.msg);
                         $("input#newref").focus();
                         return false;
                     } else {
-                       var html = "<form method='post' action='js/mini-upload-form/upload.php' enctype='multipart/form-data' id='upload' class='upl_newref'>"+
-                            "<div id='drop'>"+
-                                "<a>Add files</a><input type='file' name='ref,"+refid+"' multiple/> Or drag it here"+
-                            "</div>"+
-                            "<ul></ul>"+
-                        "</form>";
+/*                        "<form method='post' action='js/mini-upload-form/upload.php' enctype='multipart/form-data' id='upload' class='upl_newref'>"+
+                        "<div id='drop'>"+
+                        "<a>Add files</a><input type='file' name='ref,"+refid+"' multiple/> Or drag it here"+
+                        "</div>"+
+                        "<ul></ul>"+
+                        "</form>";*/
+                        var html = result.msg;
                         $('.refupload')
                             .css('display','table-cell').fadeIn('slow');
                         $('#upref').html(html);
@@ -556,10 +409,9 @@ $( document ).ready(function() {
         })
 
         // Delete reference drawing
-        .on('click','.deleteref',function(e) {
+        .on('click','.refdraw-delbutton',function(e) {
             e.preventDefault();
-            var refid = $(this).attr('data-ref');
-            console.log(refid);
+            var refid = $(this).data('ref');
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',
@@ -614,43 +466,19 @@ $( document ).ready(function() {
                     $('.itemList#'+refdraw).html(result);
                 }
             });
-            return false;
-        })
-
-        // Trigger modal dialog box for publications (show/modify/delete forms)
-        .on('mouseover',"a[rel*=item_leanModal]",function(e) {
-            e.preventDefault();
-            $(this).leanModal({top : 50, width : 500, overlay : 0.6, closeButton: ".modal_close" });
         })
 
         // Show item details
-        .on('click',"#modal_trigger_showitem",function(e){
+        .on('click',".thumb",function(e){
             e.preventDefault();
-            var refid = $(this).attr('data-ref');
-            var itemid = $(this).attr('data-item');
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: false,
-                data: {
-                    show_item: true,
-                    refid: refid,
-                    itemid: itemid},
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    $('.item_popupContainer').show();
-                    $(".modal_section#item_description")
-                        .show()
-                        .html(result.content);
-                    $(".item_delete").hide();
-                    $(".header_title").text("Drawing's description: "+result.item);
-                }
-            });
+            var refid = $(this).data('ref');
+            var itemid = $(this).data('item');
+            showItem(refid, itemid);
         })
 
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Export tools
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+        /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         Export tools
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
         // Backup the database only if asked
         .on('click','.backup',function(){
             var op = $(this).attr('data-op');
@@ -696,110 +524,26 @@ $( document ).ready(function() {
                 .fadeOut(5000);
         })
 
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Application settings
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-        // Configuration of the application
-        .on('click','.config_form_site',function(e) {
-            e.preventDefault();
-            processform("config_form_site",".feedback_site");
-        })
-
-        .on('click','.config_form_exp',function(e) {
-            e.preventDefault();
-            processform("config_form_exp",".feedback_exp");
-        })
-
-        .on('click','.config_form_mail',function(e) {
-            e.preventDefault();
-            processform("config_form_mail",".feedback_mail");
-        })
-
-
-    /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     Login dialog
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-    // Upload a file
-        .on('mouseover','#fileupload').fileupload({
-            dataType: 'json',
-            done: function (e, data) {
-                $.each(data.result.files, function (index, file) {
-                    $('<p/>').text(file.name).appendTo(document.body);
-                });
-            }
-        })
-
-        // Trigger modal dialog box for log in
-        .on('mouseover',"a[rel*=leanModal]",function(e) {
-            e.preventDefault();
-            $(this).leanModal({top : 50, overlay : 0.6, closeButton: ".modal_close" });
-        })
-
-        // Dialog log in
-        .on('click',"#modal_trigger_login",function(e){
-            e.preventDefault();
-            showmodal('user_login');
-            $(".header_title").text('Log in');
-        });
-
-    // Process events happening on the login/sign up modal dialog box
-    $(".popupContainer")
-
-        //Change password
-        .on('click','.modal_trigger_changepw',function(e) {
-            e.preventDefault();
-            showmodal('user_changepw');
-        })
-
-        // Going back to Login Forms
-        .on('click',".back_btn",function(){
-            showmodal('user_login');
-            $(".header_title").text('Log in');
-            return false;
-        })
-
+        /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         Login dialog
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
         // Login form
-        .on('click',".login",function() {
-            var username = $("input#log_username").val();
-            var password = $("input#log_password").val();
-
-            if (username == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#log_username").focus();
-                return false;
-            }
-
-            if (password == "") {
-                showfeedback('<p id="warning">This field is required</p>');
-                $("input#log_password").focus();
-                return false;
-            }
-
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: true,
-                data: {username: username,
-                    password: password,
-                    login: true
-                },
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    console.log(result);
-                    if (result == 'logok') {
-                        location.reload();
-                    } else if (result == "wrong_username") {
-                        showfeedback('<p id="warning">Wrong username</p>');
-                    } else if (result == "wrong_password") {
-                        showfeedback('<p id="warning">Wrong username/password</p>');
-                    }
+        .on('click',".login",function(e) {
+            e.preventDefault();
+            var input = $(this);
+            var form = input.length > 0 ? $(input[0].form) : $();
+            var callback = function(result) {
+                if (result.status === true) {
+                    location.reload();
                 }
-            });
-            return false;
-        });
+            };
+            processForm(form,callback);
+        })
 
-    $('.item_popupContainer')
+        // Log out
+        .on('click',"#logout",function(){
+            logout();
+        })
 
         // Show publication deletion confirmation
         .on('click',".del_item",function(e){
@@ -817,8 +561,9 @@ $( document ).ready(function() {
                 success: function(data){
                     var result = jQuery.parseJSON(data);
                     $('#item_'+itemid).remove();
-                    close_modal('.item_popupContainer');
+                    close_modal('#item_modal');
                 }
             });
         });
+
 });

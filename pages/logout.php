@@ -24,13 +24,10 @@ session_unset();
 session_destroy();
 
 $content = "
-<div id='content'>
-	<span id='pagename'>Congratulations</span>
-	<div class='section_content' style='text-align: center'>
-		<p>Thank you for your participation</p>
-		<div id='countdown'></div>
-	</div>
-</div>
+<section style='text-align: center'>
+	<p>Thank you for participating!!</p>
+	<div id='countdown'></div>
+</section>
 ";
 
 echo json_encode($content);

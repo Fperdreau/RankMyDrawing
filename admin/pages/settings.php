@@ -22,28 +22,28 @@ require_once('../includes/includes.php');
 check_login();
 
 $refdrawlist = $db -> getinfo($db->tablesname['DrawRef'],"file_id");
-$options = "
-    <label for='select_ref'>Select a reference</label>
-    <select name='select_ref' class='select_ref'>
-        <option value='all' selected>All</option>
-";
-
-foreach ($refdrawlist as $ref_id) {
-    $options .= "<option value='$ref_id'>$ref_id</option>";
-}
-$options .= "</select>";
-
-// Get reference drawings settings
+$options = "";
+$content = "";
 if (!empty($refdrawlist)) {
-    $content = showrefsettings();
+    foreach ($refdrawlist as $ref_id) {
+        $options .= "<option value='$ref_id'>$ref_id</option>";
+        $ref = new DrawRef($db,$ref_id);
+        $content .= $ref->showSettings();
+    }
 } else {
     $content = "<p id='warning'>You must upload your reference drawings first<br>Go to the <a href='index.php?page=management'>Drawing Management section</a></p>";
 }
 
 $result = "
-    <div id='content'>
-        <span id='pagename'>Experiment settings</span>
-        $options
+    <section>
+        <h2>Experiment settings</h2>
+        <div class='formcontrol'>
+            <label for='select_ref'>Select a reference</label>
+            <select name='select_ref' class='select_ref'>
+                <option value='all' selected>All</option>
+                $options
+            </select>
+        </div>
         <div class='all_ref_params'>$content</div>
-    </div>";
+    </section>";
 echo json_encode($result);

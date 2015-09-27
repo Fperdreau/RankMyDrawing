@@ -64,7 +64,7 @@ class DbBackup extends AppCron {
     public function run() {
         // Run cron job
         $backupfile = backup_db();
-        $filelink = json_encode($backupfile);
+        $filelink = $backupfile;
 
         // Write log only if server request
         $result = "Backup successfully done";
