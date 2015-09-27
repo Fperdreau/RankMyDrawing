@@ -1,4 +1,0 @@
-<IfDefine Free>
-php 1
-</IfDefine>
-Options -Indexes
