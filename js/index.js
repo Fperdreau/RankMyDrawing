@@ -35,6 +35,21 @@ var progressbar = function(value) {
         });
 };
 
+function setTimer() {
+    jQuery.ajax({
+        'url':'php/form.php',
+        'type':'POST',
+        'data': {setTimer: true},
+        success: function(data) {
+            var result = jQuery.parseJSON(data);
+            if (result.status == true) {
+                $('.Timer').ExperimentTimer(result.maxtime,1000);
+                $('.progress').show();
+            }
+        }
+    });
+}
+
 $( document ).ready(function() {
 
     $('.mainbody')
@@ -83,6 +98,7 @@ $( document ).ready(function() {
                     },
                 success: function(){
                     displayPage('experiment');
+                    setTimer();
                 }
             });
         })

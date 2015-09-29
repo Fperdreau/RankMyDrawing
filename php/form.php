@@ -27,6 +27,18 @@ if (!empty($_POST['get_app_status'])) {
     exit;
 }
 
+if (!empty($_POST['setTimer'])) {
+    $AppConfig->maxTime = 30;
+    if ($AppConfig->maxTime !== false) {
+        $result['status'] = true;
+        $result['maxtime'] = $AppConfig->maxTime;
+    } else {
+        $result['status'] = false;
+    }
+    echo json_encode($result);
+    exit;
+}
+
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Contact form
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

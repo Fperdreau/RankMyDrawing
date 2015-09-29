@@ -44,7 +44,6 @@ $result = "
 			<img src='$original' class='drawing_img'>
 		</div>
 	</div>
-	<div class='progress'><div id='progressbar'>Progression: 0%</div></div>
 	<div class='img_container'>
 		<div class='picture drawing' id='item1'>
 			<img src='$img1' class='drawing_img' data-item='$item1->file_id' data-opp='$item2->file_id'>

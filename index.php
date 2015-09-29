@@ -56,6 +56,9 @@ require('includes/boot.php');
         <div id="core">
             <?php require(PATH_TO_PAGES.'modal.php'); ?>
             <div id="pagecontent"></div>
+            <div class='progress' style="display: none;">
+                <div class='Timer'></div>
+                <div id='progressbar'>Progression: 0%</div></div>
         </div>
 
         <!-- Footer section -->
@@ -75,5 +78,6 @@ require('includes/boot.php');
         <script type="text/javascript" src="js/form.js"></script>
         <script type="text/javascript" src="js/plugins.js"></script>
         <script type="text/javascript" src="js/jquery.leanModal.js"></script>
+        <script type="text/javascript" src="js/timer/timer.js"></script>
     </body>
 </html>

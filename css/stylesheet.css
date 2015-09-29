@@ -817,11 +817,16 @@ h3 {
 }
 
 .progress {
+    display: block;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    position: fixed;
+    top: 60px;
+    right: 0;
     box-sizing: border-box;
-    width: 100%;
     text-align: center;
-    margin: 20px;
-    height: 30px;
+    background: rgba(64, 64, 64, .9);
 }
 
 .picture {
