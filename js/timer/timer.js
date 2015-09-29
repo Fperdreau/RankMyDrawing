@@ -21,7 +21,9 @@
                     var remainingTime = maxTime - currentTime;
                     var ms = 1000*Math.round(remainingTime/1000); // round to nearest second
                     var d = new Date(ms);
-                    self.timerDiv.html(d.getUTCMinutes() + ':' + d.getUTCSeconds());
+                    var minutes = (d.getUTCMinutes() < 10) ? '0'+d.getUTCMinutes(): d.getUTCMinutes();
+                    var secondes = (d.getUTCSeconds() < 10) ? '0'+d.getUTCSeconds(): d.getUTCSeconds();
+                    self.timerDiv.html(minutes + ':' + secondes);
 
                 }, self.interval);
             }
@@ -32,8 +34,10 @@
         this.maxTime = maxTime;
         this.interval = interval;
         this.style = {
+            'padding':'5px',
             'color': 'rgba(255, 255, 255, .8)',
             'font-size': '20px',
+            'background': 'rgba(64, 64, 64, .9',
             'font-weight': 500
         };
         this.html("<span class='ExperimentTimer'></span>");

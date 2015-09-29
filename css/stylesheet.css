@@ -798,17 +798,15 @@ h3 {
 /* *********************************************************************/
 #progressbar {
     display: inline-block;
-    width: 200px;
     height: 30px;
     text-align: center;
     font-size: 15px;
     line-height: 30px;
-    border: 1px solid rgba(100, 100, 100, .7);
+    border: 1px solid rgba(200, 200, 200, .8);
     border-radius: 5px;
-    padding: 0;
+    padding: 0 5px;
     margin: auto;
-    color: rgba(100, 100, 100, 1);
-    background-color: rgba(255, 255, 255, 1);
+    color: rgba(64, 64, 64, 1);
 }
 
 #experiment_frame {
@@ -824,9 +822,14 @@ h3 {
     position: fixed;
     top: 60px;
     right: 0;
+    font-size: 0;
     box-sizing: border-box;
     text-align: center;
     background: rgba(64, 64, 64, .9);
+}
+
+.Timer {
+    display: inline-block;
 }
 
 .picture {

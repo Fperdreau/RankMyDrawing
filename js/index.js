@@ -31,7 +31,7 @@ var progressbar = function(value) {
         .show()
         .text(text)
         .css({
-            background: "linear-gradient(to right, rgba(100,100,100,.5) "+linearprogress+"%, rgba(100,100,100,0) "+linearprogress+"%)"
+            background: "linear-gradient(to right, rgba(255,255,255,.8) "+linearprogress+"%, rgba(255,255,255,0) "+linearprogress+"%)"
         });
 };
 
