@@ -456,7 +456,7 @@ if (!empty($_POST['getpagecontent'])) {
         $title = "Installation complete!";
         $operation = "
 		<p id='success'>Congratulations!</p>
-		<p id='warning'> Now you can delete the 'install.php' file from the root folder of the application</p>
+		<p id='warning'>Now you can delete the 'install.php' file from the root folder of the application</p>
 		<p style='text-align: right'><input type='button' value='Finish' class='finish'></p>";
     }
 
@@ -615,7 +615,7 @@ if (!empty($_POST['getpagecontent'])) {
                 // Go to next installation step
                 .on('click', '.finish', function(e) {
                     e.preventDefault();
-                    window.location = "index.php";
+                    window.location = "admin/index.php";
                 })
 
                 // Step 1->3: Launch database setup
