@@ -870,7 +870,7 @@ h3 {
 .drawing {
     box-shadow: 0 0 12px #555;
     width: auto;
-    margin: auto;
+    margin: 20px auto;
     text-align: center;
     cursor: pointer;
     border: 1px solid #eeeeee;
