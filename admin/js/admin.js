@@ -392,15 +392,8 @@ $( document ).ready(function() {
                         $("input#newref").focus();
                         return false;
                     } else {
-/*                        "<form method='post' action='js/mini-upload-form/upload.php' enctype='multipart/form-data' id='upload' class='upl_newref'>"+
-                        "<div id='drop'>"+
-                        "<a>Add files</a><input type='file' name='ref,"+refid+"' multiple/> Or drag it here"+
-                        "</div>"+
-                        "<ul></ul>"+
-                        "</form>";*/
                         var html = result.msg;
-                        $('.refupload')
-                            .css('display','table-cell').fadeIn('slow');
+                        $('.refupload').show();
                         $('#upref').html(html);
                         return false;
                     }
