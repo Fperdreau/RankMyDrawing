@@ -35,14 +35,12 @@ if (!empty($refdrawlist)) {
 }
 
 $result = "
-	<section>
+	<section id='new_refdraw'>
 		<h2>Add a reference drawing</h2>
         <div class='refdraw-add'>
-        	<div style='display: table-cell; width: 30%;'>
-                <div style='display: block;'>
-	        	  <div class='newref_label'>1. Choose a name</div>
-                </div>
-                <div style='display: block;'>
+        	<div id='ref_new_name'>
+	        	<div class='newref_label'>1. Choose a name</div>
+                <div>
                     <form id='newrefid'>
     	        		<input type='text' value='' name='newref' id='newref' />
     	        		<input type='submit' id='submit' class='newrefid' value='Add'/>
@@ -50,9 +48,9 @@ $result = "
                 </div>
         	</div>
 
-            <div class='refupload' style='display: none; text-align: center; width: 50%; margin-left: 100px;'>
+            <div class='refupload' style='display: none;'>
                 <div class='newref_label'>2. Upload the reference drawing</div>
-                <div style='margin: 0 20%;'>
+                <div>
                     <div id='upref'></div>
                 </div>
             </div>
