@@ -45,7 +45,11 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.timer').ExperimentTimer(30,1000);
+            var options = {maxtime: 10};
+            $('.timer').experimenttimer(options);
+            var myplugin = $('.timer').data('experimenttimer');
+            myplugin.start(); // prints "publicMethod() called!" to console
+
         });
     </script>
 </body>

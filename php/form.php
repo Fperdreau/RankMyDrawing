@@ -28,17 +28,29 @@ if (!empty($_POST['get_app_status'])) {
 }
 
 if (!empty($_POST['setTimer'])) {
-    $AppConfig->maxTime = 30;
+    $start = $_POST['start'] === 'true';
+    if (empty($_SESSION['timerStart']) and $start ) {
+        $_SESSION['timerStart'] = $start;
+    } elseif (!empty($_SESSION['timerStart'])) {
+        $start = $_SESSION['timerStart'];
+    }
+
+    $AppConfig->maxTime = 1;
     if ($AppConfig->maxTime !== false) {
         $result['status'] = true;
         $result['maxtime'] = $AppConfig->maxTime;
     } else {
         $result['status'] = false;
     }
+    $result['start'] = $result['status'] && $start;
     echo json_encode($result);
     exit;
 }
 
+if (!empty($_POST['getUrl'])) {
+    echo json_encode($AppConfig->redirecturl);
+    exit;
+}
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Contact form
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

@@ -21,53 +21,81 @@
  * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function($){
+    var ExperimentTimer = function(element, options) {
+        var defaults = {
+            style: {
+                'padding':'5px',
+                'color': 'rgba(255, 255, 255, .8)',
+                'font-size': '20px',
+                'background': 'rgba(64, 64, 64, .9',
+                'font-weight': 500
+                },
+            maxtime: 30,
+            interval: 1000,
+            afterend: function() {}
+        };
+        this.status = false;
+        var elem = $(element);
+        elem.data('status',false);
+        var obj = this;
+        var settings = $.extend(defaults, options || {});
 
-(function($) {
+        elem.html("<span class='ExperimentTimer'></span>");
+        obj.timerDiv = elem.find('.ExperimentTimer');
+        obj.timerDiv.css(settings.style);
 
-    var display = function(self) {
-        var currentTime = new Date();
-        var endTime = new Date(currentTime.getTime() + self.maxTime*60000);
-        jQuery.ajax({
-            url: 'js/timer/process.php',
-            type: 'POST',
-            data: {
-                getTime: true,
-                max: endTime},
-            success: function(data) {
-                var result = jQuery.parseJSON(data);
-                setInterval(function() {
-                    var currentTime = new Date();
-                    var maxTime = new Date(result);
-                    var remainingTime = maxTime - currentTime;
-                    var ms = 1000*Math.round(remainingTime/1000); // round to nearest second
-                    var d = new Date(ms);
-                    var minutes = (d.getUTCMinutes() < 10) ? '0'+d.getUTCMinutes(): d.getUTCMinutes();
-                    var secondes = (d.getUTCSeconds() < 10) ? '0'+d.getUTCSeconds(): d.getUTCSeconds();
-                    self.timerDiv.html(minutes + ':' + secondes);
+        this.start = function() {
+            elem.data('status',true);
+            var currentTime = new Date();
+            var endTime = new Date(currentTime.getTime() + settings.maxtime*60000);
+            jQuery.ajax({
+                url: 'js/timer/process.php',
+                type: 'POST',
+                data: {
+                    getTime: true,
+                    max: endTime},
+                success: function(data) {
+                    var result = jQuery.parseJSON(data);
+                    obj.refreshtimer = setInterval(function() {
+                        var currentTime = new Date();
+                        var maxTime = new Date(result);
+                        var remainingTime = maxTime - currentTime;
+                        if (remainingTime >= 0) {
+                            var ms = 1000*Math.round(remainingTime/1000); // round to nearest second
+                            var d = new Date(ms);
+                            var minutes = (d.getUTCMinutes() < 10) ? '0'+d.getUTCMinutes(): d.getUTCMinutes();
+                            var secondes = (d.getUTCSeconds() < 10) ? '0'+d.getUTCSeconds(): d.getUTCSeconds();
+                            obj.timerDiv.html(minutes + ':' + secondes);
+                        } else {
+                            obj.stop();
+                        }
+                    }, settings.interval);
+                }
+            });
+        };
 
-                }, self.interval);
-            }
-        });
+        this.stop = function() {
+            obj.timerDiv.html("Time's up!");
+            clearInterval(obj.refreshtimer);
+            obj.settings.afterend();
+        }
+
     };
 
-    $.fn.ExperimentTimer = function (maxTime, interval) {
-        this.maxTime = maxTime;
-        this.interval = interval;
-        this.style = {
-            'padding':'5px',
-            'color': 'rgba(255, 255, 255, .8)',
-            'font-size': '20px',
-            'background': 'rgba(64, 64, 64, .9',
-            'font-weight': 500
-        };
-        this.html("<span class='ExperimentTimer'></span>");
-        this.timerDiv = this.find('.ExperimentTimer');
-        this.timerDiv.css(this.style);
-        var self = this;
-        display(self);
-        this.fadeIn();
+    // Wrapper function
+    $.fn.experimenttimer = function(options) {
+        return this.each(function() {
+            var element = $(this);
 
-        return this;
-    }
+            // Return early if this element already has a plugin instance
+            if (element.data('experimenttimer')) return this;
 
-}(jQuery));
+            // pass options to plugin constructor
+            var myplugin = new ExperimentTimer(this, options);
+
+            // Store plugin object in this element's data
+            element.data('experimenttimer', myplugin);
+        });
+    };
+})(jQuery);

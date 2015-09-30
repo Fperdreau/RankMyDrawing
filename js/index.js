@@ -35,22 +35,55 @@ var progressbar = function(value) {
         });
 };
 
-function setTimer() {
+var myplugin;
+function setTimer(el, start) {
+    start = (start == undefined) ? false: start;
     jQuery.ajax({
         'url':'php/form.php',
         'type':'POST',
-        'data': {setTimer: true},
+        'data': {setTimer: true, start: start},
         success: function(data) {
             var result = jQuery.parseJSON(data);
-            if (result.status == true) {
-                $('.Timer').ExperimentTimer(result.maxtime,1000);
-                $('.progress').show();
+            if (result.start == true) {
+                var afterend = endExperiment;
+                var options = {
+                    maxtime: result.maxtime,
+                    afterend: afterend};
+                el.experimenttimer(options);
+                myplugin = el.data('experimenttimer');
+                myplugin.start();
+                $('.progress').fadeIn('slow');
             }
         }
     });
 }
 
+function endExperiment() {
+    displayPage('logout');
+    $('.progress').fadeOut('slow');
+    var count = 5;
+    var countdown = setInterval(function(){
+        $("#countdown").html("You are going to be redirected in "+ count + " seconds!");
+        if (count == 0) {
+            clearInterval(countdown);
+            jQuery.ajax({
+                'url':'php/form.php',
+                'type': 'POST',
+                'data': {getUrl: true},
+                success: function(data) {
+                    var result = jQuery.parseJSON(data);
+                    window.location.href = result;
+                }
+            });
+        }
+        count--;
+    }, 1000);
+}
+
 $( document ).ready(function() {
+
+    var timerDiv = $('.Timer');
+    setTimer(timerDiv);
 
     $('.mainbody')
 
@@ -98,7 +131,7 @@ $( document ).ready(function() {
                     },
                 success: function(){
                     displayPage('experiment');
-                    setTimer();
+                    setTimer(timerDiv, true);
                 }
             });
         })
@@ -128,16 +161,7 @@ $( document ).ready(function() {
                         .html("<img src='"+result.img2+"' class='drawing_img' data-item='"+result.item2+"' data-opp='"+result.item1+"'>");
                     progressbar(result.progress);
                 } else {
-                    displayPage('logout');
-                    var count = 5;
-                    var countdown = setInterval(function(){
-                        $("#countdown").html("You are going to be redirected in "+ count + " seconds!");
-                        if (count == 0) {
-                            clearInterval(countdown);
-                            window.location.href = result.redirecturl;
-                        }
-                        count--;
-                    }, 1000);
+                    endExperiment();
                 }
             };
             processAjax(form,data,callback);

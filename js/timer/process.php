@@ -34,6 +34,6 @@ if (!empty($_POST['getTime'])) {
         $_SESSION['stopTime'] = $maxTime;
     }
 
-    echo json_encode($maxTime);
+    echo json_encode($_SESSION['stopTime']);
     exit;
 }
