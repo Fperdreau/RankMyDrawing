@@ -53,7 +53,7 @@ class AppConfig extends AppTable {
     public $npair = 0;
     public $filter = "on";
     public $languages = array();
-    public $redirecturl = "http://www.florianperdreau.fr";
+    public $redirecturl = "https://github.com/Fperdreau/RankMyDrawings";
     public $instruction = "";
     public $consent = "";
 
