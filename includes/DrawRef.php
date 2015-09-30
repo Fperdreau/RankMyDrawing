@@ -19,7 +19,10 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-
+/**
+ * Class DrawRef
+ * Handle settings and information of a reference drawing
+ */
 class DrawRef extends AppTable {
 
     protected $table_data = array(
@@ -33,23 +36,25 @@ class DrawRef extends AppTable {
         "initial_score" => array("INT(5)", false),
         "nb_pairs" => array("INT(5)", false),
         "max_nb_pairs" => array("INT(5)",false),
+        "maxtime" => array("INT(3)",false),
         "status" => array("CHAR(3)", false),
         "filter" => array("CHAR(3)", false),
         "primary" => "id"
     );
 
-    public $file_id = "";
-    public $filename = "";
-    public $date = "";
-    public $nb_users = 0;
-    public $max_nb_users = 200;
-    public $nb_draw = 0;
-    public $max_nb_pairs = 0;
-    public $initial_score = 1500;
-    public $nb_pairs = 0;
-    public $status = "on";
-    public $filter = "off";
-    public $drawlist = array();
+    public $file_id = ""; // Reference file id
+    public $filename = ""; // Reference file name
+    public $date = ""; // Date of creation
+    public $nb_users = 0; // Current number of participants
+    public $max_nb_users = 200; // Maximum number of participants
+    public $nb_draw = 0; // Number of drawings corresponding to this reference drawing
+    public $max_nb_pairs = 0; // Maximum possible number of combinations
+    public $initial_score = 1500; // Initial ELO score given to every new drawing
+    public $nb_pairs = 0; // Number of pairs (trials) every participants has to rank
+    public $status = "on"; // Status of the experiment corresponding to this reference drawing (On or Off)
+    public $filter = "off"; // Allow or prevent users replaying the experiment
+    public $maxtime = 0; // Maximum duration of the experiment (0: no time limit)
+    public $drawlist = array(); // List of associated drawings
 
     /**
      * Constructor
@@ -350,7 +355,7 @@ class DrawRef extends AppTable {
             $ref = new DrawRef($this->db, $ref_id);
         }
 
-        $sql = "SELECT file_id FROM $this->tablename WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' ORDER BY nb_users ASC";
+        $sql = "SELECT file_id FROM $this->tablename WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' and nb_pairs>'0' ORDER BY nb_users ASC";
         $req = $this->db->send_query($sql);
         $validref = false;
         while ($row = mysqli_fetch_assoc($req)) {
@@ -555,21 +560,26 @@ class DrawRef extends AppTable {
                     <input type='hidden' name='refid' value='$this->file_id'>
 
                     <div class='formcontrol'>
-                        <label for='initial_score' class='label'>Initial Elo score</label>
+                        <label for='initial_score'>Initial Elo score</label>
                         <input type='text' name='initial_score' value='$this->initial_score' required/>
                         <span id='info'>Modifying this value will result in the recomputation of all items' score</span>
                     </div>
                     <div class='formcontrol'>
-                        <label for='nb_pairs' class='label'>Number of trials</label>
+                        <label for='nb_pairs'>Number of trials</label>
                         <input type='text' name='nb_pairs' value='$this->nb_pairs' max='$this->max_nb_pairs'/>
                         <span id='info'>Max number: $this->max_nb_pairs</span>
                     </div>
                     <div class='formcontrol'>
-                        <label for='max_nb_users' class='label'>Max number of users</label>
+                        <label for='max_nb_users'>Max number of users</label>
                         <input type='text' name='max_nb_users' value='$this->max_nb_users' required min='0' max='$this->max_nb_users'/>
                     </div>
                     <div class='formcontrol'>
-                        <label for='status' class='label'>Status</label>
+                        <label for='maxtime'>Maximum duration</label>
+                        <input type='text' name='maxtime' value='$this->maxtime' required/>
+                        <span id='info'>In minutes. 0: no time limits</span>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='status'>Status</label>
                         <select name='status' data-ref='$this->file_id'>
                             <option value='$this->status' selected>$this->status</option>
                             <option value='on'>on</option>
@@ -577,7 +587,7 @@ class DrawRef extends AppTable {
                         </select>
                     </div>
                     <div class='formcontrol'>
-                        <label for='filter' class='label'>Filter user</label>
+                        <label for='filter'>Filter user</label>
                         <select name='filter' data-ref='$this->file_id'>
                             <option value='$this->filter' selected>$this->filter</option>
                             <option value='on'>on</option>
@@ -604,11 +614,11 @@ class DrawRef extends AppTable {
                 </div>
                 <div class='lang_label'></div>
                     <div class='formcontrol'>
-                       <label class='label'>Instructions</label>
+                       <label>Instructions</label>
                         <div class='instruction'></div>
                     </div>
                     <div class='formcontrol'>
-                        <label class='label'>Consent form</label>
+                        <label>Consent form</label>
                         <div class='consent'></div>
                     </div>
                     <div class='refdraw-submit-div'></div>
