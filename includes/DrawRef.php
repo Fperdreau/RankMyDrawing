@@ -581,6 +581,10 @@ class DrawRef extends AppTable {
         return $result;
     }
 
+    /**
+     * Show Reference drawing's details and list of items
+     * @return string
+     */
     public function showDetails() {
         $itemlist = $this->displayitems();
         $file = new Uploads($this->db,$this->filename);
