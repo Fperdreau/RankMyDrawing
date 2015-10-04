@@ -21,6 +21,9 @@
  * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Timer Plugin
+ */
 (function($){
     var ExperimentTimer = function(element, options) {
         var defaults = {

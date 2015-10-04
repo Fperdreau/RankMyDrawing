@@ -30,7 +30,7 @@ $content = $ref->get_content('consent');
 $consent = $content[$user->language];
 
 $result = "
-<section>
+<section id='consent'>
     <h2>Consent Form</h2>
     <div style='padding: 20px;'>
         $consent

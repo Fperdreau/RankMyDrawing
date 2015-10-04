@@ -124,7 +124,8 @@ class AppDb {
             "Users" => $this->dbprefix."_users",
             "Media" => $this->dbprefix."_media",
             "Pages" => $this->dbprefix."_pages",
-            "Crons" => $this->dbprefix."_crons"
+            "Crons" => $this->dbprefix."_crons",
+            "Uploads" => $this->dbprefix."_uploads"
         );
     }
 

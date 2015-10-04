@@ -71,8 +71,7 @@ function endExperiment() {
                 'type': 'POST',
                 'data': {getUrl: true},
                 success: function(data) {
-                    var result = jQuery.parseJSON(data);
-                    window.location.href = result;
+                    window.location.href = jQuery.parseJSON(data);
                 }
             });
         }
@@ -156,9 +155,9 @@ $( document ).ready(function() {
             var callback =  function(result) {
                 if (result.stopexp == false) {
                     $('#item1')
-                        .html("<img src='"+result.img1+"' class='drawing_img' data-item='"+result.item1+"' data-opp='"+result.item2+"'>");
+                        .html("<img src='"+result.img1+"' class='picture drawing_img' data-item='"+result.item1+"' data-opp='"+result.item2+"'>");
                     $('#item2')
-                        .html("<img src='"+result.img2+"' class='drawing_img' data-item='"+result.item2+"' data-opp='"+result.item1+"'>");
+                        .html("<img src='"+result.img2+"' class='picture drawing_img' data-item='"+result.item2+"' data-opp='"+result.item1+"'>");
                     progressbar(result.progress);
                 } else {
                     endExperiment();

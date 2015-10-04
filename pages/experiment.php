@@ -30,26 +30,32 @@ $exp = new Experiment($db, $ref,$user->userid);
 $trial = $exp->gettrial();
 $pair = $_SESSION['pairslist'][$trial];
 
+// Instantiate items
 $item1 = new Ranking($db,$ref->file_id,$pair[0]);
 $item2 = new Ranking($db,$ref->file_id,$pair[1]);
 
-$img1 = "images/$ref->file_id/img/$item1->filename";
-$img2 = "images/$ref->file_id/img/$item2->filename";
-$original = "images/$ref->file_id/img/$ref->filename";
+// Get corresponding files
+$file1 = new Uploads($db,$item1->filename);
+$file2 = new Uploads($db,$item2->filename);
+$reffile = new Uploads($db,$ref->filename);
+
+$img1 = "images/$ref->file_id/img/$file1->filename";
+$img2 = "images/$ref->file_id/img/$file2->filename";
+$original = "images/$ref->file_id/img/$reffile->filename";
 
 $result = "
 <div id='experiment_frame' data-user='$user->userid' data-ref='$ref->file_id'>
 	<div class='original_container'>
 		<div class='picture original' id='$ref->file_id'>
-			<img src='$original' class='drawing_img'>
+			<img src='$original' class='picture drawing_img'>
 		</div>
 	</div>
 	<div class='img_container'>
-		<div class='picture drawing' id='item1'>
-			<img src='$img1' class='drawing_img' data-item='$item1->file_id' data-opp='$item2->file_id'>
+		<div class='drawing' id='item1'>
+			<img src='$img1' class='picture drawing_img' data-item='$item1->file_id' data-opp='$item2->file_id'>
 		</div>
 		<div class='picture drawing' id='item2'>
-			<img src='$img2' class='drawing_img' data-item='$item2->file_id' data-opp='$item1->file_id'>
+			<img src='$img2' class='picture drawing_img' data-item='$item2->file_id' data-opp='$item1->file_id'>
 		</div>
 	</div>
 </div>

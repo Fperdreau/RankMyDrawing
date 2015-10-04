@@ -270,47 +270,6 @@ input[type='button'].addBtn {
 /* *********************************************************************/
 /* HTML Structure
 /* *********************************************************************/
-
-#sign {
-    padding: 5px 50px;
-    display: inline-block;
-    text-align: right;
-}
-
-#sign>div {
-    vertical-align: middle;
-    display:inline-block;
-    margin: 5px 10px;
-    color: #cccccc;
-    font-size: 0.9em;
-}
-
-#appTitle {
-    text-transform: uppercase;
-    color: #cccccc;
-    margin-top: 20px;
-    font-size: 1.1em;
-    font-weight: 500;
-}
-
-#appVersion {
-    border-top: 1px solid rgba(150,150,150,.5);
-    color: rgba(150,150,150,.5);
-    margin-top: 0;
-    font-size: 0.9em;
-    font-weight: 200;
-}
-
-#colBar {
-    display: block;
-    width: 100%;
-    background: rgba(150,150,150,.5);
-    height: 30px;
-}
-
-/* *********************************************************************/
-/* Body
-/* *********************************************************************/
 html {
     height: 100%;
     font-size: 16px;
@@ -319,7 +278,7 @@ html {
 body {
     height: 100%;
     width: 100%;
-    min-width: 320px;
+    min-width: 1024px;
     margin: 0;
     padding: 0;
     font-family: 'Lato', Calibri, Arial, sans-serif;
@@ -328,7 +287,7 @@ body {
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: scroll;
 }
 
 a {
@@ -341,7 +300,7 @@ a:hover {
 }
 
 /* *********************************************************************/
-/* Body
+/* HEADER
 /* *********************************************************************/
 header {
     position: fixed;
@@ -419,7 +378,9 @@ header .headerbox:hover {
     height: auto;
 }
 
-/* Menu */
+/* *********************************************************************/
+/* MENU
+/* *********************************************************************/
 li {
     text-transform: uppercase;
 }
@@ -811,6 +772,7 @@ h3 {
 
 #experiment_frame {
     width: 100%;
+    min-width: 850px;
     min-height: 400px;
 }
 
@@ -870,7 +832,7 @@ h3 {
 .drawing {
     box-shadow: 0 0 12px #555;
     width: auto;
-    margin: auto;
+    margin: 20px auto;
     text-align: center;
     cursor: pointer;
     border: 1px solid #eeeeee;
@@ -887,7 +849,7 @@ h3 {
 }
 
 /************************************************
-* Publication modal dialog
+* Modal dialog
 ************************************************/
 .item_caps {
     display: block;
@@ -952,7 +914,9 @@ h3 {
     display: none;
 }
 
-/* Login */
+/************************************************
+* Login window
+************************************************/
 .login-container {
     display: inline-block;
     clear: both;
@@ -978,7 +942,31 @@ h3 {
     width: 30%;
 }
 
-/* Drawing Management */
+/************************************************
+* Drawing management
+************************************************/
+#new_refdraw {
+    max-width: 600px;
+}
+
+.refdraw-add {
+    padding: 10px;
+    margin: 10px auto 10px auto;
+}
+
+#ref_new_name{
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: 10px;
+
+}
+
+.refupload{
+    vertical-align: top;
+    display: inline-block;
+    text-align: left;
+}
+
 .newref_label {
     font-size: 1.2em;
     font-weight: 400;
@@ -986,10 +974,10 @@ h3 {
 }
 
 .refdraw-div {
+    max-width: 300px;
     padding: 0;
     margin-top: 10px;
     text-align: justify;
-
 }
 
 .refdraw-content {
@@ -1134,6 +1122,7 @@ h3 {
     background-color: #ffffff;
     padding: 5px;
     margin: 5px;
+    cursor: pointer;
 }
 
 .item:hover{
@@ -1143,11 +1132,6 @@ h3 {
 .thumb {
     width: 90%;
     margin: auto;
-}
-
-.refdraw-add {
-    padding: 10px;
-    margin: 10px auto 10px auto;
 }
 
 .refdraw-header {
@@ -1233,13 +1217,15 @@ h3 {
     border: 1px solid #DFDFDF; /* Add a border arround our status message   */
 }
 
-#info {
+.info {
     display: inline-block;
-    color: #000099;
+    max-width: 250px;
+    box-sizing: border-box;
+    color: rgba(62, 95, 163, 1);
     font-size: 10px; /* Set message font size  */
     padding: 5px; /* Some padding to make some more space for our text  */
-    background-color: rgba(0,0,127,.2); /* Add a background color to our status message   */
-    border: 1px solid #DFDFDF; /* Add a border arround our status message   */
+    background-color: rgba(62, 95, 163, .1); /* Add a background color to our status message   */
+    border: 1px solid rgba(62, 95, 163, .8); /* Add a border arround our status message   */
 }
 
 .page_description {

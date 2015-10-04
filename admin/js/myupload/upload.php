@@ -29,7 +29,6 @@
  */
 require_once('../../includes/includes.php');
 
-$ref = new DrawRef($db);
 $id = array_keys($_FILES);
 $id = $id[0];
 $data = explode(',',$id);
@@ -37,6 +36,7 @@ $op = $data[0];
 $file_id = $data[1];
 $filename = false;
 if ($op == "ref") {
+    $ref = new DrawRef($db);
     $result = $ref->make($file_id,$_FILES[$id]);
 } else {
     //Loop through each file

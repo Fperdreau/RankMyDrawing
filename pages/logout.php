@@ -24,7 +24,7 @@ session_unset();
 session_destroy();
 
 $content = "
-<section style='text-align: center'>
+<section style='text-align: center; width: 400px;'>
 	<p>Thank you for participating!!</p>
 	<div id='countdown'></div>
 </section>

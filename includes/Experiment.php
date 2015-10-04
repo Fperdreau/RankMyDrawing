@@ -157,7 +157,7 @@ class Experiment {
             $W = $outcomes[$ind1]; // Match's outcome (0=lose, 1=win)
             $diff = $item->score - $opp->score; // Difference of scores
             $pwin = 1/(1 + (pow(10, -$diff/400))); // Win probability
-            $coef = 800/(2*($item->nb_occ+1)); // Adjust coefficient to the item's level
+            $coef = 800/(2*($item->nb_occ + 1)); // Adjust coefficient to the item's level
             $scores[$item->file_id] = $item->score + $coef * ($W - $pwin); // Compute new ELO score
         }
         return $scores;

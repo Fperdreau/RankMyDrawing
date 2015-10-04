@@ -79,7 +79,6 @@
 
 .upl_errors {
     display: none;
-    width: 100%;
     color: #990000;
     font-size: 0.8em; /* Set message font size  */
     padding: 5px; /* Some padding to make some more space for our text  */
@@ -147,7 +146,7 @@
 }
 
 .del_upl {
-    background: rgba(255, 255, 255, .7) url('../images/delete.png') no-repeat 50% 50%;
+    background: rgba(255, 255, 255, .7) url('../../../images/delete.png') no-repeat 50% 50%;
     background-size: 15px;
     border-left: 1px solid #999999;
     width: 20px;

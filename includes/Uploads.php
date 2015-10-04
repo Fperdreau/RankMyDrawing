@@ -24,12 +24,21 @@
  * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Uploads {
+class Uploads extends AppTable {
 
-    protected $directory;
-    protected $maxsize;
-    protected $allowed_types;
-    public $presid;
+    protected $table_data = array(
+        "id" => array("INT NOT NULL AUTO_INCREMENT", false),
+        "fileid" => array("CHAR(50)", false),
+        "filename" => array("CHAR(50)", false),
+        "date" => array("DATETIME NOT NULL"),
+        "type" => array("CHAR(50)", false),
+        "directory" => array("CHAR(255)", false),
+        "primary" => "id"
+    );
+    protected $directory=PATH_TO_IMG;
+    protected $maxsize=2000*1000;
+    protected $allowed_types=array('png');
+    protected $max_resolution=array(4000,4000);
     public $fileid;
     public $date;
     public $filename;
@@ -39,24 +48,33 @@ class Uploads {
      * Constructor
      * @param AppDb $db
      */
-    function __construct(AppDb $db) {
-        $config = new AppConfig($db);
-        $this->directory = PATH_TO_APP.'/images/';
-        $this->maxsize = $config->upl_maxsize;
-        $this->allowed_types = explode(',',$config->upl_types);
+    function __construct(AppDb $db, $fileid=null) {
+        parent::__construct($db, "Uploads", $this->table_data);
 
         // Create uploads folder if it does not exist yet
         if (!is_dir($this->directory)) {
             mkdir($this->directory);
         }
+
+        if (!is_null($fileid)) {
+            $this->get($fileid);
+        }
     }
 
     /**
      * Create Media object
-     * @param $file
+     * @param $file : $_FILES
+     * @param null $directory : Destination folder
+     * @param null $filename: file name
      * @return bool|mixed|mysqli_result|string
      */
-    public function make($file) {
+    public function make($file, $directory=null, $filename=null) {
+
+        // Create uploads folder if it does not exist yet
+        $this->directory = ($directory !== null) ? $directory:$this->directory;
+        if (!is_dir($this->directory)) {
+            mkdir($this->directory);
+        }
 
         // First check the file
         $result['error'] = $this->checkupload($file);
@@ -65,7 +83,7 @@ class Uploads {
         }
 
         // Second: Proceed to upload
-        $result = $this->upload($file);
+        $result = $this->upload($file,$filename);
         if ($result['error'] !== true) {
             return $result;
         }
@@ -73,8 +91,8 @@ class Uploads {
         $this->date = date('Y-m-d h:i:s');
 
         // Third: add to the Media table
-        $class_vars = get_class_vars('Media');
-        $content = $this->parsenewdata($class_vars,array(),array('directory','maxsize','allowed_types'));
+        $class_vars = get_class_vars('Uploads');
+        $content = $this->parsenewdata($class_vars,array(),array('max_resolution','maxsize','allowed_types'));
         $result['error'] = $this->db->addcontent($this->tablename,$content);
         if ($result['error'] !== true) {
             $result['error'] = 'SQL: Could not add the file to the media table';
@@ -110,46 +128,36 @@ class Uploads {
         // First check if the db points to an existing file
         if (!is_file($this->directory.$this->filename)) {
             // If not, we remove the data from the db
-            if ($this->delete() !== true) {
-                return False;
-            }
+            return $this->delete();
+        } else {
+            return true;
         }
-
-        // Second check if files present on the server are registered in the db
-        return $this->files2db();
     }
 
     /**
-     * Associates a previously uploaded file to a presentation
-     * @param $filename
-     * @param $presid
-     * @return mixed
-     */
-    function add_presid($filename,$presid) {
-        return $this->db->updatecontent($this->tablename,array('presid'=>$presid),array('filename'=>$filename));
-    }
-
-    /**
-     * Delete a file corresponding to the actual presentation
+     * Delete a file
      * @return bool|string
      */
     function delete() {
+        // Check if file exists
         if (is_file($this->directory.$this->filename)) {
+            // If it exists, try to delete it
             if (unlink($this->directory.$this->filename)) {
+                // If deleted, remove its corresponding entry in DB
                 if ($this->db->deletecontent($this->tablename,'fileid',$this->fileid)) {
                     $result['status'] = true;
-                    $result['msg'] = "<p id='success'>File Deleted</p>";
+                    $result['msg'] = "File Deleted";
                 } else {
                     $result['status'] = false;
-                    $result['msg'] = "<p id='success'>Oops!</p>";
+                    $result['msg'] = "Could not remove entry from DB";
                 }
             } else {
                 $result['status'] = false;
-                $result['msg'] = "<p id='success'>Oops!</p>";
+                $result['msg'] = "Could not delete the file";
             }
         } else {
             $result['status'] = false;
-            $result['msg'] = "<p id='success'>Oops!</p>";
+            $result['msg'] = "File does not exist";
         }
         return $result;
     }
@@ -160,7 +168,6 @@ class Uploads {
      * @return bool|string
      */
     private function checkupload($file) {
-        // Check $_FILES['upfile']['error'] value.
         if ($file['error'][0] != 0) {
             switch ($file['error'][0]) {
                 case UPLOAD_ERR_OK:
@@ -187,6 +194,10 @@ class Uploads {
         if (false === in_array($ext,$this->allowed_types)) {
             return "Invalid file type";
         } else {
+            list($width, $height, $type, $attr) = getimagesize($file['tmp_name'][0]);
+            if ($width > $this->max_resolution[0] || $height > $this->max_resolution[1]) {
+                return "Wrong resolution (max: ".$this->max_resolution[0]."x".$this->max_resolution[1].")";
+            }
             return true;
         }
     }
@@ -194,9 +205,10 @@ class Uploads {
     /**
      * Upload a file
      * @param $file
+     * @param null $filename: file ID
      * @return mixed
      */
-    public function upload($file) {
+    public function upload($file, $filename=null) {
         $result['status'] = false;
         if (isset($file['tmp_name'][0]) && !empty($file['name'][0])) {
             $result['error'] = self::checkupload($file);
@@ -206,17 +218,22 @@ class Uploads {
                 $this->type = end($splitname);
 
                 // Create a unique filename
-                $newname = $this->makeId();
+                if (!is_null($filename)) {
+                    $this->fileid = $filename;
+                    $this->filename = $filename.'.'.$this->type;
+                } else {
+                    $this->filename = $this->makeId();
+                }
 
                 // Move file to the upload folder
-                $dest = $this->directory.$newname;
-                $results['error'] = move_uploaded_file($tmp,$dest);
+                $destination = $this->directory.$this->filename;
+                $results['error'] = move_uploaded_file($tmp,$destination);
 
                 if ($results['error'] == false) {
                     $result['error'] = "Uploading process failed";
                 } else {
                     $results['error'] = true;
-                    $result['status'] = $newname;
+                    $result['status'] = $this->fileid;
                 }
             }
         } else {

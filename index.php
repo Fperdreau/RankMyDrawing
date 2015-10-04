@@ -26,18 +26,21 @@ require('includes/boot.php');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <META NAME="description" CONTENT="Journal Club Manager. Organization. Submit or suggest a presentation. Archives.">
-        <META NAME="keywords" CONTENT="Journal Club">
+        <META NAME="description" CONTENT="RankMyDrawings: assessing drawing accuracy using an ELO ranking system">
+        <META NAME="keywords" CONTENT="RankMyDrawings">
+
         <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link type='text/css' rel='stylesheet' href="css/stylesheet.css"/>
+        <link type='text/css' rel='stylesheet' href="css/essentials.css"/>
+        <link type='text/css' rel='stylesheet' href="css/experiment.css"/>
         <link type="text/css" rel="stylesheet" href="css/modal_style.css" />
+        <link type="text/css" rel="stylesheet" href="css/form.css" />
 
         <!-- JQuery -->
         <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/loading.js"></script>
 
-        <title><?php $AppConfig->sitetitle ?></title>
+        <title>RankMyDrawings</title>
     </head>
 
     <body class="mainbody">

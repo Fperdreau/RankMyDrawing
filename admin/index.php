@@ -30,8 +30,10 @@ require('../includes/boot.php');
         <META NAME="description" CONTENT="Journal Club Manager. Organization. Submit or suggest a presentation. Archives.">
         <META NAME="keywords" CONTENT="Journal Club">
         <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link type='text/css' rel='stylesheet' href="../css/stylesheet.css"/>
+        <link type='text/css' rel='stylesheet' href="../css/essentials.css"/>
+        <link type='text/css' rel='stylesheet' href="../css/admin.css"/>
         <link type="text/css" rel="stylesheet" href="../css/modal_style.css" />
+        <link type="text/css" rel="stylesheet" href="../css/form.css" />
         <link type="text/css" rel="stylesheet" href="js/myupload/uploader.css" />
 
         <!-- JQuery -->

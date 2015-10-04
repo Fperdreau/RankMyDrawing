@@ -1,0 +1,458 @@
+/*
+Copyright © 2014, F. Perdreau, Radboud University Nijmegen
+=======
+This file is part of RankMyDrawings.
+
+RankMyDrawings is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+RankMyDrawings is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+body {
+    width: 100%;
+    min-width: 320px;
+    overflow-x: hidden;
+}
+
+/* *********************************************************************/
+/* HEADER
+/* *********************************************************************/
+.menu_btn {
+    display: inline-block;
+    vertical-align: top;
+
+    width: 30px;
+    height: 40px;
+    background: url('../images/menu.png') no-repeat center center;
+    background-size: 80% auto;
+    background-color: rgba(255,255,255,.5);
+
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.menu_btn:hover{
+    background-color: rgba(255,255,255,.8);
+}
+
+.menu_btn>img {
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+}
+
+/* *********************************************************************/
+/* MENU
+/* *********************************************************************/
+li {
+    text-transform: uppercase;
+}
+
+li a {
+    color: rgba(207,81,81,1);
+}
+
+.sideMenu {
+    position: fixed;
+    z-index: 800;
+    top: 40px;
+    left: -250px;
+    width: 250px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background: rgba(68,68,68,1);
+    border-right: 5px solid rgba(207,81,81,1);
+    border-top: 5px solid rgba(207,81,81,1);
+}
+
+.sideMenu nav {
+    display: block;
+    max-width: 250px;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 2px 2px #555;
+}
+
+.sideMenu nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sideMenu nav li {
+    text-align: left;
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid rgba(255,255,255,.5);
+    color: #eee;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.sideMenu nav li:hover {
+    border-bottom: 1px solid rgba(34,34,34,.5);
+    background: rgba(255,255,255,.5);
+    color: rgba(68,68,68,1);
+}
+
+.sideMenu nav li:hover>a {
+    color: #ffffff;
+}
+
+.activepage {
+    color: #cccccc;
+}
+
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+#core {
+    position: relative;
+    max-width: 70%;
+    min-width: 300px;
+    box-sizing: border-box;
+    padding: 0;
+    margin: auto;
+    min-height: 768px;
+}
+
+/************************************************
+* Modal dialog
+************************************************/
+.item_caps {
+    display: block;
+    width: 30%;
+    background-color: rgba(255,255,255,.7);
+    padding: 10px;
+}
+
+#item_title {
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+    font-weight: bold;
+}
+
+.item_img {
+    display: block;
+    width: 600px;
+    height: 400px;
+    text-align: center;
+    padding: 0px;
+    margin: 10px auto;
+}
+
+.action_btn {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+}
+
+.action_btn>div {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.del_item {
+    cursor: pointer;
+    padding: 10px 10px;
+    height: 20px;
+    background-color: rgba(207, 81, 81, 1);
+    color: #EEEEEE;
+    width: 100px;
+    text-align: center;
+}
+
+.del_item:hover {
+    background-color: #EEEEEE;
+    color: rgba(207, 81, 81, 1);
+}
+
+/* Login and register forms */
+.missing_field {
+    background-color: rgba(127,0,0,.5);
+}
+
+.login_form {
+    display: none;
+}
+
+/************************************************
+* Login window
+************************************************/
+.login-container {
+    display: inline-block;
+    clear: both;
+    width: 90%;
+    text-align: justify;
+    margin: auto;
+    padding: 0;
+    vertical-align: top;
+}
+
+.login-container > div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.login-container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.login {
+    width: 30%;
+}
+
+/************************************************
+* Drawing management
+************************************************/
+#new_refdraw {
+    max-width: 600px;
+}
+
+.refdraw-add {
+    padding: 10px;
+    margin: 10px auto 10px auto;
+}
+
+#ref_new_name{
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: 10px;
+
+}
+
+.refupload{
+    vertical-align: top;
+    display: inline-block;
+    text-align: left;
+}
+
+.newref_label {
+    font-size: 1.2em;
+    font-weight: 400;
+    display: block;
+}
+
+.refdraw-div {
+    max-width: 300px;
+    padding: 0;
+    margin-top: 10px;
+    text-align: justify;
+}
+
+.refdraw-content {
+    margin: auto;
+    text-align: center;
+    vertical-align: top;
+    box-sizing: border-box;
+    background-color: rgba(68,68,68,1);
+}
+
+.refdraw-name {
+    background-color: rgba(207, 81, 81, 1);
+    width: auto;
+    color: #eeeeee;
+    padding: 0 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
+    box-sizing: border-box;
+    border-bottom: 2px solid rgba(207, 81, 81, 1);
+    display: inline-block;
+    vertical-align: top;
+}
+
+.refdraw-settings {
+    background: url('../images/settings.png') no-repeat center center;
+    background-size: 50% auto;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.refdraw-settings:hover{
+    background-color: rgba(207, 81, 81, .5);
+}
+
+.refdraw-desc {
+    display: inline-block;
+    text-align: center;
+    min-width: 250px;
+    height: auto;
+    padding: 0;
+    margin: auto;
+    vertical-align: middle;
+    background-color: rgba(68,68,68,1);
+}
+
+.refdraw-info {
+    padding: 5px;
+    background-color: #eeeeee;
+    color: #555555;
+    border-top: 1px dashed #555555;
+    border-bottom: 1px dashed #555555;
+}
+
+.refdraw-half {
+    vertical-align: top;
+    text-align: center;
+    min-width: 250px;
+    display: inline-block;
+}
+
+.refdraw-items {
+    margin: auto;
+    width: 500px;
+    height: auto;
+    background-color: #666666;
+    padding: 10px;
+    border: 1px solid #222222;
+}
+
+.refdraw-thumb {
+    padding: 10px;
+    border: 1px solid #999999;
+    border-radius: 5px;
+    background-color: rgba(34,34,34,1);
+    margin: 10px auto 10px auto;
+    width: 200px;
+    height: 150px;
+    text-align: center;
+}
+
+.ref-thumb {
+    width: 100px;
+    height: auto;
+}
+
+.refdraw-delbutton {
+    vertical-align: top;
+    display: inline-block;
+
+    width: 30px;
+    height: 30px;
+    background: url('../images/close.png') no-repeat center center;
+    background-size: 50% auto;
+    cursor: pointer;
+    color:#aaa;
+    font-size:1.2em;
+}
+
+.refdraw-delbutton:hover{
+    background-color: rgba(207, 81, 81, .5);
+}
+
+.sortitems {
+    margin-bottom: 10px;
+}
+
+.upload_msg {
+    padding: 5px;
+    background-color: rgba(207, 81, 81, .5);
+    color: rgba(255, 255, 255, 1);
+    font-size: 10px;
+}
+
+.delete_btn_item {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+    width: 20px;
+    height: 20px;
+    background: url('../images/close.png') no-repeat center center;
+    background-size: 50% auto;
+    background-color: rgba(68, 68, 68, .5);
+    cursor: pointer;
+}
+
+.delete_btn_item:hover {
+    background-color: rgba(207, 81, 81, .5);
+}
+
+.item {
+    position: relative;
+    vertical-align: top;
+    display: inline-block;
+    width: 100px;
+    height: 80px;
+    background-color: #ffffff;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.item:hover{
+    background-color: #dddddd;
+}
+
+.thumb {
+    width: 90%;
+    margin: auto;
+}
+
+.refdraw-header {
+    box-sizing: border-box;
+    font-size: 0;
+    background-color: rgba(255, 255, 255, 1);
+    border-bottom: 2px solid rgba(207, 81, 81, 1);
+    color: #eeeeee;
+    padding: 0;
+    font-weight: bold;
+    height: 30px;
+}
+
+.refdraw-param {
+    background-color: rgba(255,255,255,.9);
+    margin: 20px 20px auto auto;
+    border: 1px dashed rgba(68, 68, 68, .3);
+}
+
+.section_param {
+    padding: 10px;
+}
+
+.section_param-header {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.add_lang {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.div_display_content {
+    padding: 10px;
+    cursor: pointer;
+    margin: auto;
+}

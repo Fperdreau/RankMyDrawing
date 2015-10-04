@@ -1,0 +1,244 @@
+
+/* *********************************************************************/
+/* Body
+/* *********************************************************************/
+html {
+    height: 100%;
+    font-size: 16px;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    min-width: 1024px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 1em;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+/* *********************************************************************/
+/* HTML Structure
+/* *********************************************************************/
+#core {
+    position: relative;
+    max-width: 100%;
+    min-width: 1024px;
+    box-sizing: border-box;
+    padding: 0;
+    margin: auto;
+    min-height: 768px;
+}
+
+/* *********************************************************************/
+/* Home Page
+/* *********************************************************************/
+.user_info {
+    margin: 50px auto;
+    width: 50%;
+    text-align: justify;
+    padding: 30px;
+    background-color: rgba(127,127,127,.1);
+}
+
+/* *********************************************************************/
+/* Consent form
+/* *********************************************************************/
+section#consent {
+    width: 70%;
+}
+
+.action_btn {
+    clear: both;
+    width: 50%;
+    margin: 10px auto;
+    display: block;
+    text-align: justify;
+    text-decoration: none;
+}
+
+.action_btn>div {
+    display: inline-block;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    width: 70px;
+    margin-left: 0;
+}
+
+.action_btn:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.part_btn:hover {
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+.decline {
+    padding:10px 10px;
+    background: rgba(207, 81, 81, 1);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.decline:hover {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
+
+}
+
+.agree {
+    padding:10px 20px;
+    background: rgba(255, 255, 255, 1);
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
+}
+
+.agree:hover {
+    background: rgba(207, 81, 81, 1);
+    color: #FFFFFF;
+}
+
+/* *********************************************************************/
+/* Instructions
+/* *********************************************************************/
+section#instructions {
+    width: 70%;
+}
+
+.instructions {
+    display: inline-block;
+    width: 35%;
+    min-width: 300px;
+    vertical-align: top;
+}
+
+.example {
+    vertical-align: top;
+    display: inline-block;
+    padding-left: 20px;
+    width: 50%;
+    min-width: 250px;
+    box-sizing: border-box;
+}
+
+.example>img {
+    width: 100%;
+}
+
+.start_btn {
+    text-align: center;
+    margin: auto;
+    width: 100px;
+    cursor: pointer;
+    padding:10px 20px;
+    background: #FFFFFF;
+    color: rgba(207, 81, 81, 1);
+    border: 1px solid rgba(207, 81, 81, 1);
+    transition: all 0.3s ease 0s;
+    text-transform: uppercase;
+}
+
+.start_btn:hover {
+    background: rgba(207, 81, 81, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+/* *********************************************************************/
+/* Experiment
+/* *********************************************************************/
+#progressbar {
+    display: inline-block;
+    height: 30px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 30px;
+    border: 1px solid rgba(200, 200, 200, .8);
+    border-radius: 5px;
+    padding: 0 5px;
+    margin: auto;
+    color: rgba(64, 64, 64, 1);
+}
+
+#experiment_frame {
+    width: 900px;
+    height: 700px;
+    margin: auto;
+}
+
+.progress {
+    display: block;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    position: fixed;
+    top: 60px;
+    right: 0;
+    font-size: 0;
+    box-sizing: border-box;
+    text-align: center;
+    background: rgba(64, 64, 64, .9);
+}
+
+.Timer {
+    display: inline-block;
+}
+
+.picture {
+    min-width: 200px;
+    min-height: 200px;
+    max-width: 400px;
+    max-height: 400px;
+}
+
+.original {
+    margin: auto;
+    text-align: center;
+}
+
+.original_container {
+    margin: auto;
+    padding: 0;
+    width: 100%;
+    text-align: justify;
+}
+
+.img_container {
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    text-align: justify;
+    display: block;
+}
+
+.img_container>div {
+    display: inline-block;
+}
+
+.img_container:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.drawing {
+    box-shadow: 0 0 12px #555;
+    margin: 20px auto;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #eeeeee;
+}
+
+.drawing:hover {
+    box-shadow: 0 0 12px #FF0000;
+    border: 1px solid #999999;
+}

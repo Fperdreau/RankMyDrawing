@@ -29,20 +29,19 @@ if (!empty($_POST['get_app_status'])) {
 
 if (!empty($_POST['setTimer'])) {
     $start = $_POST['start'] === 'true';
-    if (empty($_SESSION['timerStart']) and $start ) {
-        $_SESSION['timerStart'] = $start;
-    } elseif (!empty($_SESSION['timerStart'])) {
-        $start = $_SESSION['timerStart'];
+    $result['start'] = false;
+    if ($start) {
+        $refid = $_SESSION['refid'];
+        $ref = new DrawRef($db, $refid);
+        $maxtime = $ref->maxtime;
+        if ($maxtime > 0) {
+            $result['start'] = true;
+            $result['maxtime'] = $maxtime;
+        } else {
+            $result['start'] = false;
+        }
     }
 
-    $AppConfig->maxTime = 1;
-    if ($AppConfig->maxTime !== false) {
-        $result['status'] = true;
-        $result['maxtime'] = $AppConfig->maxTime;
-    } else {
-        $result['status'] = false;
-    }
-    $result['start'] = $result['status'] && $start;
     echo json_encode($result);
     exit;
 }
@@ -107,10 +106,10 @@ if (!empty($_POST['startexp'])) {
 }
 
 if (!empty($_POST['endtrial'])) {
-    $userid = $_POST['userid'];
-    $refid = $_POST['refid'];
-    $winnerid = $_POST['winner'];
-    $loserid = $_POST['loser'];
+    $userid = htmlspecialchars($_POST['userid']);
+    $refid = htmlspecialchars($_POST['refid']);
+    $winnerid = htmlspecialchars($_POST['winner']);
+    $loserid = htmlspecialchars($_POST['loser']);
 
     $ref = new DrawRef($db,$refid);
     $user = new Participant($db,$userid,$refid);
@@ -140,8 +139,13 @@ if (!empty($_POST['endtrial'])) {
         $item2id = $trialinfo[1];
         $item1 = new Ranking($db,$refid,$item1id);
         $item2 = new Ranking($db,$refid,$item2id);
-        $img1 = "images/$ref->file_id/img/$item1->filename";
-        $img2 = "images/$ref->file_id/img/$item2->filename";
+
+        // Get corresponding files
+        $file1 = new Uploads($db,$item1->filename);
+        $file2 = new Uploads($db,$item2->filename);
+
+        $img1 = "images/$ref->file_id/img/$file1->filename";
+        $img2 = "images/$ref->file_id/img/$file2->filename";
 
         $result['item1'] = $item1id;
         $result['item2'] = $item2id;

@@ -392,15 +392,8 @@ $( document ).ready(function() {
                         $("input#newref").focus();
                         return false;
                     } else {
-/*                        "<form method='post' action='js/mini-upload-form/upload.php' enctype='multipart/form-data' id='upload' class='upl_newref'>"+
-                        "<div id='drop'>"+
-                        "<a>Add files</a><input type='file' name='ref,"+refid+"' multiple/> Or drag it here"+
-                        "</div>"+
-                        "<ul></ul>"+
-                        "</form>";*/
                         var html = result.msg;
-                        $('.refupload')
-                            .css('display','table-cell').fadeIn('slow');
+                        $('.refupload').show();
                         $('#upref').html(html);
                         return false;
                     }
@@ -412,19 +405,15 @@ $( document ).ready(function() {
         .on('click','.refdraw-delbutton',function(e) {
             e.preventDefault();
             var refid = $(this).data('ref');
-            jQuery.ajax({
-                url: '../admin/php/form.php',
-                type: 'POST',
-                async: true,
-                data: {
-                    deleteref: refid
-                },
-                success: function(data){
-                    var result = jQuery.parseJSON(data);
-                    console.log(result);
+            var data = {deleteref: refid};
+            var el = $('.refdraw-div#'+refid);
+            console.log(el);
+            var callback = function(result) {
+                if (result.status == true) {
                     $('#'+refid).remove();
                 }
-            });
+            };
+            processAjax(el,data,callback,'../admin/php/form.php');
         })
 
         // Delete selected item

@@ -29,13 +29,12 @@ echo "
         <div class='modal_section' id='contact' data-title='Send a message'>
             <form id='contact_form'>
                 <div class='formcontrol'>
-                    <label for='name'>Your name</label><input type='text' name='name' placeholder='Your name' required>
+                    <input type='text' name='name' placeholder='Your name' required'>
                 </div>
                 <div class='formcontrol'>
-                    <label for='mail'>E-mail</label><input type='email' name='mail' placeholder='Your email' required>
+                    <input type='email' name='mail' placeholder='Your email' required>
                 </div>
                 <div class='formcontrol'>
-                    <label for='message'>Message</label><br>
                     <textarea id='message' name='message' placeholder='Your message' required></textarea>
                 </div>
                 <div class='submit_btns'>

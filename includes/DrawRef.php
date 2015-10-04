@@ -19,7 +19,10 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-
+/**
+ * Class DrawRef
+ * Handle settings and information of a reference drawing
+ */
 class DrawRef extends AppTable {
 
     protected $table_data = array(
@@ -33,23 +36,25 @@ class DrawRef extends AppTable {
         "initial_score" => array("INT(5)", false),
         "nb_pairs" => array("INT(5)", false),
         "max_nb_pairs" => array("INT(5)",false),
+        "maxtime" => array("INT(3) NOT NULL",0),
         "status" => array("CHAR(3)", false),
         "filter" => array("CHAR(3)", false),
         "primary" => "id"
     );
 
-    public $file_id = "";
-    public $filename = "";
-    public $date = "";
-    public $nb_users = 0;
-    public $max_nb_users = 200;
-    public $nb_draw = 0;
-    public $max_nb_pairs = 0;
-    public $initial_score = 1500;
-    public $nb_pairs = 0;
-    public $status = "on";
-    public $filter = "off";
-    public $drawlist = array();
+    public $file_id = ""; // Reference file id
+    public $filename = ""; // Reference file name
+    public $date = ""; // Date of creation
+    public $nb_users = 0; // Current number of participants
+    public $max_nb_users = 200; // Maximum number of participants
+    public $nb_draw = 0; // Number of drawings corresponding to this reference drawing
+    public $max_nb_pairs = 0; // Maximum possible number of combinations
+    public $initial_score = 1500; // Initial ELO score given to every new drawing
+    public $nb_pairs = 0; // Number of pairs (trials) every participants has to rank
+    public $status = "on"; // Status of the experiment corresponding to this reference drawing (On or Off)
+    public $filter = "off"; // Allow or prevent users replaying the experiment
+    public $maxtime = 0; // Maximum duration of the experiment (0: no time limit)
+    public $drawlist = array(); // List of associated drawings
 
     /**
      * Constructor
@@ -71,12 +76,6 @@ class DrawRef extends AppTable {
      */
     public function make($file_id,$file) {
         $this->file_id = $file_id;
-
-        // First, check uploads
-        $result['error'] = $this->checkupload($file);
-        if ($result['error'] != true) {
-            return $result;
-        }
 
         // Make folders
         $result = self::make_folders();
@@ -105,29 +104,6 @@ class DrawRef extends AppTable {
 
         return $result;
 	}
-
-    /**
-     * Validate upload
-     * @param $file
-     * @return bool|string
-     */
-    private function checkupload($file) {
-        // Check $_FILES['upfile']['error'] value.
-        if ($file['error'][0] != 0) {
-            switch ($file['error'][0]) {
-                case UPLOAD_ERR_OK:
-                    break;
-                case UPLOAD_ERR_NO_FILE:
-                    return "No file to upload";
-                case UPLOAD_ERR_INI_SIZE:
-                case UPLOAD_ERR_FORM_SIZE:
-                    return 'File Exceeds size limit';
-                default:
-                    return "Unknown error";
-            }
-        }
-        return true;
-    }
 
     /**
      * Create picture folders corresponding to this reference drawing
@@ -276,34 +252,22 @@ class DrawRef extends AppTable {
      * @return string
      */
     function upload($file) {
-        $result['status'] = false;
-        if (isset($file['tmp_name'][0]) && !empty($file['name'][0])) {
-            $tmp = htmlspecialchars($file['tmp_name'][0]);
-            $splitname = explode(".", strtolower($file['name'][0]));
-            $extension = end($splitname);
+        // Get ID
+        $this->filename = self::makeID();
 
-			$img_directory = PATH_TO_IMG."$this->file_id/img/";
-            $thumb_directory = PATH_TO_IMG."$this->file_id/thumb/";
-            chmod($img_directory,0777);
-            chmod($thumb_directory,0777);
+        $upload = new Uploads($this->db);
+        $img_directory = PATH_TO_IMG."$this->file_id/img/";
+        $thumb_directory = PATH_TO_IMG."$this->file_id/thumb/";
 
-            $newname = self::makeID().".".$extension;
-
-            if (upload_img($tmp,$img_directory,$newname)) {
-                if (upload_thumb($newname,$img_directory,$thumb_directory,100)) {
-                    $result['status'] = $newname;
-                    $result['error'] = true;
-                } else {
-                    $result['error'] = false;
-                    $result['status'] = "thumb not uploaded";
-                }
+        $result = $upload->make($file,$img_directory,$this->filename);
+        if ($result['error'] === true) {
+            $upload->get($result['status']);
+            if (upload_thumb($upload->filename,$img_directory,$thumb_directory,100)) {
+                $result['error'] = true;
             } else {
                 $result['error'] = false;
-                $result['status'] = "file not uploaded";
+                $result['status'] = "thumb not uploaded";
             }
-        } else {
-            $result['error'] = false;
-            $result['status'] = "No file to upload";
         }
         return $result;
 	}
@@ -347,15 +311,15 @@ class DrawRef extends AppTable {
 
         // Update all ref drawings tables
         foreach ($reflist as $ref_id) {
-            $ref = new DrawRef($this->db, $ref_id);
+            $ref = new self($this->db, $ref_id);
         }
 
-        $sql = "SELECT file_id FROM $this->tablename WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' ORDER BY nb_users ASC";
+        $sql = "SELECT file_id FROM $this->tablename WHERE status='on' and nb_users<max_nb_users and nb_draw>='2' and nb_pairs>'0' ORDER BY nb_users ASC";
         $req = $this->db->send_query($sql);
         $validref = false;
         while ($row = mysqli_fetch_assoc($req)) {
             $ref_id = $row['file_id'];
-            $cur_ref = new DrawRef($this->db, $ref_id);
+            $cur_ref = new self($this->db, $ref_id);
 
             // Check if user already exists for this ref drawing and if this ref drawing's settings allow users to do it again
             $user_exist = $cur_ref->checkuser($user_ip);
@@ -393,9 +357,12 @@ class DrawRef extends AppTable {
         }
 
         // Delete related files
+        $upload = new Uploads($this->db, $this->filename);
+        $result = $upload->delete();
+
         $img_path = PATH_TO_IMG."$this->file_id/";
         deleteDirectory($img_path);
-        return true;
+        return $result;
     }
 
     /**
@@ -497,17 +464,7 @@ class DrawRef extends AppTable {
 
             foreach ($drawlist as $id) {
                 $item = new Ranking($this->db,$this->file_id,$id);
-                $thumb_url = "../images/$item->refid/thumb/thumb_$item->filename";
-                $content .= "
-                    <div class='item' id='item_$item->file_id'>
-                        <div style='font-size: 12px; float: left;'>Score: $item->score</div>
-                        <div class='delete_btn_item' id='$item->file_id' data-item='$item->refid'>
-                        </div>
-                        <div class='thumb leanModal' data-modal='item_modal' data-section='item_description' data-ref='$item->refid' data-item='$item->file_id'>
-                            <img src='$thumb_url' class='thumb' alt='$item->file_id'>
-                        </div>
-                    </div>
-                ";
+                $content .= $item->showThumb();
             }
         } else {
             $content = "<span class='upload_msg'>There are no items for this reference drawing yet</span>";
@@ -555,21 +512,26 @@ class DrawRef extends AppTable {
                     <input type='hidden' name='refid' value='$this->file_id'>
 
                     <div class='formcontrol'>
-                        <label for='initial_score' class='label'>Initial Elo score</label>
+                        <label for='initial_score'>Initial Elo score</label>
                         <input type='text' name='initial_score' value='$this->initial_score' required/>
-                        <span id='info'>Modifying this value will result in the recomputation of all items' score</span>
+                        <span class='info'>Modifying this value will result in the recomputation of all items' score</span>
                     </div>
                     <div class='formcontrol'>
-                        <label for='nb_pairs' class='label'>Number of trials</label>
+                        <label for='nb_pairs'>Number of trials</label>
                         <input type='text' name='nb_pairs' value='$this->nb_pairs' max='$this->max_nb_pairs'/>
-                        <span id='info'>Max number: $this->max_nb_pairs</span>
+                        <span class='info'>Max number: $this->max_nb_pairs</span>
                     </div>
                     <div class='formcontrol'>
-                        <label for='max_nb_users' class='label'>Max number of users</label>
+                        <label for='max_nb_users'>Max number of users</label>
                         <input type='text' name='max_nb_users' value='$this->max_nb_users' required min='0' max='$this->max_nb_users'/>
                     </div>
                     <div class='formcontrol'>
-                        <label for='status' class='label'>Status</label>
+                        <label for='maxtime'>Maximum duration</label>
+                        <input type='text' name='maxtime' value='$this->maxtime' required/>
+                        <span class='info'>In minutes. 0: no time limits</span>
+                    </div>
+                    <div class='formcontrol'>
+                        <label for='status'>Status</label>
                         <select name='status' data-ref='$this->file_id'>
                             <option value='$this->status' selected>$this->status</option>
                             <option value='on'>on</option>
@@ -577,7 +539,7 @@ class DrawRef extends AppTable {
                         </select>
                     </div>
                     <div class='formcontrol'>
-                        <label for='filter' class='label'>Filter user</label>
+                        <label for='filter'>Filter user</label>
                         <select name='filter' data-ref='$this->file_id'>
                             <option value='$this->filter' selected>$this->filter</option>
                             <option value='on'>on</option>
@@ -604,11 +566,11 @@ class DrawRef extends AppTable {
                 </div>
                 <div class='lang_label'></div>
                     <div class='formcontrol'>
-                       <label class='label'>Instructions</label>
+                       <label>Instructions</label>
                         <div class='instruction'></div>
                     </div>
                     <div class='formcontrol'>
-                        <label class='label'>Consent form</label>
+                        <label>Consent form</label>
                         <div class='consent'></div>
                     </div>
                     <div class='refdraw-submit-div'></div>
@@ -621,7 +583,8 @@ class DrawRef extends AppTable {
 
     public function showDetails() {
         $itemlist = $this->displayitems();
-        $imgurl = "../images/$this->file_id/thumb/thumb_$this->filename";
+        $file = new Uploads($this->db,$this->filename);
+        $imgurl = "../images/$this->file_id/thumb/thumb_$file->filename";
 
         $sort_option =  "
                 <div class='formcontrol'>

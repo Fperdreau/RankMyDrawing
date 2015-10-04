@@ -23,14 +23,14 @@ along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
 class Ranking {
 
     private $db;
-    public $file_id = "";
-    public $filename = "";
-    public $date = "";
-    public $score = "";
-    public $nb_win = "";
-    public $nb_occ = "";
-    public $rank =  "";
-    public $refid = "";
+    public $file_id;
+    public $filename;
+    public $date;
+    public $score;
+    public $nb_win;
+    public $nb_occ;
+    public $rank;
+    public $refid;
 
     /**
      * Constructor
@@ -54,9 +54,11 @@ class Ranking {
     function make($refid,$file) {
         $this->refid = $refid;
         $this->file_id = self::makeID();
-        $result = $this->upload($file);
 
-        if ($result['error'] == true) {
+        $result = $this->upload($file);
+        if ($result['error'] !== true) {
+            return $result;
+        } else {
             $this->filename = $result['status'];
             $this->date = date('Y-m-d H:i:s');
             // Create corresponding tables
@@ -121,34 +123,25 @@ class Ranking {
         }
     }
 
-    // Upload items files
     /**
      * Upload item's corresponding files
      * @param $file
      * @return string
      */
     function upload($file) {
+        $upload = new Uploads($this->db);
         $img_directory = PATH_TO_IMG."$this->refid/img/";
         $thumb_directory = PATH_TO_IMG."$this->refid/thumb/";
-        $tmp = $file['tmp_name'][0];
-        $initfilename = $file['name'][0];
-        $split = explode(".", $initfilename);
-        $extension = end($split);
 
-        // Make an unique ID for this item
-        $newname = $this->file_id.".".$extension;
-
-        if (upload_img($tmp,$img_directory,$newname)) {
-            if (upload_thumb($newname,$img_directory,$thumb_directory,100)) {
-                $result['status'] = $newname;
+        $result = $upload->make($file,$img_directory,$this->file_id);
+        if ($result['error'] === true) {
+            $upload->get($result['status']);
+            if (upload_thumb($upload->filename,$img_directory,$thumb_directory,100)) {
                 $result['error'] = true;
             } else {
                 $result['error'] = false;
                 $result['status'] = "thumb not uploaded";
             }
-        } else {
-            $result['error'] = false;
-            $result['status'] = "file not uploaded";
         }
         return $result;
     }
@@ -166,7 +159,7 @@ class Ranking {
             "table4" => $this->db->dbprefix.'_'.$this->refid."_res_mat");
         $ntable = count($tables);
 
-        $this->db -> deletecontent($tables["table2"],array("file_id"),array($this->file_id));
+        $result['status'] = $this->db -> deletecontent($tables["table2"],array("file_id"),array($this->file_id));
 
         // Update other tables
         for ($t=3;$t<=$ntable;$t++) {
@@ -176,21 +169,19 @@ class Ranking {
             $sql = "ALTER TABLE $table_name DROP COLUMN $this->file_id";
             $this->db->send_query($sql);
 
-            $this->db -> deletecontent($table_name,array("file_id"),array($this->file_id));
+            $result['status'] = $this->db->deletecontent($table_name,array("file_id"),array($this->file_id));
         }
 
         // Delete file
-        $img_url = PATH_TO_IMG."$this->refid/img/$this->filename";
-        $thumb_url = PATH_TO_IMG."$this->refid/thumb/thumb_$this->filename";
+        $file = new Uploads($this->db, $this->filename);
+        $result = $file->delete();
 
-        if (is_file($img_url)) {
-            unlink($img_url);
-        }
-
+        // Delete thumb
+        $thumb_url = PATH_TO_IMG."$this->refid/thumb/thumb_$file->filename";
         if (is_file($thumb_url)) {
             unlink($thumb_url);
         }
-        return true;
+        return $result;
     }
 
     /**
@@ -224,8 +215,8 @@ class Ranking {
 
     /**
      * Write match's outcome to the database
-     * @param $oppid
-     * @param $outcome
+     * @param $oppid: opponent ID
+     * @param $outcome: match outcome
      * @return bool
      */
     public function updateresults($oppid,$outcome) {
@@ -233,22 +224,65 @@ class Ranking {
         $this->nb_win += $outcome;
 
         // Update ranking table
-        $rankingtable = $this->db->dbprefix.'_'.$this->refid."_ranking";
-        $this->db->updatecontent($rankingtable,array("nb_win"=>$this->nb_win,"nb_occ"=>$this->nb_occ,"score"=>$this->score),
+        $rankingTable = $this->db->dbprefix.'_'.$this->refid."_ranking";
+        $this->db->updatecontent($rankingTable,array("nb_win"=>$this->nb_win,"nb_occ"=>$this->nb_occ,"score"=>$this->score),
             array("file_id"=>$this->file_id));
 
         // Update result matrix
-        $restable = $this->db->dbprefix.'_'.$this->refid."_res_mat";
-        $oldvalue = $this->db->getinfo($restable,$oppid,"file_id",$this->file_id);
-        $newvalue = $oldvalue[0] + $outcome;
-        $this->db->updatecontent($restable,array("$oppid"=>$newvalue),array("file_id"=>$this->file_id));
+        $resTable = $this->db->dbprefix.'_'.$this->refid."_res_mat";
+        $sql = "SELECT $oppid FROM $resTable WHERE file_id='$this->file_id'";
+        $req = $this->db->send_query($sql);
+        $oldResult = mysqli_fetch_assoc($req);
+        $newResult = $oldResult[$oppid] + $outcome;
+        $this->db->updatecontent($resTable,array($oppid=>$newResult),array("file_id"=>$this->file_id));
 
         // Update comparison matrix
-        $comptable = $this->db->dbprefix.'_'.$this->refid."_comp_mat";
-        $oldvalue = $this->db->getinfo($restable,$oppid,"file_id",$this->file_id);
-        $newvalue = $oldvalue[0] + 1;
-        $this->db->updatecontent($comptable,array("$oppid"=>$newvalue),array("file_id"=>$this->file_id));
+        $compTable = $this->db->dbprefix.'_'.$this->refid."_comp_mat";
+        $sql = "SELECT $oppid FROM $compTable WHERE file_id='$this->file_id'";
+        $req = $this->db->send_query($sql);
+        $oldValue = mysqli_fetch_assoc($req);
+        $newValue = $oldValue[$oppid] + 1;
+        $this->db->updatecontent($compTable,array($oppid=>$newValue),array("file_id"=>$this->file_id));
 
         return true;
+    }
+
+    /**
+     * Show item details (in modal window)
+     */
+    public function showDetails() {
+        // Add a delete link (only for admin and organizers or the authors)
+        $file = new Uploads($this->db,$this->filename);
+        $img = "../images/$this->refid/img/$file->filename";
+        return "
+        <div class='item_img' style='background: url($img) no-repeat; background-size: 600px;'>
+            <div class='item_caps'>
+                <div id='item_title'>$this->file_id</div>
+                <span style='color:#CF5151; font-weight: bold;'>Score: </span>$this->score<br>
+                <span style='color:#CF5151; font-weight: bold;'>Number of matchs: </span>$this->nb_occ<br>
+                <span style='color:#CF5151; font-weight: bold;'>Number of win: </span>$this->nb_win<br>
+            </div>
+        </div>
+        <div class='del_item' data-ref='$this->refid' data-item='$this->file_id'>Delete</div>
+        ";
+    }
+
+    /**
+     * Show as thumb
+     */
+    public function showThumb() {
+        $file = new Uploads($this->db, $this->filename);
+        $thumb_url = "../images/$this->refid/thumb/thumb_$file->filename";
+        return "
+            <div class='item' id='item_$this->file_id'>
+                <div style='font-size: 12px; float: left;'>Score: $this->score</div>
+                <div class='delete_btn_item' id='$this->file_id' data-item='$this->refid'>
+                </div>
+                <div class='thumb leanModal' data-modal='item_modal' data-section='item_description' data-ref='$this->refid'
+                 data-item='$this->file_id'>
+                    <img src='$thumb_url' class='thumb' alt='$this->file_id'>
+                </div>
+            </div>
+        ";
     }
 }

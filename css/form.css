@@ -1,0 +1,267 @@
+/*
+Copyright © 2014, F. Perdreau, Radboud University Nijmegen
+=======
+This file is part of RankMyDrawings.
+
+RankMyDrawings is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+RankMyDrawings is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+/* *********************************************************************/
+/* Forms & Input field styles
+/* *********************************************************************/
+.formcontrol {
+    vertical-align: top;
+    margin: 5px;
+    font-size: 0;
+    min-width: 60%;
+    max-width: 100%;
+}
+
+.formcontrol>div.inputFeedback {
+    display: inline-block;
+    font-size: 25px;
+    font-weight: 500;
+    background: rgba(207,81,81,.8);
+    color: #FFF;
+    border: 1px solid rgba(207,81,81,.5);
+    max-width: 20px;
+    min-width: 0;
+    text-align: center;
+    height: 20px;
+    line-height: 20px;
+    margin: 0;
+    padding: 4px 4px 4px 4px;
+    vertical-align: middle;
+}
+
+.formcontrol>div {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+    padding: 4px 2px 4px 10px;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    line-height: 20px;
+    min-height: 20px;
+
+    min-width: 40%;
+    border: 1px solid rgba(207, 81, 81, .3);
+    color: #777;
+}
+
+/* Div specific to tinyMCE textarea */
+.formcontrol>div.mce-tinymce {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    color: #777;
+}
+
+form {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+}
+
+label{
+    display: inline-block;
+    vertical-align: top;
+    background-color: rgba(207,81,81,1);
+    border: 1px solid rgba(207,81,81,1);
+    text-align: center;
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: #EEE;
+    padding: 4px 1px;
+
+    min-width: 110px;
+    height: 20px;
+    line-height: 20px;
+}
+
+input[type='text'], input[type='email'], input[type='password'], input[type='date'], .formcontrol select, textarea {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: 0;
+    padding: 4px 2px 4px 10px;
+
+    font-size: 12px;
+    font-weight: 300;
+
+    line-height: 20px;
+    min-height: 20px;
+
+    min-width: 10%;
+    border: 1px solid rgba(207, 81, 81, .3);
+    color: #777;
+}
+
+input[type='date'] {
+    padding: 3px 2px 3px 10px;
+}
+
+select {
+    -webkit-appearance: menulist-button;
+    height: 30px;
+    text-transform: capitalize;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-bottom: 1px solid rgba(207,81,81,1);
+}
+
+input[type='radio'] {
+    display: inline-block;
+    width: 10%;
+}
+
+textarea {
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    font-weight: 400;
+    resize: none;
+
+    /* Size and position */
+    width: 90%;
+    min-height: 150px;
+}
+
+input.input_opt {
+    display: inline-block;
+    padding: 5px 2px 5px 2px;
+    min-width: 100px;
+    width: auto;
+    border:1px solid rgba(207, 81, 81, .3);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    margin: 0 auto;
+}
+
+select.select_opt {
+    min-width: 30px;
+    width: auto;
+    border: 1px solid rgba(207, 81, 81, .3);
+    padding: 5px 4px;
+    color: #555;
+}
+
+/* Submit and action buttons */
+.submit_btns {
+    margin: 0 auto 0 0;
+    top: 0;
+    right: 20px;
+    text-align: right;
+    font-size:0;
+}
+
+.submit_btns>div {
+    display: inline-block;
+}
+
+input[type="submit"], input[type="button"] {
+    cursor: pointer;
+    background: rgba(249, 249, 249, 1); /* Set button background */
+    border: 1px solid rgba(207, 81, 81, 1); /* Small border around our submit button */
+    padding: 8px; /* Add some more space around our button text */
+    transition: all 0.3s ease 0s;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover {
+    color: #FFF;
+    background: rgba(207, 81, 81, 1); /* Set button background */
+    padding: 8px; /* Add some more space around our button text */
+}
+
+input[type="submit"]:active, input[type="button"]:active {
+    color: #FFF;
+    background: rgba(207, 81, 81, .5); /* Set button background */
+    border: 1px solid #DFDFDF; /* Small border around our submit button */
+    padding: 8px; /* Add some more space around our button text */
+}
+
+input[type='button'].addBtn {
+    font-weight: 500;
+    padding: 0 10px 0 10px;
+    box-sizing: border-box;
+    line-height: 28px;
+    font-size: 20px;
+}
+
+/* Semi-transparent layer added on top of a form in order to show a feedback */
+.feedbackForm {
+    position : absolute;
+    z-index : 900;
+    top : 0;
+    left : 0;
+    display : inline-flex;
+    text-align :center;
+    min-width : 100%;
+    min-height : 100%;
+    background : rgba(255,255,255,.9);
+    margin : auto;
+}
+
+.feedbackForm > div {
+    vertical-align: middle;
+}
+
+/* Change background color of invalid fields */
+.wrongField {
+    background: rgba(200,0,0,.1);
+}
+
+/* Feedback div to display other messages */
+.feedbackSubmit {
+    margin: 0;
+    box-sizing: border-box;
+
+    padding: 8px 3px 9px 3px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(200, 0, 0, .5);
+
+    display: inline-block;
+    color: #FFF;
+    min-width: 0;
+    max-width: 70%;
+    text-align: center;
+
+    vertical-align: top;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.feedback {
+    margin: 0;
+    padding: 0;
+}
+
+.formRequired {
+    margin: 0;
+    padding: 8px 3px 9px 3px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(200, 0, 0, .5);
+}

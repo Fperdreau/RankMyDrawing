@@ -31,7 +31,7 @@ $instruction = $content[$user->language];
 $exampleurl = 'images/example.png';
 
 $result = "
-<section>
+<section id='instructions'>
     <h2>Instructions</h2>
     <div class='instructions'>$instruction</div>
     <div class='example'>

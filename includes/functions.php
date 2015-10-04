@@ -318,11 +318,19 @@ function file_backup() {
     }
 }
 
-// Image functions
+/**
+ * Create image thumbs
+ * @param $image_src: source file
+ * @param null $image_dest: destination folder
+ * @param int $max_size: maximum image resolution
+ * @param bool|FALSE $expand
+ * @param bool|FALSE $square
+ * @return bool
+ */
 function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand = FALSE, $square = FALSE ) 	{
     if( !file_exists($image_src) ) return FALSE;
 
-    // Récupère les infos de l'image
+    // Get image info
     $fileinfo = getimagesize($image_src);
     if( !$fileinfo ) return FALSE;
 
@@ -332,7 +340,7 @@ function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand 
     $type      = str_replace('image/', '', $type_mime);
 
     if( !$expand && max($width, $height)<=$max_size && (!$square || ($square && $width==$height) ) ) {
-        // L'image est plus petite que max_size
+        // image is smaller than max size
         if($image_dest)	{
             return copy($image_src, $image_dest);
         } else {
@@ -341,12 +349,12 @@ function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand 
         }
     }
 
-    // Calcule les nouvelles dimensions
+    // Compute new dimensions
     $ratio = $width / $height;
     if( $square )	{
         $new_width = $new_height = $max_size;
         if( $ratio > 1 ) {
-            // Paysage
+            // Landscape
             $src_y = 0;
             $src_x = round( ($width - $height) / 2 );
 
@@ -364,7 +372,7 @@ function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand 
         $src_h = $height;
 
         if ( $ratio > 1 ) {
-            // Paysage
+            // Landscape
             $new_width  = $max_size;
             $new_height = round( $max_size / $ratio );
         } else {
@@ -374,20 +382,20 @@ function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand 
         }
     }
 
-    // Ouvre l'image originale
+    // Create new image from the original
     $func = 'imagecreatefrom' . $type;
     if( !function_exists($func) ) return FALSE;
 
     $image_src = $func($image_src);
     $new_image = imagecreatetruecolor($new_width,$new_height);
 
-    // Gestion de la transparence pour les png
+    // Transparency for PNG
     if( $type=='png' )	{
         imagealphablending($new_image,false);
         if( function_exists('imagesavealpha') )
             imagesavealpha($new_image,true);
 
-        // Gestion de la transparence pour les gif
+        // Transparency for GIF
     } elseif( $type=='gif' && imagecolortransparent($image_src)>=0 ) {
         $transparent_index = imagecolortransparent($image_src);
         $transparent_color = imagecolorsforindex($image_src, $transparent_index);
@@ -396,36 +404,32 @@ function imagethumb( $image_src , $image_dest = NULL , $max_size = 100, $expand 
         imagecolortransparent($new_image, $transparent_index);
     }
 
-    // Redimensionnement de l'image
+    // Resize image
     imagecopyresampled(
         $new_image, $image_src,
         0, 0, $src_x, $src_y,
         $new_width, $new_height, $src_w, $src_h
     );
 
-    // Enregistrement de l'image
+    // Save image
     $func = 'image'. $type;
     if($image_dest)	{
         $func($new_image, $image_dest);
     }
 
-    // Libération de la mémoire
+    // Free memory
     imagedestroy($new_image);
     return true;
 }
 
-// Upload image
-function upload_img($tmp,$directory,$filename) {
-    $dest = $directory.$filename;
-    if (!is_dir($directory)) {
-        mkdir($directory);
-    }
-    chmod($directory,0777);
-    $result = move_uploaded_file($tmp,$dest);
-    chmod($directory,0655);
-    return $result;
-}
-
+/**
+ * Create a thumb image
+ * @param $filename: source file name
+ * @param $src_dir: path to source file
+ * @param $dest_dir: destination folder
+ * @param int $size: maximal width of the thumb version
+ * @return bool
+ */
 function upload_thumb($filename,$src_dir,$dest_dir,$size = 100) {
     $thumb_name = 'thumb_'. $filename;
     $dest = $dest_dir.$thumb_name;
@@ -440,6 +444,11 @@ function upload_thumb($filename,$src_dir,$dest_dir,$size = 100) {
     return $result;
 }
 
+/**
+ * Delete reference drawing folder
+ * @param $dir
+ * @return bool
+ */
 function deleteDirectory($dir) {
     if (!file_exists($dir)) {
         return true;
@@ -463,7 +472,11 @@ function deleteDirectory($dir) {
     return rmdir($dir);
 }
 
-// Compute a factorial number
+/**
+ * Compute a factorial number
+ * @param $number
+ * @return int
+ */
 function factorial($number) {
     if ($number < 2) {
         return 1;

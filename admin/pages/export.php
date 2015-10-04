@@ -32,7 +32,7 @@ foreach ($refdrawlist as $cur_refdraw) {
 
 $result = "
     <div id='section_container'>
-        <div class='section_content'>
+        <section>
             <h2>Tools</h2>
         	<div id='exportdb'>
         	    <div class='formcontrol'>
@@ -58,7 +58,7 @@ $result = "
                 </div>
             </div>
 
-        </div>
+        </section>
     </div>";
 
 echo json_encode($result);

@@ -262,6 +262,10 @@ if (!empty($_POST['operation'])) {
         $DrawRef = new DrawRef($db);
         $DrawRef->setup($op);
 
+        // Create ref_drawings table
+        $Uploads = new Uploads($db);
+        $Uploads->setup($op);
+
         // Create CronJobs table
         $CronJobs = new AppCron($db);
         $CronJobs->setup($op);
@@ -456,7 +460,7 @@ if (!empty($_POST['getpagecontent'])) {
         $title = "Installation complete!";
         $operation = "
 		<p id='success'>Congratulations!</p>
-		<p id='warning'> Now you can delete the 'install.php' file from the root folder of the application</p>
+		<p id='warning'>Now you can delete the 'install.php' file from the root folder of the application</p>
 		<p style='text-align: right'><input type='button' value='Finish' class='finish'></p>";
     }
 
@@ -615,7 +619,7 @@ if (!empty($_POST['getpagecontent'])) {
                 // Go to next installation step
                 .on('click', '.finish', function(e) {
                     e.preventDefault();
-                    window.location = "index.php";
+                    window.location = "admin/index.php";
                 })
 
                 // Step 1->3: Launch database setup

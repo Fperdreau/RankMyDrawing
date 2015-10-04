@@ -279,18 +279,7 @@ if(!empty($_POST['show_item'])) {
     $item = new Ranking($db,$refid,$itemid);
 
     // Add a delete link (only for admin and organizers or the authors)
-    $img = "../images/$item->refid/img/$item->filename";
-    $result['content'] = "
-        <div class='item_img' style='background: url($img) no-repeat; background-size: 600px;'>
-            <div class='item_caps'>
-                <div id='item_title'>$item->file_id</div>
-                <span style='color:#CF5151; font-weight: bold;'>Score: </span>$item->score<br>
-                <span style='color:#CF5151; font-weight: bold;'>Number of matchs: </span>$item->nb_occ<br>
-                <span style='color:#CF5151; font-weight: bold;'>Number of win: </span>$item->nb_win<br>
-            </div>
-        </div>
-        <div class='del_item' data-ref='$item->refid' data-item='$item->file_id'>Delete</div>
-        ";
+    $result['content'] = $item->showDetails();
     $result['item'] = $itemid;
     echo json_encode($result);
     exit;
@@ -307,6 +296,7 @@ if(!empty($_POST['show_item_settings'])) {
     echo json_encode($result);
     exit;
 }
+
 // Delete item drawing
 if (!empty($_POST['delete_item'])) {
     $item_id = htmlspecialchars($_POST['delete_item']);
