@@ -1,8 +1,8 @@
 <?php
 /**
- * File for Myuploads CSS style
+ * File for Myuploads process file
  *
- * CSS 3.0
+ * PHP 5.0
  *
  * @author Florian Perdreau (fp@florianperdreau.fr)
  * @copyright Copyright (C) 2014 Florian Perdreau

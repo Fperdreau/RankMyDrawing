@@ -236,7 +236,7 @@ if (!empty($_POST['getItems'])) {
 
 // Check availability of the new reference drawing's label
 if (!empty($_POST['check_availability'])) {
-    include_once('../js/myupload/uploader.php');
+    include_once('../js/myuploads/uploader.php');
     $refid = $_POST['refid'];
     $ref = new DrawRef($db);
     if ($ref->exists($refid)) {

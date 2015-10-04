@@ -34,7 +34,7 @@ require('../includes/boot.php');
         <link type='text/css' rel='stylesheet' href="../css/admin.css"/>
         <link type="text/css" rel="stylesheet" href="../css/modal_style.css" />
         <link type="text/css" rel="stylesheet" href="../css/form.css" />
-        <link type="text/css" rel="stylesheet" href="js/myupload/uploader.css" />
+        <link type="text/css" rel="stylesheet" href="js/myuploads/uploader.css" />
 
         <!-- JQuery -->
         <script type="text/javascript" src="../js/jquery-1.11.1.js"></script>
@@ -103,7 +103,7 @@ require('../includes/boot.php');
         <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 
         <!-- MyUploads -->
-        <script type="text/javascript" src="js/myupload/Myupload.js"></script>
+        <script type="text/javascript" src="js/myuploads/Myupload.js"></script>
 
     </body>
 </html>

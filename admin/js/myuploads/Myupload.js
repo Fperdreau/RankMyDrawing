@@ -1,31 +1,38 @@
 /**
- * File for javascript/jQuery functions
+ * File for Myuploads CSS style
+ *
+ * File for js and jQuery functions
  *
  * @author Florian Perdreau (fp@florianperdreau.fr)
  * @copyright Copyright (C) 2014 Florian Perdreau
  * @license <http://www.gnu.org/licenses/agpl-3.0.txt> GNU Affero General Public License v3
  *
- * This file is part of Journal Club Manager.
+ * This file is part of MyUploader.
  *
- * Journal Club Manager is free software: you can redistribute it and/or modify
+ * MyUploader is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Journal Club Manager is distributed in the hope that it will be useful,
+ * MyUploader is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
+ * along with MyUploader.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 /**
  * Functions related to uploader
  * @todo: make a plugin of it
  */
-// Get file information on drop
+
+/**
+ * Get file information on drop
+ * @param e
+ */
 var getdrop = function (e) {
     var dt = e.dataTransfer || (e.originalEvent && e.originalEvent.dataTransfer);
     var name = el.find('.upl_input').attr('name');
@@ -45,13 +52,16 @@ var getdrop = function (e) {
  * Process uploads
  * Animate uploader background while files are being uploaded. Send ajax request ($_FILES) and retrieve success or errors.
  * In case of success, show uploaded files in the files list. Otherwise, show error message.
-  */
+ * @param: el: DOM element corresponding to uploader
+ * @param: form: Form to which the uploader belongs
+ * @param: data:
+ */
 var processUpl = function (el,form,data) {
     var animBack = new AnimateBack(el);
 
     jQuery.ajax({
         type:'POST',
-        url:'../admin/js/myupload/upload.php',
+        url:'../admin/js/myuploads/upload.php',
         headers:{'Cache-Control':'no-cache'},
         data:data,
         contentType:false,

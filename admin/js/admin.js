@@ -421,7 +421,6 @@ $( document ).ready(function() {
             e.preventDefault();
             var itemid = $(this).attr('id');
             var drawref = $(this).attr('data-item');
-            console.log(itemid);
             jQuery.ajax({
                 url: '../admin/php/form.php',
                 type: 'POST',

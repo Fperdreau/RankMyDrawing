@@ -1,8 +1,8 @@
 <?php
 /**
- * File for Myuploads CSS style
+ * File for Myuploads DRAG & DROP AREA
  *
- * CSS 3.0
+ * PHP 5.2 or later
  *
  * @author Florian Perdreau (fp@florianperdreau.fr)
  * @copyright Copyright (C) 2014 Florian Perdreau
@@ -25,7 +25,7 @@
  */
 
 /**
- * Create drag&drop field
+ * Create drag & drop area
  * @param array $links
  * @return string
  */
