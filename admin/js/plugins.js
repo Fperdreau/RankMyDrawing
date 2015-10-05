@@ -1,5 +1,7 @@
 /**
- * File for js and jquery functions
+ * File for Plugins
+ *
+ * PHP version 5
  *
  * @author Florian Perdreau (fp@florianperdreau.fr)
  * @copyright Copyright (C) 2014 Florian Perdreau
@@ -18,9 +20,8 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with Journal Club Manager.  If not, see <http://www.gnu.org/licenses/>.
+ * along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 /**
  * Functions required to manage plugins and scheduled tasks
@@ -195,7 +196,6 @@ $(document).ready(function() {
             var name = $(this).parent('.plugOpt').attr('id');
             var op = $(this).attr('data-op');
             var div = $(this).closest('.plugDiv');
-
             // Parse options
             var option = {};
             $(".plugOpt#"+name).find('input').each(function() {
@@ -209,12 +209,21 @@ $(document).ready(function() {
         })
 
     /**
+     * Show link to created backup
+      */
+        .on('click','.file_link', function(){
+            $(this)
+                .html('<p id="success">Downloaded</p>')
+                .fadeOut(3000);
+        })
+
+    /**
      * Run a scheduled task manually
      */
         .on('click','.run_cron',function(e) {
             e.preventDefault();
             var el = $(this);
-            var cron = $(this).attr('data-cron');
+            var cron = $(this).data('cron');
             var div = $(this).closest('.plugDiv');
             jQuery.ajax({
                 url: 'php/form.php',
@@ -232,6 +241,10 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     validsubmitform(div,data);
+                    var result = jQuery.parseJSON(data);
+                    if (result.content !== undefined) {
+                        div.append("<div class='plugResult file_link'>"+result.content+"</div>");
+                    }
                 }
             });
         });

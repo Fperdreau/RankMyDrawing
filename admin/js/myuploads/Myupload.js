@@ -210,7 +210,7 @@ $(document).ready(function() {
 
         .on('change','.upl_input',function(e) {
             e.preventDefault();
-            var fileInput = $('.upl_input')[0];
+            var fileInput = $(this)[0];
             var name = $(this).attr('name');
             var el = $(this).closest('.upl_container');
             var input = $(this);

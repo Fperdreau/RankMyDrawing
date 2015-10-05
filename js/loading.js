@@ -32,9 +32,8 @@ function getPage(page, urlparam) {
         page = (params.page == undefined) ? 'home':params.page;
     }
 
-    urlparam = (urlparam == undefined) ? parseurl():urlparam;
+    urlparam = (urlparam === undefined) ? parseurl():urlparam;
     urlparam = (urlparam === false || urlparam === "") ? false: urlparam;
-
     jQuery.ajax({
         url: 'php/form.php',
         data: {get_app_status: true},

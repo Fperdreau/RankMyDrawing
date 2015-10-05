@@ -42,20 +42,6 @@ while($tNow <= $tEnd){
 
 $result = "
 <div class='section_container'>
-    <section>
-        <h2>Site parameters</h2>
-        <form id='config_form_site'>
-            <div class='feedback_site'></div>
-            <input type='hidden' name='config_modify' value='true'/>
-            <div class='formcontrol'>
-                <label for='clean_day' class='label'>Oldest DB backups to keep (in days)</label>
-                <input type='text' size='30' name='clean_day' value='$AppConfig->clean_day' />
-            </div>
-            <div class='submit_btns'>
-                <input type='submit' name='modify' value='Modify' class='processform'/>
-            </div>
-        </form>
-    </section>
 
     <section>
         <h2>General Settings</h2>

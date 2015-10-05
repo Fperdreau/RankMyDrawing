@@ -105,7 +105,7 @@ if ($AppConfig->expon == 'on' && $ref_id !== false) {
 }
 
 $result = "
-    <section class='user_info'>
+    <section class='user_info' style='max-width: 400px;'>
         <h2>Information</h2>
         $content
     </section>

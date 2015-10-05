@@ -228,6 +228,122 @@ li a {
     width: 30%;
 }
 
+/* *********************************************************************/
+/* Admin - Plugins
+/* *********************************************************************/
+.plugDiv {
+    position: relative;
+    border-bottom: 1px dashed #ddd;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.plugDiv .formcontrol {
+    margin: 5px 5px 0 0;
+}
+
+.plugLeft {
+    display: inline-block;
+    vertical-align: top;
+    width: 150px;
+}
+
+.plugName {
+    font-weight: 600;
+    color: rgba(68,68,68,1);
+    vertical-align: top;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.plugTime {
+    font-size: 0.8em;
+    margin-bottom: 10px;
+}
+
+.optBar {
+    margin-top: 20px;
+    display: block;
+    vertical-align: bottom;
+}
+
+.plugSettings {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.plugOpt {
+    font-size: 0.8em;
+    padding: 10px;
+    margin: 10px auto 10px auto;
+    border: 2px dashed #ddd;
+    display: none;
+    width: 100%;
+}
+
+.plugResult {
+    font-size: 0.8em;
+    padding: 10px;
+    border: 2px dashed #ddd;
+}
+
+.workBtn {
+    display:inline-block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background-color: rgba( 255, 255, 255, 1);
+    border: 2px solid rgba(207,81,81,1);
+}
+
+.workBtn:hover{
+    border: 2px solid rgba(34, 34, 34, 1);
+    background-color: rgba(207,81,81,1);
+}
+
+.loadBtn {
+    background: rgba( 255, 255, 255, 1)
+    url('../images/small_loader.gif')
+    50% 50%
+    no-repeat;
+    background-size: 20px 20px;
+}
+
+.installBtn {
+    background: rgba( 255, 255, 255, 1)
+    url('../images/install_btn.png')
+    50% 50%
+    no-repeat;
+    background-size: 20px 20px;
+}
+
+.uninstallBtn {
+    background: rgba( 255, 255, 255, 1)
+    url('../images/delete.png')
+    50% 50%
+    no-repeat;
+    background-size: 20px 20px;
+}
+
+.runBtn {
+    background: url('../images/run.png') 50% 50%
+    no-repeat;
+    background-size: 20px 20px;
+
+}
+
+.settingsBtn {
+    background: rgba( 255, 255, 255, .7)
+    url('../images/settings.png')
+    50% 50%
+    no-repeat;
+    background-size: 20px 20px;
+}
+
+.modOpt {
+    margin: 10px 0;
+}
 /************************************************
 * Drawing management
 ************************************************/

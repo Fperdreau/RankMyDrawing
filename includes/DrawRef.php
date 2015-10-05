@@ -514,7 +514,7 @@ class DrawRef extends AppTable {
                     <div class='formcontrol'>
                         <label for='initial_score'>Initial Elo score</label>
                         <input type='text' name='initial_score' value='$this->initial_score' required/>
-                        <span class='info'>Modifying this value will result in the recomputation of all items' score</span>
+                        <span class='info'>You must modify this value prior to start the experiment!</span>
                     </div>
                     <div class='formcontrol'>
                         <label for='nb_pairs'>Number of trials</label>
@@ -522,11 +522,11 @@ class DrawRef extends AppTable {
                         <span class='info'>Max number: $this->max_nb_pairs</span>
                     </div>
                     <div class='formcontrol'>
-                        <label for='max_nb_users'>Max number of users</label>
+                        <label for='max_nb_users'>Max users</label>
                         <input type='text' name='max_nb_users' value='$this->max_nb_users' required min='0' max='$this->max_nb_users'/>
                     </div>
                     <div class='formcontrol'>
-                        <label for='maxtime'>Maximum duration</label>
+                        <label for='maxtime'>Time limit</label>
                         <input type='text' name='maxtime' value='$this->maxtime' required/>
                         <span class='info'>In minutes. 0: no time limits</span>
                     </div>

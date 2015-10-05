@@ -1,26 +1,34 @@
 <?php
-/*
-Copyright © 2014, F. Perdreau, Radboud University Nijmegen
-=======
-This file is part of RankMyDrawings.
+/**
+ * File for class DbBackup
+ *
+ * PHP version 5
+ *
+ * @author Florian Perdreau (fp@florianperdreau.fr)
+ * @copyright Copyright (C) 2014 Florian Perdreau
+ * @license <http://www.gnu.org/licenses/agpl-3.0.txt> GNU Affero General Public License v3
+ *
+ * This file is part of RankMyDrawings.
+ *
+ * RankMyDrawings is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RankMyDrawings is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-RankMyDrawings is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-RankMyDrawings is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
-//require('../includes/boot.php');
-
+/**
+ * Class DbBackup
+ *
+ * Scheduled task that creates backup of the database and store them in backup/mysql.
+ */
 class DbBackup extends AppCron {
     /**
      * Assign chairmen for the next n sessions
@@ -35,7 +43,7 @@ class DbBackup extends AppCron {
     public $dayName;
     public $dayNb;
     public $hour;
-    public $options;
+    public $options=array("nb_version"=>10);
 
     /**
      * Constructor
@@ -52,7 +60,6 @@ class DbBackup extends AppCron {
      * @return bool|mysqli_result
      */
     public function install() {
-        // Register the plugin in the db
         $class_vars = get_class_vars($this->name);
         return $this->make($class_vars);
     }
@@ -63,14 +70,12 @@ class DbBackup extends AppCron {
      */
     public function run() {
         // Run cron job
-        $backupfile = backup_db();
-        $filelink = $backupfile;
+        $fileLink = backupDb($this->options['nb_version']);
 
-        // Write log only if server request
-        $result = "Backup successfully done";
-        $this->logger("$this->name.txt",$result);
+        $result['status'] = true;
+        $result['msg'] = "Full Backup successfully done";
+        $result['content'] = "<a href='$fileLink' target='_blank'>Download backup</a>";
         $this->time = AppCron::parseTime($this->dayNb,$this->dayName, $this->hour);
-
-        return $filelink;
+        return $result;
     }
 }

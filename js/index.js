@@ -31,7 +31,7 @@ var progressbar = function(value) {
         .show()
         .text(text)
         .css({
-            background: "linear-gradient(to right, rgba(255,255,255,.8) "+linearprogress+"%, rgba(255,255,255,0) "+linearprogress+"%)"
+            background: "linear-gradient(to right, rgba(255,255,255,.8) "+linearprogress+"%, rgba(255,255,255,.3) "+linearprogress+"%)"
         });
 };
 
@@ -45,10 +45,9 @@ function setTimer(el, start) {
         success: function(data) {
             var result = jQuery.parseJSON(data);
             if (result.start == true) {
-                var afterend = endExperiment;
                 var options = {
                     maxtime: result.maxtime,
-                    afterend: afterend};
+                    afterend: endExperiment};
                 el.experimenttimer(options);
                 myplugin = el.data('experimenttimer');
                 myplugin.start();
@@ -58,7 +57,10 @@ function setTimer(el, start) {
     });
 }
 
-function endExperiment() {
+/**
+ * End of experiment routine
+ */
+var endExperiment = function() {
     displayPage('logout');
     $('.progress').fadeOut('slow');
     var count = 5;
@@ -77,7 +79,7 @@ function endExperiment() {
         }
         count--;
     }, 1000);
-}
+};
 
 $( document ).ready(function() {
 

@@ -30,10 +30,14 @@ foreach ($refdrawlist as $cur_refdraw) {
 	$optioncontent .= "<option name='$cur_refdraw'>$cur_refdraw</option>";
 }
 
+$AppCron = new AppCron($db);
+$cronOpt = $AppCron->show();
+
+
 $result = "
     <div id='section_container'>
         <section>
-            <h2>Tools</h2>
+            <h2>Export</h2>
         	<div id='exportdb'>
         	    <div class='formcontrol'>
                     <label for='export'>Export Database in XLS</label>
@@ -43,21 +47,11 @@ $result = "
                     </select>
                 </div>
             </div>
+        </section>
 
-            <div id='dbbackup'>
-                <div class='formcontrol'>
-                    <label for='backup'>Backup databases</label>
-                    <input type='button' name='backup' value='Proceed' id='submit' class='backup' data-op='dbbackup'/>
-                </div>
-            </div><br>
-
-            <div id='fullbackup'>
-                <div class='formcontrol'>
-                    <label for='full_backup'>Full backup (all databases + files)</label>
-                    <input type='button' name='full_backup' value='Proceed' id='submit' class='backup' data-op='fullbackup'/>
-                </div>
-            </div>
-
+        <section>
+            <h2>Backup services</h2>
+            $cronOpt
         </section>
     </div>";
 

@@ -120,15 +120,15 @@ Provide your database access information.
 
 ![Installation Step 1](./media/install2.png)
 
-***Hostname***: Your SQL hostname (e.g.: sql.mydomain.com)
+* Hostname : Your SQL hostname (e.g.: sql.mydomain.com)
 
-***User name***: your SQL username (the one you may use to access PHPMyAdmin).
+* User name : your SQL username (the one you may use to access PHPMyAdmin).
 
-***Password***: your SQL password (The same you are using to access PHPMyAdmin).
+* Password : your SQL password (The same you are using to access PHPMyAdmin).
 
-***Database name***: the name of the database you have created at the Step 3 of the preparation phase.
+* Database name : the name of the database you have created at the Step 3 of the preparation phase.
 
-***Database prefix***: Choose a prefix that will be used to create tables in your database (e.g.: rmd).
+* Database prefix : Choose a prefix that will be used to create tables in your database (e.g.: rmd).
 
 \*Make sure the prefix you choose if not already used by other applications installed on your server.
 
@@ -142,19 +142,19 @@ the SMTP host of your server (if there is) or to use the one of any email provid
 
 ![Installation Step 2](./media/install3.png)
 
-**Send Email address:** your journal club email
+* Send Email address: your journal club email
 
-**Sender Name:** Name associated to the email address
+* Sender Name: Name associated to the email address
 
-**Email host:** SMTP host address (e.g. smtp.gmail.com if you are using a GMAIL address).
+* Email host: SMTP host address (e.g. smtp.gmail.com if you are using a GMAIL address).
 
-**SMTP access:** Security protocol (SSL/TLS/none).
+* SMTP access: Security protocol (SSL/TLS/none).
 
 \**Note that using SSL/TLS requires that SSL PHP extension is installed on your web-server.*
 
-**Email username:** your email username
+* Email username: your email username
 
-**Email password:** your email password.
+* Email password: your email password.
 
 ### Step 3: Administration account
 
@@ -162,11 +162,11 @@ Create an administrator account to manage your website.
 
 ![Installation Step 3](./media/install4.png)
 
-***Username***: choose a username.
+* Username: choose a username.
 
-***Password***: choose a password.
+* Password: choose a password.
 
-***Confirm your password***: retype the password you have chosen.
+* Confirm your password: retype the password you have chosen.
 
 At the end of this step, you will be automatically redirected to your administration interface. You may be invited to log in using your administration username and password. Once you are logged in, go to “Drawing management” via the left-side menu.
 
@@ -179,6 +179,8 @@ Using your favorite FTP client, delete the “install.php” file that you may f
 
 Administration interface
 ========================
+
+Your administration interface is accessible at <http://www.mydomain.com/RankMyDrawings/admin/>
 
 Drawing management
 ------------------
@@ -193,6 +195,8 @@ First of all, you need to upload a “reference drawing” corresponding to the 
 
 2. Drag & drop (or click on the uploader) to upload the reference drawing.
 
+3. Refresh the page to see your new reference drawing
+
 #### Add participants’ drawings: 
 
 ![Drawing step 2](./media/drawing2.png)
@@ -203,35 +207,49 @@ click on the “select files” button. You may be able to select and upload mul
 
 ![Drawing step 3](./media/drawing3.png)
 
-***ELO initial score***: Score given to any new “player”. **This setting must be modified before the upload of any drawings!**
+Accessible by clicking on the settings icon (the gray "wheel" next to the reference drawing's name). 
 
-***Number of trials***: Number of trials per participant
+* ELO initial score: Score given to any new “player”. **This setting must be modified before the upload of any drawings!**
 
-***Max number of users***: Maximum number of participants for this reference drawing
+* Number of trials: Number of trials per participant
 
-***Status***: Enable of disable the experiment for this reference drawing
+* Max users: Maximum number of participants for this reference drawing
 
-***Filter user***: Allow or not participants to repeat the experiment
+* Time Limit: Maximum duration of the experiment (0: no time limit)
 
-Here, you can also modify instructions and consent forms, as well as add languages.
+* Status: Enable of disable the experiment for this reference drawing
+
+* Filter user: Allow or not participants to repeat the experiment
+
+***Instructions and consent***
+
+Here, you can also modify instructions and consent forms (click on the text), as well as add languages (select "add").
 
 Admin info
 ----------
 Here you can modify administrator's username, email address and password.
 
-Export
+Tools
 ---------------
-***EXPORT DATABASE IN XLS***: Export the selected reference drawing's database into xls files.
+![Tools](./media/tools.png)
 
-***Backup databases***: back up the full database.
+***EXPORT***
 
-***Full backup***: backup database and all files
+Export the selected reference drawing's database into xls files that will be compressed into a ZIP file. 
+After the exportation completed, a link to the ZIP file will be displayed.
+
+***Backup Services*** 
+
+Note: these services can be run as scheduled tasks. To do so, plan a schedule task (or a cron task for server running on Linux)
+and point it to /some/local/path/RankMyDrawings/cronjobs/run.php. You can set the running time and frequency here.
+
+* DbBackup: back up the full database.
+
+* FullBackup: backup database and all files
 
 Settings
 -------------------
 ![Settings](./media/settings.png)
-
-***OLDEST DB BACKUPS TO KEEP (IN DAYS)***: Maximum number of backup versions to store on the server
 
 **Redirect URL:** URL to which users will be redirected at the end of the experiment.
 

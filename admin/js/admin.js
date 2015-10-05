@@ -407,7 +407,6 @@ $( document ).ready(function() {
             var refid = $(this).data('ref');
             var data = {deleteref: refid};
             var el = $('.refdraw-div#'+refid);
-            console.log(el);
             var callback = function(result) {
                 if (result.status == true) {
                     $('#'+refid).remove();
@@ -467,24 +466,6 @@ $( document ).ready(function() {
         /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          Export tools
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-        // Backup the database only if asked
-        .on('click','.backup',function(){
-            var op = $(this).attr('data-op');
-            jQuery.ajax({
-                url: 'php/form.php',
-                type: 'POST',
-                async: true,
-                data: {
-                    backup: true,
-                    op: op},
-                success: function(data){
-                    var json = jQuery.parseJSON(data);
-                    console.log(json);
-                    $('#'+op).append('<div class="file_link" data-url="'+json+'" style="width: auto;"><a href="' + json + '">Download backup file</a></div>');
-                }
-            });
-        })
-
         // Export ref drawings database to xls
         .on('change','.exportdb',function(e){
             e.preventDefault();
@@ -498,7 +479,6 @@ $( document ).ready(function() {
                     refid: refid},
                 success: function(data){
                     var json = jQuery.parseJSON(data);
-                    console.log(json);
                     $('#exportdb').append('<div class="file_link" data-url="'+json+'" style="width: auto;"><a href="' + json + '">Download XLS file</a></div>');
                 }
             });

@@ -95,7 +95,8 @@ label{
     color: #EEE;
     padding: 4px 1px;
 
-    min-width: 110px;
+    min-width: 100px;
+    max-width: 100px;
     height: 20px;
     line-height: 20px;
 }

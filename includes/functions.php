@@ -1,82 +1,64 @@
 <?php
-/*
-Copyright © 2014, F. Perdreau, Radboud University Nijmegen
-=======
-This file is part of RankMyDrawings.
+/**
+ * File for php functions
+ *
+ * PHP version 5
+ *
+ * @author Florian Perdreau (fp@florianperdreau.fr)
+ * @copyright Copyright (C) 2014 Florian Perdreau
+ * @license <http://www.gnu.org/licenses/agpl-3.0.txt> GNU Affero General Public License v3
+ *
+ * This file is part of RankMyDrawings.
+ *
+ * RankMyDrawings is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RankMyDrawings is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-RankMyDrawings is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-RankMyDrawings is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with RankMyDrawings.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
+/**
+ * Bunch of useful functions (used by several classes)
+ * - check_login(): check if user is logged in. Otherwise, invite the user to sign in.
+ * - exportDb(char $tablename): export database table into xls file
+ * - exportdbtoxls(): export all tables corresponding to a reference drawing into xls files compressed into a ZIP file.
+ * - browse(): browse directories
+ * - backupDb(): back up the whole database
+ * - cleanbackup(): clean backupfiles and remove the oldest ones from the server
+ * - backupFiles(): create an archive including a copy of all files and database
+ */
 
 require_once('boot.php');
 
+/**
+ * Check if user is logged in
+ */
 function check_login() {
 	$cond = !isset($_SESSION['logok']) || $_SESSION['logok'] == false;
 
     if ($cond) {
         $result = "
-		    <div id='content'>
-        		<p id='warning'>You must <span class='leanModal' id='user_login' data-section='user_login'>
-        		log in</span> to access the different options of this interface</p>
-		    </div>
+            <p id='warning'>You must <span class='leanModal' id='user_login' data-section='user_login'
+            style='color: rgba(255,255,255,.8); cursor: pointer;'>log in</span> to access the different options of this
+            interface</p>
 		    ";
 		echo json_encode($result);
         exit;
     }
 }
 
-function is_session_started()
-{
-    if ( php_sapi_name() !== 'cli' ) {
-        if ( version_compare(phpversion(), '5.4.0', '>=') ) {
-            if (session_status() == PHP_SESSION_ACTIVE) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (session_id() == '') {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-    return FALSE;
-}
-
-// Recursively browse files in a specified folders and subfolders
-function browse($dir, $dirsNotToSaveArray = array()) {
-    $filenames = array();
-    if ($handle = opendir($dir)) {
-        while (false !== ($file = readdir($handle))) {
-            $filename = $dir."/".$file;
-            if ($file != "." && $file != ".." && is_file($filename)) {
-                $filenames[] = $filename;
-            }
-
-            else if ($file != "." && $file != ".." && is_dir($dir.$file) && !in_array($dir.$file, $dirsNotToSaveArray) ) {
-                $newfiles = browse($dir.$file,$dirsNotToSaveArray);
-                $filenames = array_merge($filenames,$newfiles);
-            }
-        }
-        closedir($handle);
-    }
-    return $filenames;
-}
-
-// Export target db to xls file
+/**
+ * Export database tables into XLS files
+ * @param $tablename: name of the table to export
+ * @return string
+ */
 function exportDb($tablename) {
     global $db;
     $out = "";
@@ -173,13 +155,46 @@ function exportdbtoxls($refname, $tableList) {
     }
 }
 
-// Backup routine
-function backup_db(){
+/**
+ * Browse files to backup
+ * @param $dir
+ * @param array $dirsNotToSaveArray
+ * @return array
+ */
+function browse($dir, $dirsNotToSaveArray = array()) {
+    $filenames = array();
+    if ($handle = opendir($dir)) {
+        while (false !== ($file = readdir($handle))) {
+            $filename = $dir."/".$file;
+            if ($file != "." && $file != ".." && is_file($filename)) {
+                $filenames[] = $filename;
+            } else if ($file != "." && $file != ".." && is_dir($dir.$file) && !in_array($dir.$file, $dirsNotToSaveArray) ) {
+                $newfiles = browse($dir.$file,$dirsNotToSaveArray);
+                $filenames = array_merge($filenames,$newfiles);
+            }
+        }
+        closedir($handle);
+    }
+    return $filenames;
+}
+
+/**
+ * Backup database and save it as a *.sql file. Clean backup folder (remove oldest versions) at the end.
+ * @param $nbVersion: Number of previous backup versions to keep on the server (the remaining will be removed)
+ * @return string : Path to *.sql file
+ */
+function backupDb($nbVersion){
     global $db, $AppConfig;
 
     // Create Backup Folder
-    $mysqlSaveDir = PATH_TO_APP.'/backup/Mysql';
+    $mysqlrelativedir = 'backup/mysql';
+    $urltoSaveDir = $AppConfig->site_url.'/'.$mysqlrelativedir;
+    $mysqlSaveDir = PATH_TO_APP.'/'.$mysqlrelativedir;
     $fileNamePrefix = 'fullbackup_'.date('Y-m-d_H-i-s');
+
+    if (!is_dir(PATH_TO_APP.'/backup')) {
+        mkdir(PATH_TO_APP.'/backup',0777);
+    }
 
     if (!is_dir($mysqlSaveDir)) {
         mkdir($mysqlSaveDir,0777);
@@ -187,82 +202,64 @@ function backup_db(){
 
     // Do backup
     /* Store All AppTable name in an Array */
-    $allTables = array();
-    $result = $db->send_query('SHOW TABLES');
-    while($row = mysqli_fetch_row($result)){
-        $allTables[] = $row[0];
-    }
+    $allTables = $db->getapptables();
 
     $return = "";
-    foreach($allTables as $table){
+    //cycle through
+    foreach($allTables as $table)
+    {
         $result = $db->send_query('SELECT * FROM '.$table);
         $num_fields = mysqli_num_fields($result);
 
-        $return.= 'DROP TABLE IF EXISTS '.$table.';';
-        $row2 = mysqli_fetch_row($db->send_query('SHOW CREATE TABLE '.$table));
+        $return.= 'DROP TABLE '.$table.';';
+        $row = $db->send_query('SHOW CREATE TABLE '.$table);
+        $row2 = mysqli_fetch_row($row);
         $return.= "\n\n".$row2[1].";\n\n";
 
-        for ($i = 0; $i < $num_fields; $i++) {
-            while($row = mysqli_fetch_row($result)){
+        for ($i = 0; $i < $num_fields; $i++)
+        {
+            while($row = mysqli_fetch_row($result))
+            {
                 $return.= 'INSERT INTO '.$table.' VALUES(';
-                for($j=0; $j<$num_fields; $j++){
+                for($j=0; $j<$num_fields; $j++)
+                {
                     $row[$j] = addslashes($row[$j]);
-                    $row[$j] = str_replace("\n","\\n",$row[$j]);
-                    if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; }
-                    else { $return.= '""'; }
+                    $row[$j] = preg_replace("/\n/","\\n",$row[$j]);
+                    if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
                     if ($j<($num_fields-1)) { $return.= ','; }
                 }
                 $return.= ");\n";
             }
         }
-        $return.="\n\n";
+        $return.="\n\n\n";
     }
     $handle = fopen($mysqlSaveDir."/".$fileNamePrefix.".sql",'w+');
     fwrite($handle,$return);
     fclose($handle);
 
-    cleanbackups($mysqlSaveDir);
-    return $AppConfig->site_url."/backup/Mysql/$fileNamePrefix.sql";
+    cleanBackups($mysqlSaveDir,$nbVersion);
+    return "$urltoSaveDir/$fileNamePrefix.sql";
 }
-
-// Mail backup file to admins
-function mail_backup($backupfile) {
-    global $AppMail, $db;
-    $admin = new Users($db);
-    $admin->get('admin');
-
-    // Send backup via email
-    $content = "
-    Hello, <br>
-    <p>This message has been sent automatically by the server. You may find a backup of your database in attachment.</p>
-    ";
-    $body = $AppMail -> formatmail($content);
-    $subject = "Automatic Database backup";
-    if ($AppMail->send_mail($admin->email,$subject,$body,$backupfile)) {
-    }
-}
-
 
 /**
  * Check for previous backup and delete the oldest ones
- * @param $mysqlSaveDir
+ * @param $mysqlSaveDir: Path to backup folder
+ * @param $nbVersion: Number of backups to keep on the server
  */
-function cleanbackups($mysqlSaveDir) {
-    $db = new AppDb();
-    $config = new AppConfig($db);
-    $oldbackup = browse($mysqlSaveDir);
-    if (!empty($oldbackup)) {
+function cleanBackups($mysqlSaveDir,$nbVersion) {
+    $oldBackup = browse($mysqlSaveDir);
+    if (!empty($oldBackup)) {
         $files = array();
         // First get files date
-        foreach ($oldbackup as $file) {
-            $filewoext = explode('.',$file);
-            $filewoext = $filewoext[0];
-            $prop = explode('_',$filewoext);
+        foreach ($oldBackup as $file) {
+            $fileWoExt = explode('.',$file);
+            $fileWoExt = $fileWoExt[0];
+            $prop = explode('_',$fileWoExt);
             if (count($prop)>1) {
                 $back_date = $prop[1];
                 $back_time = $prop[2];
-                $formatedtime = str_replace('-',':',$back_time);
-                $date = $back_date." ".$formatedtime;
+                $formatedTime = str_replace('-',':',$back_time);
+                $date = $back_date." ".$formatedTime;
                 $files[$date] = $file;
             }
         }
@@ -274,7 +271,7 @@ function cleanbackups($mysqlSaveDir) {
         $cpt = 0;
         foreach ($files as $date=>$old) {
             // Delete file if too old
-            if ($cpt >= $config->clean_day) {
+            if ($cpt >= $nbVersion) {
                 if (is_file($old)) {
                     unlink($old);
                 }
@@ -284,14 +281,50 @@ function cleanbackups($mysqlSaveDir) {
     }
 }
 
-// Full backup routine
-function file_backup() {
-    global  $AppConfig;
-    $dirToSave = PATH_TO_APP;
+/**
+ * Mail backup file to admins
+ * @param $backupfile
+ * @return bool
+ */
+function mail_backup($backupfile) {
+    global $db, $AppConfig;
+    $mail = new AppMail($db,$AppConfig);
+    $admin = new Users($db);
+    $admin->get('admin');
+
+    // Send backup via email
+    $content = "
+    Hello, <br>
+    <p>This message has been sent automatically by the server. You may find a backup of your database in attachment.</p>
+    ";
+    $body = $mail -> formatmail($content);
+    $subject = "Automatic Database backup";
+    if ($mail->send_mail($admin->email,$subject,$body,$backupfile)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Full backup routine (files + database)
+ * @return string
+ */
+function backupFiles() {
+    global $AppConfig;
+
+    $dirToSave = PATH_TO_APP.'/';
     $dirsNotToSaveArray = array(PATH_TO_APP."/backup");
-    $mysqlSaveDir = PATH_TO_APP.'/backup/Mysql';
-    $zipSaveDir = PATH_TO_APP.'/backup/Complete';
+
+    $mysqlrelativedir = 'backup/complete';
+    $urltoSaveDir = $AppConfig->site_url.'/'.$mysqlrelativedir;
+    $mysqlSaveDir = PATH_TO_APP.'/backup/mysql';
+    $zipSaveDir = PATH_TO_APP.'/backup/complete';
     $fileNamePrefix = 'fullbackup_'.date('Y-m-d_H-i-s');
+
+    if (!is_dir(PATH_TO_APP.'/backup')) {
+        mkdir(PATH_TO_APP.'/backup',0777);
+    }
 
     if (!is_dir($zipSaveDir)) {
         mkdir($zipSaveDir,0777);
@@ -307,14 +340,15 @@ function file_backup() {
 
     $zip = new ZipArchive();
 
-    if ($zip->open($zipfile, ZipArchive::CREATE)!==true) {
+    if ($zip->open($zipfile, ZIPARCHIVE::CREATE)!==TRUE) {
         return "cannot open <$zipfile>";
     } else {
         foreach ($filenames as $filename) {
-            $zip->addFile($filename);
+            $zip->addFile($filename,$filename);
         }
+
         $zip->close();
-        return $AppConfig->site_url."backup/Complete/$fileNamePrefix.zip";
+        return $urltoSaveDir."/$fileNamePrefix.zip";
     }
 }
 

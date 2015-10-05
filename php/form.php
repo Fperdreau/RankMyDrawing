@@ -29,17 +29,17 @@ if (!empty($_POST['get_app_status'])) {
 
 if (!empty($_POST['setTimer'])) {
     $start = $_POST['start'] === 'true';
-    $result['start'] = false;
+    $refid = (!empty($_SESSION['refid'])) ? $_SESSION['refid']:null;
+    $ref = new DrawRef($db, $refid);
+    $maxTime = $ref->maxtime;
+
+    $start = ($maxTime > 0 || !empty($_SESSION['stopTime']));
+
     if ($start) {
-        $refid = $_SESSION['refid'];
-        $ref = new DrawRef($db, $refid);
-        $maxtime = $ref->maxtime;
-        if ($maxtime > 0) {
-            $result['start'] = true;
-            $result['maxtime'] = $maxtime;
-        } else {
-            $result['start'] = false;
-        }
+        $result['start'] = true;
+        $result['maxtime'] = $maxTime;
+    } else {
+        $result['start'] = false;
     }
 
     echo json_encode($result);

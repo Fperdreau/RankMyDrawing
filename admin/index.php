@@ -51,7 +51,7 @@ require('../includes/boot.php');
             <nav>
                 <ul>
                     <li><a href='index.php?page=admininfo' class='menu-section' id='admininfo'>Admin Info</a></li>
-                    <li><a href='index.php?page=export' class='menu-section' id='export'>Export</a></li>
+                    <li><a href='index.php?page=tools' class='menu-section' id='Tools'>Tools</a></li>
                     <li><a href='index.php?page=management' class='menu-section' id='management'>Drawing Management</a></li>
                     <li><a href='index.php?page=application' class='menu-section' id='application'>Settings</a></li>
                 </ul>
@@ -98,6 +98,7 @@ require('../includes/boot.php');
         <script type="text/javascript" src="js/admin.js"></script>
         <script type="text/javascript" src="../js/form.js"></script>
         <script type="text/javascript" src="../js/jquery.leanModal.js"></script>
+        <script type="text/javascript" src="js/plugins.js"></script>
 
         <!-- TinyMce (Rich-text textarea) -->
         <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>

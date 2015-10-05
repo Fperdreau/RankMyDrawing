@@ -43,7 +43,6 @@
         elem.data('status',false);
         var obj = this;
         var settings = $.extend(defaults, options || {});
-
         elem.html("<span class='ExperimentTimer'></span>");
         obj.timerDiv = elem.find('.ExperimentTimer');
         obj.timerDiv.css(settings.style);
@@ -81,7 +80,7 @@
         this.stop = function() {
             obj.timerDiv.html("Time's up!");
             clearInterval(obj.refreshtimer);
-            obj.settings.afterend();
+            settings.afterend();
         }
 
     };
