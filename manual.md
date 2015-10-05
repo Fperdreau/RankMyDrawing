@@ -201,7 +201,13 @@ First of all, you need to upload a “reference drawing” corresponding to the 
 
 ![Drawing step 2](./media/drawing2.png)
 
-click on the “select files” button. You may be able to select and upload multiple files at once. However, the number of files that can be uploaded at once may depend on your server settings (size limit vary across servers). If the upload of multiple files fails, try with fewer files. Note that you will be able to upload other drawings in the future. They will be added to the database and will be considered as “new players” in the ELO ranking system.
+click on the “select files” button. You may be able to select and upload multiple files at once. However, 
+the number of files that can be uploaded at once may depend on your server settings (size limit vary across servers). 
+If the upload of multiple files fails, try with fewer files. Note that you will be able to upload other drawings in the future. 
+They will be added to the database and will be considered as “new players” in the ELO ranking system.
+
+Once your drawings have been uploaded, they will appear in the drawing list of the reference drawing. You can then click
+them to see their information (current score, etc.).
 
 #### Reference drawing's settings
 
